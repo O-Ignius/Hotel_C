@@ -54,6 +54,8 @@ void altera_txt();
 
 void remover_txt();
 
+cad_clie transforma_dados();
+
 /////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\
 \
 
@@ -290,6 +292,7 @@ void menuReserva(int tipoArquivo){
 
 //      Bin
 
+//  Clientes
 void salva_cadastro_pessoa_bin(cad_clie saves) {
 
     FILE *salva;
@@ -490,8 +493,11 @@ void removeBinario() {
     */
 }
 
+//  Reserva
+
 //      TXT
 
+//  Clientes
 void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     FILE *salva;
@@ -819,6 +825,10 @@ void remover_txt() {
     remove("cadastro.txt");
     rename("temp.txt", "cadastro.txt");
 }
+
+//  Reserva
+
+
 
 int main() {
     // setar linguagem pt-br
