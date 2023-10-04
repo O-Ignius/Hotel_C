@@ -10,21 +10,49 @@
 
 /////////////////////////////   Structs  \\\\\\\\\\\\\\\\\\\\\\\\\
 
-
-
+//struct moradia
 typedef struct {
     char rua[150], bairro[100], cidade[100], estado[2];
-
     float numero, cep;
 
 } endereco;
 
+//struct check
+typedef struct {
+    int hora, min;
+}check;
+
+//struct cadastro hotel
+typedef struct {
+    char nome_hot[100], nome_respo[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
+    endereco local;
+    float telefone_hot, telefone_respo, lucro;
+    check in, out;
+    
+}hotel;
+
+// struct cadastro cliente
 typedef struct {
     float codigo, cpf, telefone;
     char nome[100], email[150], sexo[50], estado_civil[50], nascimento[15];
     endereco local;
 
 } cad_clie;
+
+//struct categoria acomodações
+typedef struct {
+    char descri[300];
+    float diaria;
+    int qnt_pessoas;
+    
+}cate_aco;
+
+//struct acomodações
+typedef struct {
+    float codigo;
+    cate_aco tipo;
+    
+}acomodacao;
 
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
