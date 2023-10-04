@@ -43,22 +43,53 @@ typedef struct {
 typedef struct {
     char descri[300];
     float diaria;
-    int qnt_pessoas;
+    int codigo, qnt_pessoas;
     
 }cate_aco;
 
 //struct acomodações
 typedef struct {
     float codigo;
+    char descri[300], facilidades[300];
     cate_aco tipo;
     
 }acomodacao;
 
+//struct produtos
+typedef struct {
+    int codigo, estoque, estoque_min;
+    float custo, venda;
+    char descricao[300];
+    
+}produto;
+
+//struct fornecedores
+typedef struct {
+    int codigo;
+    char nome[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
+    float telefone;
+    endereco local;
+    
+}fornecedor;
+
+//struct operadores sistema
+typedef struct {
+    int codigo, acesso;
+    char nome[100], user[100], senha[100];
+    
+}operador;
+
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-//Variadas
+//Coleta dados
 
 cad_clie le_dados_cad();
+
+hotel le_dados_hotel();
+
+acomodacao le_dados_acomod();
+
+//Variadas
 
 int tamanhoArquivoBin();
 
@@ -122,14 +153,10 @@ int selecionarTipoArquivo() {
     return tipoArquivo;
 }
 
-cad_clie le_dados_cad(int binOuTxt) {
+//    Coleta dados:
+cad_clie le_dados_cad() {
 
     cad_clie dados;
-    if(binOuTxt == 0){
-        dados.codigo = tamanhoArquivoBin() + 1;
-    } else {
-        dados.codigo = tamanhoArquivoTXT() + 1;
-    }
 
     setbuf(stdin, NULL);
 
@@ -210,6 +237,92 @@ cad_clie le_dados_cad(int binOuTxt) {
 
     setbuf(stdin, NULL);
      */
+    return dados;
+}
+
+hotel le_dados_hotel() {
+    // variaveis
+    hotel dados;
+    
+    //coleta de dados
+    setbuf(stdin, NULL);
+    printf("Digite o nome do hotel: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.nome_hot);
+    setbuf(stdin, NULL);
+    printf("Digite a razão social: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.raz_soci);
+    setbuf(stdin, NULL);
+    printf("Digite a inscrição estadual do hotel: \n");
+    scanf("%[^\n]s", dados.inscri_estad);
+    setbuf(stdin, NULL);
+    printf("Digite o CNPJ do hotel: \n");
+    scanf("%[0-9.-][^\n]s", dados.nome_hot);
+    setbuf(stdin, NULL);
+    printf("Digite o email do hotel: \n");
+    scanf("%s", dados.email);
+    setbuf(stdin, NULL);
+    printf("Digite o número de telefone do hotel: \n");
+    scanf("%[0-9][^\n]s", dados.telefone_hot);
+    setbuf(stdin, NULL);
+    printf("Digite a sigla do estado em que se encontra o hotel: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.estado);
+    setbuf(stdin, NULL);
+    printf("Digite a cidade do hotel: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.cidade);
+    setbuf(stdin, NULL);
+    printf("Digite o CEP da cidade do hotel: \n");
+    scanf("%f", dados.local.cep);
+    setbuf(stdin, NULL);
+    printf("Digite o bairro do hotel: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.bairro);
+    setbuf(stdin, NULL);
+    printf("Digite a rua do hotel: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.rua);
+    setbuf(stdin, NULL);
+    printf("Digite o número do hotel: \n");
+    scanf("%f", dados.local.numero);
+    setbuf(stdin, NULL);
+    printf("Digite o nome do gerente do hotel: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.nome_respo);
+    setbuf(stdin, NULL);
+    printf("Digite o telefone do gerente do hotel: \n");
+    scanf("%f", dados.telefone_respo);
+    setbuf(stdin, NULL);
+    printf("Digite o horario de check-in do hotel: \n");
+    printf("horas: ");
+    scanf("%d", dados.in.hora);
+    setbuf(stdin, NULL);
+    printf("\nminutos: ");
+    scanf("%d", dados.in.min);
+    setbuf(stdin, NULL);
+    printf("Digite o horario de check-out do hotel: \n");
+    printf("horas: ");
+    scanf("%d", dados.out.hora);
+    setbuf(stdin, NULL);
+    printf("\nminutos: ");
+    scanf("%d", dados.out.min);
+    setbuf(stdin, NULL);
+    printf("Digite a margem de lucro dos produtos vendidos pelo hotel: ");
+    scanf("%f", dados.lucro);
+    
+    return dados;
+}
+
+acomodacao le_dados_acomod(cate_aco tipo){
+    //variaveis
+    acomodacao dados;
+    
+    //coleta de dados
+    setbuf(stdin, NULL);
+    printf("Digite o código do quarto: \n");
+    scanf("%f", dados.codigo);
+    setbuf(stdin, NULL);
+    printf("Digite a descrição da acomodação: \n");
+    scanf("%[a-z A-Z]s", dados.descri);
+    setbuf(stdin, NULL);
+    printf("Digite as facilidades da acomodação (como ar condicionado, TV, ...): \n");
+    scanf("%[a-z A-Z]s", dados.facilidades);
+    
     return dados;
 }
 
