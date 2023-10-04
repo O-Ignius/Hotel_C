@@ -122,7 +122,7 @@ int selecionarTipoArquivo() {
     return tipoArquivo;
 }
 
-cad_clie le_dados_cad(binOuTxt) {
+cad_clie le_dados_cad(int binOuTxt) {
 
     cad_clie dados;
     if(binOuTxt == 0){
