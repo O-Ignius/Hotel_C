@@ -1,4 +1,4 @@
-/////////////////////////////   Bibliotecas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////   Bibliotecas  \\\\\\\\\\\\\\\\\\\\\\\\
 
 #include <stdio.h>
 
@@ -28,12 +28,25 @@ typedef struct {
 
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+//Variadas
+
+cad_clie le_dados_cad();
+
+int tamanhoArquivoBin();
+
+int tamanhoArquivoTXT();
+
+int selecionarTipoArquivo();
+
+//Menus
+
 void menuPrincipal();
 
 void menuCliente(int tipoArquivo);
 
 void menuReserva(int tipoArquivo);
 
+//BIN
 void salva_cadastro_pessoa_bin(cad_clie saves);
 
 void le_cadastro_pessoa_bin();
@@ -43,6 +56,8 @@ void le_todos_cadastro_pessoa_bin();
 void alteraBinario();
 
 void removeBinario();
+
+//TXT 
 
 void salva_cadastro_pessoa_txt(cad_clie saves);
 
@@ -54,36 +69,43 @@ void altera_txt();
 
 void remover_txt();
 
-cad_clie transforma_dados();
 
-/////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\\\
+\
 \
 
 //    Variadas
 
 int selecionarTipoArquivo() {
     int tipoArquivo = 0;
-    system("clear");
-    printf("Digite 0 para salvar as informações em arquivos binários e 1 para arquivos txt: ");
+
+    printf("\nDigite 0 para salvar as informações em arquivos binários e 1 para arquivos txt: ");
     scanf("%d", &tipoArquivo);
+
     while (tipoArquivo != 0 && tipoArquivo != 1) {
         printf("Número inválido, digite novamente: ");
         scanf("%d", &tipoArquivo);
     }
-    printf("Tipo de arquivo alterado com sucesso!");
+    if (tipoArquivo == 0) {
+        printf("Tipo de arquivo alterado para BINARIO!");
+    } else
+        printf("Tipo de arquivo alterado para TXT!");
+    getchar();
     return tipoArquivo;
 }
 
-cad_clie le_dados_cad() {
+cad_clie le_dados_cad(binOuTxt) {
+
     cad_clie dados;
-
-    printf("Digite o código: \n");
-
-    scanf("%f", &dados.codigo);
+    if(binOuTxt == 0){
+        dados.codigo = tamanhoArquivoBin() + 1;
+    } else {
+        dados.codigo = tamanhoArquivoTXT() + 1;
+    }
 
     setbuf(stdin, NULL);
 
-    printf("Digite o seu nome completo: \n");
+    printf("\nDigite o seu nome completo: ");
 
     scanf("%[a-z A-Z][^\n]s", dados.nome);
 
@@ -163,9 +185,10 @@ cad_clie le_dados_cad() {
     return dados;
 }
 
-void menuPrincipal(){
-    int opcao = -1, binOUtxt = 1;
-    
+//MENUS:
+
+void menuPrincipal() {
+    int opcao = -1, binOUtxt = 0;
 
     while (opcao != 0) {
         system("clear");
@@ -179,52 +202,50 @@ void menuPrincipal(){
         printf("Opcão: ");
         scanf("%d", &opcao);
 
-        switch (opcao)
-        {
-        case 1:
-            menuCliente(binOUtxt);
-            break;
-        case 2:
-            menuReserva(binOUtxt);
-            break;
-        case 9:
-            binOUtxt = selecionarTipoArquivo();
-            break;
-        case 0:
-            printf("Fechando programa...");
-            exit(1);
-        default:
-            printf("Opcao invalida, digite novamente: ");
-            scanf("%d",&opcao);
-            break;
-        } 
+        switch (opcao) {
+            case 1:
+                menuCliente(binOUtxt);
+                break;
+            case 2:
+                menuReserva(binOUtxt);
+                break;
+            case 9:
+                binOUtxt = selecionarTipoArquivo();
+                break;
+            case 0:
+                printf("Fechando programa...");
+                exit(1);
+            default:
+                printf("Opcao invalida, digite novamente: ");
+                scanf("%d", &opcao);
+                break;
+        }
     }
-    
+
 }
 
-void menuCliente(int tipoArquivo){
+void menuCliente(int tipoArquivo) {
     int opcao = 0, binOUtxt = tipoArquivo;
-    cad_clie dados;   
-        while (opcao != 5) {
-            system("clear");
-            setbuf(stdin, NULL);
+    cad_clie dados;
+    while (opcao != 5) {
 
-            printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
-            printf("Digite a opcao desejada:\n\n");
-            printf("\tCadastro de cliente - 1\n");
-            printf("\tListar todos os cliente - 2\n");
-            printf("\tLista dados de um cliente - 3\n");
-            printf("\tAlterar dados cliente - 4\n");
-            printf("\tExcluir dados de cliente - 5\n");
-            printf("\tVoltar ao menu inicial - 6\n");
+        setbuf(stdin, NULL);
 
-            printf("Opcão: ");
-            scanf("%d", &opcao);
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastro de cliente - 1\n");
+        printf("\tListar todos os cliente - 2\n");
+        printf("\tLista dados de um cliente - 3\n");
+        printf("\tAlterar dados cliente - 4\n");
+        printf("\tExcluir dados de cliente - 5\n");
+        printf("\tVoltar ao menu inicial - 6\n");
 
-            switch (opcao)
-            {
+        printf("Opc�o: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
             case 1:
-                dados = le_dados_cad();
+                dados = le_dados_cad(binOUtxt);
                 if (binOUtxt == 0) {
                     salva_cadastro_pessoa_bin(dados);
                 } else {
@@ -234,9 +255,8 @@ void menuCliente(int tipoArquivo){
             case 2:
                 if (binOUtxt == 0) {
                     le_todos_cadastro_pessoa_bin();
-                } else {
+                } else
                     le_todos_cadastro_pessoa_txt();
-                }
                 break;
             case 3:
                 if (binOUtxt == 0) {
@@ -264,15 +284,19 @@ void menuCliente(int tipoArquivo){
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
-            }
-            getchar();
         }
+        getchar();
+    }
 }
 
-void menuReserva(int tipoArquivo){
+void menuReserva(int tipoArquivo) {
     int opcao, binOUtxt = tipoArquivo;
     cad_clie dados;
-    system("clear");
+
+
+    while (opcao != 5) {
+        getchar();
+        system("clear");
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
         printf("Digite a opcao desejada:\n\n");
         printf("\tCadastro de reserva - 1\n");
@@ -283,16 +307,12 @@ void menuReserva(int tipoArquivo){
 
         printf("Opc�o: ");
         scanf("%d", &opcao);
-
-        while (opcao != 5) {
-
-        }
-        menuPrincipal();
+    }
+    menuPrincipal();
 }
 
 //      Bin
 
-//  Clientes
 void salva_cadastro_pessoa_bin(cad_clie saves) {
 
     FILE *salva;
@@ -317,7 +337,7 @@ void le_cadastro_pessoa_bin() {
     float codigo;
     int encontrado = 0;
     printf("Digite o codigo do cliente que deseja ler: ");
-    scanf("%f",&codigo);
+    scanf("%f", &codigo);
     //      abrir arquivo
     arquivo = fopen("cadastro.bin", "rb");
 
@@ -333,7 +353,7 @@ void le_cadastro_pessoa_bin() {
             break;
         }
     }
-    if(encontrado == 0){
+    if (encontrado == 0) {
         printf("Cliente não encontrado!");
     }
     fclose(arquivo);
@@ -349,7 +369,7 @@ void le_todos_cadastro_pessoa_bin() {
         printf("\t Codigo: %.0f\tNome: %s\n", cliente.codigo, cliente.nome);
     }
     fclose(arquivo);
-    
+
     getchar();
 }
 
@@ -369,7 +389,7 @@ void alteraBinario() {
     }
 
     printf("Digite o codigo do cliente que deseja alterar: ");
-    scanf("%f",&codigo);
+    scanf("%f", &codigo);
 
     while (fread(&cliente, sizeof (cad_clie), 1, arquivo)) {
         if (cliente.codigo == codigo) {
@@ -382,37 +402,19 @@ void alteraBinario() {
             novo = le_dados_cad();
 
             //Volta para o inicio da linha de cadastro desse cliente, permitindo que se altere o cliente correto
-            fseek(arquivo, -sizeof(cad_clie), SEEK_CUR);
+            fseek(arquivo, -sizeof (cad_clie), SEEK_CUR);
             //Com o ponteiro no local correto, salva-se os novos dados, substituindo os antigos
             fwrite(&novo, sizeof (cad_clie), 1, arquivo);
             break;
         }
-        
-    } 
-    if(encontrado == 1){
+
+    }
+    if (encontrado == 1) {
         printf("Dados alterados com sucesso!");
-    } else{
+    } else {
         printf("Cliente não encontrado!");
     }
     fclose(arquivo);
-}
-
-int tamanhoArquivoBin(){
-    cad_clie clie;
-    int tam = 0;
-    FILE *arquivo;
-
-    arquivo = fopen("cadastro.bin","rb");
-
-    if(arquivo == NULL){
-        printf("\nErro ao abrir o arquivo de cadastro!");
-        exit(1);
-    }
-
-    while(fread(&clie,sizeof(cad_clie),1,arquivo)){
-        tam++;
-    }
-    return tam;
 }
 
 void removeBinario() {
@@ -422,82 +424,54 @@ void removeBinario() {
     int encontrado = 0;
 
     //tentativa um(passar os dados, exeto o que foi excluido para o arquivo temp e renomea-lo com cadastro.bin):
-    arquivoAtual = fopen("C:\\Users\\ivan-\\Desktop\\Projetos\\NetBeans\\C\\Hotel\\cadastro.bin","rb");
-    arquivoTemp = fopen("C:\\Users\\ivan-\\Desktop\\Projetos\\NetBeans\\C\\Hotel\\temporario.bin","wb");
+
+    arquivoAtual = fopen("cadastro.bin", "rb");
+    arquivoTemp = fopen("temporario.bin", "wb");
 
     printf("Digite o codigo do cliente que deseja excluir: ");
     scanf("%f", &codigo);
 
-    while(fread(&cliente,sizeof(cad_clie),1,arquivoAtual)){
-        if(cliente.codigo != codigo){
-            fwrite(&cliente,sizeof(cad_clie),1,arquivoTemp);
+    while (fread(&cliente, sizeof (cad_clie), 1, arquivoAtual)) {
+        //Le todos os cad clie e os escreve no arquivo temporario, exeto aquele que o código é igual ao que deve ser excluido
+        if (cliente.codigo != codigo) {
+            fwrite(&cliente, sizeof (cad_clie), 1, arquivoTemp);
         } else {
             encontrado = 1;
         }
     }
+
     fclose(arquivoAtual);
     fclose(arquivoTemp);
-    
-    if(encontrado == 1){
-        if(remove("C:\\Users\\ivan-\\Desktop\\Projetos\\NetBeans\\C\\Hotel\\cadastro.bin") == 0 && rename("C:\\Users\\ivan-\\Desktop\\Projetos\\NetBeans\\C\\Hotel\\temporario.bin", "C:\\Users\\ivan-\\Desktop\\Projetos\\NetBeans\\C\\Hotel\\cadastro.bin")){
+    //Exclui o arquivo original e renomeia o temporário
+    if (encontrado == 1) {
+        if (remove("cadastro.bin") == 0 && rename("temporario.bin", "cadastro.bin")) {
             printf("Cliente excluido com sucesso!");
         }
-    } else{ 
+    } else {
         printf("Cliente não encontrado!");
     }
-    
-    getchar();
-    //tentativa dois(passar os dados para um vetor, depois sobreescrever o cadastro.bin com os dados do vetor):
-    /*
-        int tamanho = tamanhoArquivo();
-        int i = 0;
-        cad_clie vetorCliente[tamanho];
-        
-        float codigo;
-        int encontrado = 0;
-
-        arquivoAtual = fopen("cadastro.bin","rb");
-        
-        if(arquivoAtual == NULL || arquivoTemp == NULL){
-            printf("\nErro ao abrir os arquivos de cadastros!");
-            return;
-        }
-
-        printf("Digite o codigo do cliente que deseja excluir: ");
-        scanf("%f", &codigo);
-        //Passando os valores para um vetor e reescrevendo no arquivo
-        
-        while(fread(&cliente,sizeof(cad_clie),1,arquivoAtual)){
-            if(cliente.codigo != codigo){
-                vetorCliente[i].codigo = cliente.codigo;
-                vetorCliente[i].cpf = cliente.cpf;
-                
-                    //vetorCliente[i].email = cliente.email;
-                    //vetorCliente[i].estado_civil = cliente.estado_civil;
-                
-            } else {
-                encontrado = 1;
-            }
-            i++;
-        }
-
-    fclose(arquivoAtual);
-    arquivoAtual = fopen("cadastro.bin", "wb");
-    
-    for (i = 0; i < tamanho; i++)
-    {
-        fwrite(&vetorCliente[i], sizeof(cad_clie),1,arquivoAtual);
-    }
-    printf("\nExcluido com sucesso!");
-    fclose(arquivoAtual);
-    */
 }
 
-//  Reserva
+int tamanhoArquivoBin() {
+    cad_clie clie;
+    int tam = 0;
+    FILE *arquivo;
+
+    arquivo = fopen("cadastro.bin", "rb");
+
+    if (arquivo == NULL) {
+        printf("\nErro ao abrir o arquivo de cadastro!");
+        return;
+    }
+
+    while (fread(&clie, sizeof (cad_clie), 1, arquivo)) {
+        tam++;
+    }
+    return tam;
+}
 
 //      TXT
 
-//  Clientes
 void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     FILE *salva;
@@ -826,24 +800,34 @@ void remover_txt() {
     rename("temp.txt", "cadastro.txt");
 }
 
-//  Reserva
+int tamanhoArquivoTXT() {
+    int tam = 0;
+    FILE *arquivo;
+    arquivo = fopen("cadastro.txt", "r");
+    char linha[500], *token;
 
+    while (fgets(linha, sizeof (linha), arquivo) != NULL) {
+        token = strtok(linha, ";");
+        for (int i = 0; i < 13; i++) {
+            token = strtok(NULL, ";");
+        }
+        tam++;
+    }
+    return tam;
+}
 
+//MAIN 
 
 int main() {
     // setar linguagem pt-br
     setlocale(LC_ALL, "Portuguese");
 
-    // limpa arquivo
-    // removeBinario();
-
-    // cria o arquivo binario caso não tenha
-    //FILE *arq = fopen("cadastro.bin", "ab");
-    
-    // cria o arquivo texto caso não tenha
-    FILE *txt = fopen("cadastro.txt", "a");
+    // cria o arquivo binario e txt caso não existam
+    fopen("cadastro.bin", "ab");
+    fopen("cadastro.txt", "a");
 
     //menuPrincipal();
     menuPrincipal();
+
     return 0;
 }
