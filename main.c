@@ -89,6 +89,12 @@ hotel le_dados_hotel();
 
 acomodacao le_dados_acomod();
 
+produto le_dados_produto();
+
+fornecedor le_dados_fornecedor();
+
+operador le_dados_operador();
+
 //Variadas
 
 int tamanhoArquivoBin();
@@ -322,6 +328,105 @@ acomodacao le_dados_acomod(cate_aco tipo){
     setbuf(stdin, NULL);
     printf("Digite as facilidades da acomodação (como ar condicionado, TV, ...): \n");
     scanf("%[a-z A-Z]s", dados.facilidades);
+    
+    return dados;
+}
+
+produto le_dados_produto() {
+    // variaveis
+    produto dados;
+    
+    //coleta dados
+    setbuf(stdin, NULL);
+    printf("Digite o código do produto: \n");
+    scanf("%d", dados.codigo);
+    setbuf(stdin, NULL);
+    printf("Digite a descrição do produto: \n");
+    scanf("%[a-z A-Z]s", dados.descricao);
+    setbuf(stdin, NULL);
+    printf("Digite o estoque do produto: \n");
+    scanf("%d", dados.estoque);
+    setbuf(stdin, NULL);
+    printf("Digite o estoque minimo do produto: \n");
+    scanf("%d", dados.estoque_min);
+    setbuf(stdin, NULL);
+    printf("Digite o preço de custo do produto: \n");
+    scanf("%f", dados.custo);
+    setbuf(stdin, NULL);
+    printf("Digite o preço de venda do produto: \n");
+    scanf("%f", dados.venda);
+    
+    return dados;
+}
+
+fornecedor le_dados_fornecedor() {
+    //variaveis
+    fornecedor dados;
+    
+    //coleta dados
+    setbuf(stdin, NULL);
+    printf("Digite o código do fornecedor: \n");
+    scanf("%f", dados.codigo);
+    setbuf(stdin, NULL);
+    printf("Digite o nome do fornecedor: \n");
+    scanf("%[a-z A-Z]%s", dados.nome);
+    setbuf(stdin, NULL);
+    printf("Digite a razão social do fornecedor: \n");
+    scanf("%s", dados.raz_soci);
+    setbuf(stdin, NULL);
+    printf("Digite a inscrição estadual do fornecedor: \n");
+    scanf("%s", dados.inscri_estad);
+    setbuf(stdin, NULL);
+    printf("Digite o CNPJ do fornecedor: \n");
+    scanf("%s", dados.cnpj);
+    setbuf(stdin, NULL);
+    printf("Digite o telefone do fornecedor: \n");
+    scanf("%f", dados.telefone);
+    setbuf(stdin, NULL);
+    printf("Digite o email do fornecedor: \n");
+    scanf("%s", dados.email);
+    setbuf(stdin, NULL);
+    printf("Digite a sigla do estado do fornecedor: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.estado);
+    setbuf(stdin, NULL);
+    printf("Digite a cidade do fornecedor: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.cidade);
+    setbuf(stdin, NULL);
+    printf("Digite o CEP da cidade do fornecedor: \n");
+    scanf("%f", dados.local.cep);
+    setbuf(stdin, NULL);
+    printf("Digite o bairro do fornecedor: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.bairro);
+    setbuf(stdin, NULL);
+    printf("Digite a rua do fornecedor: \n");
+    scanf("%[a-z A-Z][^\n]s", dados.local.rua);
+    setbuf(stdin, NULL);
+    printf("Digite o número do fornecedor: \n");
+    scanf("%f", dados.local.numero);
+    
+    return dados;
+}
+
+operador le_dados_operador() {
+    //variaveis
+    operador dados;
+    
+    //coleta dados
+    setbuf(stdin, NULL);
+    printf("Digite o código do operador: \n");
+    scanf("%f", dados.codigo);
+    setbuf(stdin, NULL);
+    printf("Digite o nome do operador: \n");
+    scanf("%[a-z A-Z]", dados.nome);
+    setbuf(stdin, NULL);
+    printf("Digite o usuário do operador: \n");
+    scanf("%s", dados.user);
+    setbuf(stdin, NULL);
+    printf("Digite a senha do operador: \n");
+    scanf("%s", dados.senha);
+    setbuf(stdin, NULL);
+    printf("Digite qual a permissão de acesso do fornecedor: \n");
+    scanf("%f", dados.acesso);
     
     return dados;
 }
