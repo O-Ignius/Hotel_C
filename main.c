@@ -107,6 +107,8 @@ int selecionarTipoArquivo();
 
 void menuPrincipal();
 
+void menuHotel(int tipoArquivo);
+
 void menuCliente(int tipoArquivo);
 
 void menuReserva(int tipoArquivo);
@@ -122,7 +124,17 @@ void alteraBinario();
 
 void removeBinario();
 
-//TXT 
+//TXT
+
+//  Hotel
+
+void salva_cadastro_hotel_txt(hotel saves);
+
+void le_cadastro_hotel_txt();
+
+void altera_hotel_txt();
+
+//  Clientes
 
 void salva_cadastro_pessoa_txt(cad_clie saves);
 
@@ -450,9 +462,12 @@ void menuPrincipal() {
 
         switch (opcao) {
             case 1:
-                menuCliente(binOUtxt);
+                menuHotel(binOUtxt);
                 break;
             case 2:
+                menuCliente(binOUtxt);
+                break;
+            case 3:
                 menuReserva(binOUtxt);
                 break;
             case 9:
@@ -468,6 +483,63 @@ void menuPrincipal() {
         }
     }
 
+}
+
+void menuHotel(int tipoArquivo) {
+    int opcao = 0, binOUtxt = tipoArquivo;
+    hotel dados;
+    while (opcao != 6) {
+
+        setbuf(stdin, NULL);
+
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastrar Hotel - 1\n");
+        printf("\tListar dados do Hotel - 2\n");
+        printf("\tAlterar dados do Hotel - 3\n");
+        printf("\tExcluir dados do Hotel - 4\n");
+        printf("\tVoltar ao menu inicial - 5\n");
+
+        printf("Opc�o: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                dados = le_dados_hotel();
+                if (binOUtxt == 0) {
+                    //salva_cadastro_hotel_bin(dados);
+                } else {
+                    salva_cadastro_hotel_txt(dados);
+                }
+                break;
+            case 2:
+                if (binOUtxt == 0) {
+                    //le_cadastro_hotel_bin();
+                } else
+                    le_cadastro_hotel_txt();
+                break;
+            case 3:
+                if (binOUtxt == 0) {
+                    //altera_hotel_bin();
+                } else {
+                    //altera_hotel_txt();
+                }
+                break;
+            case 4:
+                if (binOUtxt == 0) {
+                    //exclui_hotel_bin();
+                } else {
+                    //exclui_hotel_txt();
+                }
+                break;
+            case 5:
+                menuPrincipal();
+            default:
+                printf("\nNúmero inválido, digite novamente!\n");
+                break;
+        }
+        getchar();
+    }
 }
 
 void menuCliente(int tipoArquivo) {
@@ -563,7 +635,7 @@ void salva_cadastro_pessoa_bin(cad_clie saves) {
 
     FILE *salva;
     //      abrir arquivo
-    salva = fopen("cadastro.bin", "ab");
+    salva = fopen("cliente.bin", "ab");
 
     if (salva == NULL) {
         printf("\n\t!! Erro de salvamento de Cadastro !! \n");
@@ -718,6 +790,212 @@ int tamanhoArquivoBin() {
 
 //      TXT
 
+//  Hotel
+void salva_cadastro_hotel_txt(hotel saves) {
+    FILE *salva;
+    
+    int end, hotel, chek;
+
+    //      abrir arquivo
+
+    salva = fopen("hotel.txt", "a");
+
+    if (salva == NULL) {
+
+        printf("\n\t!! Erro de salvamento de Cadasto !! \n");
+
+        exit(1);
+    }
+
+    //      Escrever no arquivo
+
+    hotel = fprintf(salva, "%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;", saves.nome_hot, saves.raz_soci, saves.inscri_estad, saves.cnpj, saves.email, saves.telefone_hot, saves.nome_respo, saves.telefone_respo, saves.lucro);
+
+    if (hotel < 0) {
+
+        printf("!! Erro em salvar os dados do hotel!!");
+
+        exit(1);
+    }
+
+    //      Endereço
+
+    end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;", saves.local.cep, saves.local.cidade, saves.local.bairro, saves.local.rua, saves.local.numero);
+
+    if (end < 0) {
+
+        printf("!! Erro em salvar o endereço do hotel !!");
+
+        exit(1);
+    }
+    
+    chek = fprintf(salva, "%d;%d;%d;%d;\n", saves.in.hora, saves.in.min, saves.out.hora, saves.out.min);
+    
+    if (chek < 0) {
+
+        printf("!! Erro em salvar os dados de check-in e check-out do hotel !!");
+
+        exit(1);
+    }
+
+    //      Fechar arquivo
+    fclose(salva);
+}
+
+void le_cadastro_hotel_txt() {
+    FILE *le;
+    char linha[300], *token;
+   
+    //      abrir arquivo
+    le = fopen("hotel.txt", "r");
+    if (le == NULL) {
+
+        printf("\n\t!! Erro de leitura de Cadastro !! \n");
+
+        exit(1);
+    }
+   
+    while (fgets(linha, sizeof (linha), le) != NULL) {
+        token = strtok(linha, ";");
+        printf("Nome: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Razão Social: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Inscrição Estadual: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("CNPJ: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Email: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Telefone do Hotel: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Gerente: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Telefone do Gerente: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Porcentagem de lucro do hotel: %s%%\n", token);
+        token = strtok(NULL, ";");
+        printf("Cep: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Cidade: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Bairro: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Rua: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Número do hotel: %s\n", token);
+        token = strtok(NULL, ";");
+        printf("Check-in: %s:", token);
+        token = strtok(NULL, ";");
+        printf("%s\n", token);
+        token = strtok(NULL, ";");
+        printf("Check-out: %s:", token);
+        token = strtok(NULL, ";");
+        printf("%s\n", token);
+    }
+    
+    //      Fechar arquivo
+    fclose(le);
+   
+    getchar();
+}
+
+void altera_hotel_txt() {
+    FILE *le, *altera;
+    char linha[500], *token;
+    hotel txt;
+    int hotel, end, chek;
+    
+    le = fopen("hotel.txt", "r");
+    if (le == NULL) {
+        printf("Erro de abertura de arquivo!\n");
+        exit(1);
+    }
+    
+    while (fgets(linha, sizeof(cad_clie), le) != NULL) {
+        token = strtok(linha, ";");
+        strcpy(txt.nome_hot, token);
+        token = strtok(NULL, ";");
+        strcpy(txt.raz_soci, token);
+        token = strtok(NULL, ";");
+        strcpy(txt.inscri_estad, token);
+        token = strtok(NULL, ";");
+        strcpy(txt.cnpj, token);
+        token = strtok(NULL, ";");
+        strcpy(txt.email, token);
+        token = strtok(NULL, ";");
+        txt.telefone_hot = atoff(token);
+        token = strtok(NULL, ";");
+        strcpy(txt.nome_respo, token);
+        token = strtok(NULL, ";");
+        txt.telefone_respo = atoff(token);
+        token = strtok(NULL, ";");
+        txt.lucro = atoff(token);
+        token = strtok(NULL, ";");
+        txt.local.cep = atoff(token);
+        token = strtok(NULL, ";");
+        strcpy(txt.local.cidade, token);
+        token = strtok(NULL, ";");
+        strcpy(txt.local.bairro, token);
+        token = strtok(NULL, ";");
+        strcpy(txt.local.rua, token);
+        token = strtok(NULL, ";");
+        txt.local.numero = atoff(token);
+        token = strtok(NULL, ";");
+        txt.in.hora = atoi(token);
+        token = strtok(NULL, ";");
+        txt.in.min = atoi(token);
+        token = strtok(NULL, ";");
+        txt.out.hora = atoi(token);
+        token = strtok(NULL, ";");
+        txt.out.hora = atoi(token);
+    }
+    
+    fclose(le);
+    
+    altera = fopen("temp.txt", "a");
+    if (altera == NULL) {
+        printf("Erro de abertura de arquivo!\n");
+        exit(1);
+    }
+    
+    hotel = fprintf(altera, "%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;", txt.nome_hot, txt.raz_soci, txt.inscri_estad, txt.cnpj, txt.email, txt.telefone_hot, txt.nome_respo, txt.telefone_respo, txt.lucro);
+
+    if (hotel < 0) {
+
+        printf("!! Erro em salvar os dados do hotel!!");
+
+        exit(1);
+    }
+
+    //      Endereço
+
+    end = fprintf(altera, "%0.0f;%s;%s;%s;%0.0f;", txt.local.cep, txt.local.cidade, txt.local.bairro, txt.local.rua, txt.local.numero);
+
+    if (end < 0) {
+
+        printf("!! Erro em salvar o endereço do hotel !!");
+
+        exit(1);
+    }
+    
+    chek = fprintf(altera, "%d;%d;%d;%d;\n", txt.in.hora, txt.in.min, txt.out.hora, txt.out.min);
+    
+    if (chek < 0) {
+
+        printf("!! Erro em salvar os dados de check-in e check-out do hotel !!");
+
+        exit(1);
+    }
+    
+    fclose(altera);
+    
+    remove("hotel.txt");
+    rename("temp.txt", "hotel.txt");
+}
+
+//  Clientes
+
 void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     FILE *salva;
@@ -726,7 +1004,7 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     //      abrir arquivo
 
-    salva = fopen("cadastro.txt", "a");
+    salva = fopen("cliente.txt", "a");
 
     if (salva == NULL) {
 
@@ -899,13 +1177,13 @@ void altera_txt(){
     
     while (fgets(linha, sizeof(cad_clie), le) != NULL) {
         token = strtok(linha, ";");
-        txt[i].codigo = atof(token);
+        txt[i].codigo = atoff(token);
         token = strtok(NULL, ";");
         strcpy(txt[i].nome, token);
         token = strtok(NULL, ";");
-        txt[i].cpf = atof(token);
+        txt[i].cpf = atoff(token);
         token = strtok(NULL, ";");
-        txt[i].telefone = atof(token);
+        txt[i].telefone = atoff(token);
         token = strtok(NULL, ";");
         strcpy(txt[i].email, token);
         token = strtok(NULL, ";");
@@ -921,7 +1199,7 @@ void altera_txt(){
         token = strtok(NULL, ";");
         strcpy(txt[i].local.rua, token);
         token = strtok(NULL, ";");
-        txt[i].local.numero = atof(token);
+        txt[i].local.numero = atoff(token);
         
         i++;
     }
@@ -996,13 +1274,13 @@ void remover_txt() {
     
     while (fgets(linha, sizeof(cad_clie), le) != NULL) {
         token = strtok(linha, ";");
-        txt[i].codigo = atof(token);
+        txt[i].codigo = atoff(token);
         token = strtok(NULL, ";");
         strcpy(txt[i].nome, token);
         token = strtok(NULL, ";");
-        txt[i].cpf = atof(token);
+        txt[i].cpf = atoff(token);
         token = strtok(NULL, ";");
-        txt[i].telefone = atof(token);
+        txt[i].telefone = atoff(token);
         token = strtok(NULL, ";");
         strcpy(txt[i].email, token);
         token = strtok(NULL, ";");
@@ -1018,7 +1296,7 @@ void remover_txt() {
         token = strtok(NULL, ";");
         strcpy(txt[i].local.rua, token);
         token = strtok(NULL, ";");
-        txt[i].local.numero = atof(token);
+        txt[i].local.numero = atoff(token);
         
         i++;
     }
