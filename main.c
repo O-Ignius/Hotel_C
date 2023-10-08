@@ -15,7 +15,7 @@ typedef struct {
     char rua[150], bairro[100], cidade[100], estado[2];
     float numero, cep;
 
-} endereco;
+}endereco;
 
 //struct check
 typedef struct {
@@ -97,11 +97,15 @@ operador le_dados_operador();
 
 //Variadas
 
+int tam_clientes();
+
 int tamanhoArquivoBin();
 
 int tamanhoArquivoTXT();
 
 int selecionarTipoArquivo();
+
+float retorna_id(char *nome_txt, char *nome_bin, int tam);
 
 //Menus
 
@@ -153,6 +157,14 @@ void remover_txt();
 
 //    Variadas
 
+int tam_clientes() {
+    int tamanho = 0;
+    
+    tamanho = sizeof(cad_clie) - sizeof(float);
+    
+    return tamanho;
+}
+
 int selecionarTipoArquivo() {
     int tipoArquivo = 0;
 
@@ -171,6 +183,76 @@ int selecionarTipoArquivo() {
     return tipoArquivo;
 }
 
+float retorna_id(char *nome_txt, char *nome_bin, int tam) {
+    FILE *txt, *bin;
+    int dif_txt = 0, dif_bin = 0;;
+    float id_livre = 0, id_bin, id_txt;
+    char linha[300], *token;
+    
+    txt = fopen(nome_txt, "r");
+    
+    if (txt == NULL) {
+        printf("Erro de abertura de arquivo txt!");
+        exit(1);
+    }
+    
+    bin = fopen(nome_bin, "rb");
+    
+    // pega linha a linha do arquivo txt e a coloca em uma string
+    while (fgets(linha, sizeof(linha), txt) != NULL) {
+        dif_bin = 0;
+        dif_txt = 0;
+        //corta a string até achar um ; e adereça o resultado a uma variavel do tipo ponteiro
+        token = strtok(linha, ";");
+        //transforma o tipo da string cortada pra um tipo inteiro e salva ele em uma variavel
+        id_txt = atoff(token);
+        while (dif_txt == 0) {
+            if (id_livre != id_txt) {
+                if (id_bin > id_txt) {
+                    fseek(bin, -(tam + (2*sizeof(float))), SEEK_CUR);
+                }
+                else {
+                    fseek(bin, tam, SEEK_CUR);
+                }
+                while (fread(&id_bin, sizeof(float), 1, bin)) {
+                    while (dif_bin == 0) {
+                        if ((id_livre != id_bin)) {
+                            dif_bin = 1;
+                            break;
+                        }
+                        else {
+                            id_livre++;
+                            fseek(bin, tam, SEEK_CUR);
+                            break;
+                        }
+                    }
+
+                    if (dif_bin == 1) {
+                        break;
+                    }
+                }
+                if (id_txt == id_livre) {
+                    id_livre++;
+                }
+                else {
+                    dif_txt = 1;
+                }
+            }
+            else {
+                id_livre++;
+            }
+        }
+    }
+    
+    //fecha binario
+    fclose(bin);
+    
+    //fecha txt
+    fclose(txt);
+    
+    return id_livre;
+}
+
 //    Coleta dados:
 cad_clie le_dados_cad() {
 
@@ -178,6 +260,12 @@ cad_clie le_dados_cad() {
 
     setbuf(stdin, NULL);
 
+    printf("\nDigite o id: ");
+
+    scanf("%f", &dados.codigo);
+    
+    setbuf(stdin, NULL);
+    
     printf("\nDigite o seu nome completo: ");
 
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -452,8 +540,9 @@ void menuPrincipal() {
         system("clear");
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
         printf("Digite a opcao desejada:\n\n");
-        printf("\tClientes - 1\n");
-        printf("\tReservas - 2\n");
+        printf("\tHotel - 1\n");
+        printf("\tClientes - 2\n");
+        printf("\tReservas - 3\n");
         printf("\tConfigurações de salvamento - 9\n");
         printf("\tEncerrar - 0\n");
 
@@ -855,7 +944,7 @@ void le_cadastro_hotel_txt() {
         exit(1);
     }
    
-    while (fgets(linha, sizeof (linha), le) != NULL) {
+    while (fgets(linha, sizeof (hotel), le) != NULL) {
         token = strtok(linha, ";");
         printf("Nome: %s\n", token);
         token = strtok(NULL, ";");
@@ -1324,34 +1413,23 @@ void remover_txt() {
     rename("temp.txt", "cadastro.txt");
 }
 
-int tamanhoArquivoTXT() {
-    int tam = 0;
-    FILE *arquivo;
-    arquivo = fopen("cadastro.txt", "r");
-    char linha[500], *token;
-
-    while (fgets(linha, sizeof (linha), arquivo) != NULL) {
-        token = strtok(linha, ";");
-        for (int i = 0; i < 13; i++) {
-            token = strtok(NULL, ";");
-        }
-        tam++;
-    }
-    return tam;
-}
-
 //MAIN 
 
 int main() {
     // setar linguagem pt-br
     setlocale(LC_ALL, "Portuguese");
 
-    // cria o arquivo binario e txt caso não existam
-    fopen("cadastro.bin", "ab");
-    fopen("cadastro.txt", "a");
+    float a, tamanho;
+    char txt[20] = "cliente.txt", bin[20] = "cliente.bin";
 
     //menuPrincipal();
-    menuPrincipal();
-
+    //menuPrincipal();
+    
+    
+    tamanho = tam_clientes();
+    a = retorna_id(txt, bin, tamanho);
+    
+    printf("O retorno da função foi: %0.0f", a);
+    
     return 0;
 }
