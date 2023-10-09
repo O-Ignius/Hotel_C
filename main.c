@@ -187,59 +187,97 @@ int selecionarTipoArquivo() {
 
 float retorna_id(char *nome_txt, char *nome_bin, int tam) {
     FILE *txt, *bin;
-    int dif_txt = 0, dif_bin = 0;;
-    float id_livre = 0, id_bin, id_txt;
+    // cria variaveis so pra ver se o número é diferente ou não do ID
+    int dif_txt = 0, dif_bin = 0;
+    //variaveis para guardar os ID's
+    float id_livre = 0, id_bin = 0, id_txt = 0;
     char linha[300], *token;
     
     txt = fopen(nome_txt, "r");
-    
     if (txt == NULL) {
         printf("Erro de abertura de arquivo txt!");
         exit(1);
     }
     
     bin = fopen(nome_bin, "rb");
+    if (bin == NULL) {
+        printf("Erro de abertura de arquivo bin!");
+        exit(1);
+    }
+    
+    /* posiciona o cursor dentro do arquivo binário 1 posição (int) a frente com relação ao inicio, já que a primeira posição somente
+    diz se o arquivo foi ou não excluido lógicamente */
+    fseek(bin, sizeof(int), SEEK_CUR);
     
     // pega linha a linha do arquivo txt e a coloca em uma string
     while (fgets(linha, sizeof(linha), txt) != NULL) {
         dif_bin = 0;
         dif_txt = 0;
-        //corta a string até achar um ; e adereça o resultado a uma variavel do tipo ponteiro
+        
+        //corta a string até achar um ";" e adereça o resultado a uma variavel do tipo ponteiro, esse primeiro endereço seria o delet da struct
         token = strtok(linha, ";");
+        //corta a string novamente para coletar o valor do id
+        token = strtok(NULL, ";");
         //transforma o tipo da string cortada pra um tipo inteiro e salva ele em uma variavel
         id_txt = atoff(token);
+        //caso não tenha diferença entre o id_txt e o id_livre (basicamente pra iniciar)
+        //inicia verificação no arquivo txt
         while (dif_txt == 0) {
             if (id_livre != id_txt) {
-                if (id_bin > id_txt) {
-                    fseek(bin, -(tam + (2*sizeof(float))), SEEK_CUR);
-                }
-                else {
-                    fseek(bin, tam, SEEK_CUR);
-                }
-                while (fread(&id_bin, sizeof(float), 1, bin)) {
-                    while (dif_bin == 0) {
-                        if ((id_livre != id_bin)) {
-                            dif_bin = 1;
-                            break;
+                //inicia a verifição no arquivo binário
+                if (id_livre != id_bin) {
+                    if (id_bin > id_txt) {
+                        /* Enquanto não houver diferença, ele tentará comparar se há diferença entre o id_bin e o id_livre
+                         caso ache a diferença ele define a variavel dif_bin = 1 e quebra o loop.
+                         Caso não ache, quer dizer que é igual, logo, ele aumenta em 1 o id_livre e verifica novamente
+                         Avançando a posição do cursor com relação ao tamanho da struct e parando antes do float de ID*/
+                        while (dif_bin == 0) {
+                            if ((id_livre != id_bin)) {
+                                dif_bin = 1;
+                                break;
+                            }
+                            else {
+                                id_livre++;
+                                fseek(bin, tam, SEEK_CUR);
+                                break;
+                            }
                         }
-                        else {
-                            id_livre++;
-                            fseek(bin, tam, SEEK_CUR);
-                            break;
+                    }
+                    //se o id_bin for menor que o id_txt
+                    else {
+                        while (fread(&id_bin, sizeof(float), 1, bin)) {
+                            while (dif_bin == 0) {
+                                if ((id_livre != id_bin)) {
+                                    dif_bin = 1;
+                                    break;
+                                }
+                                else {
+                                    id_livre++;
+                                    fseek(bin, tam, SEEK_CUR);
+                                    break;
+                                }
+                            }
+
+                            if (dif_bin == 1) {
+                                break;
+                            }
                         }
                     }
 
-                    if (dif_bin == 1) {
-                        break;
+                    if (id_txt == id_livre) {
+                        id_livre++;
+                    }
+                    else {
+                        dif_txt = 1;
                     }
                 }
-                if (id_txt == id_livre) {
-                    id_livre++;
-                }
+                //se o id_bin for igual ao id_livre, id_livre aumenta em 1 e a posição do cursor avança com relação ao tamanho da struct
                 else {
-                    dif_txt = 1;
+                    id_livre++;
+                    fseek(bin, tam, SEEK_CUR);
                 }
             }
+            //caso o id_livre é igual ao txt
             else {
                 id_livre++;
             }
@@ -751,7 +789,7 @@ void le_cadastro_pessoa_bin() {
     printf("Digite o codigo do cliente que deseja ler: ");
     scanf("%f", &codigo);
     //      abrir arquivo
-    arquivo = fopen("cadastro.bin", "rb");
+    arquivo = fopen("cliente.bin", "rb");
 
     if (arquivo == NULL) {
         printf("\n\t!! Erro de leitura do Cadastro !! \n");
@@ -775,7 +813,7 @@ void le_todos_cadastro_pessoa_bin() {
     FILE *arquivo;
     cad_clie cliente;
 
-    arquivo = fopen("cadastro.bin", "rb");
+    arquivo = fopen("cliente.bin", "rb");
 
     while (fread(&cliente, sizeof (cad_clie), 1, arquivo)) {
         printf("\t Codigo: %.0f\tNome: %s\n", cliente.codigo, cliente.nome);
@@ -793,7 +831,7 @@ void alteraBinario() {
     float codigo;
 
     //      abrir arquivo
-    arquivo = fopen("cadastro.bin", "rb+wb");
+    arquivo = fopen("cliente.bin", "rb+wb");
 
     if (arquivo == NULL) {
         printf("\n\t!! Erro de leitura do Cadastro !! \n");
@@ -837,7 +875,7 @@ void removeBinario() {
 
     //tentativa um(passar os dados, exeto o que foi excluido para o arquivo temp e renomea-lo com cadastro.bin):
 
-    arquivoAtual = fopen("cadastro.bin", "rb");
+    arquivoAtual = fopen("cliente.bin", "rb");
     arquivoTemp = fopen("temporario.bin", "wb");
 
     printf("Digite o codigo do cliente que deseja excluir: ");
@@ -856,7 +894,7 @@ void removeBinario() {
     fclose(arquivoTemp);
     //Exclui o arquivo original e renomeia o temporário
     if (encontrado == 1) {
-        if (remove("cadastro.bin") == 0 && rename("temporario.bin", "cadastro.bin")) {
+        if (remove("cliente.bin") == 0 && rename("temporario.bin", "cliente.bin")) {
             printf("Cliente excluido com sucesso!");
         }
     } else {
@@ -869,7 +907,7 @@ int tamanhoArquivoBin() {
     int tam = 0;
     FILE *arquivo;
 
-    arquivo = fopen("cadastro.bin", "rb");
+    arquivo = fopen("cliente.bin", "rb");
 
     if (arquivo == NULL) {
         printf("\nErro ao abrir o arquivo de cadastro!");
@@ -1620,11 +1658,11 @@ int main() {
     char txt[20] = "cliente.txt", bin[20] = "cliente.bin";
 
     //menuPrincipal();
-    menuPrincipal();
+    //menuPrincipal();
     
     
-    //tamanho = tam_clientes();
-    //a = retorna_id(txt, bin, tamanho);
+    tamanho = tam_clientes();
+    a = retorna_id(txt, bin, tamanho);
     
     printf("O retorno da função foi: %0.0f", a);
     
