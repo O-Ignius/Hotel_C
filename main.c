@@ -44,13 +44,14 @@ typedef struct {
 //struct categoria acomodações
 typedef struct {
     char descri[300];
-    float diaria;
-    int codigo, qnt_pessoas;
+    float codigo, diaria;
+    int qnt_pessoas, delet;
     
 }cate_aco;
 
 //struct acomodações
 typedef struct {
+    int delet;
     float codigo;
     char descri[300], facilidades[300];
     cate_aco tipo;
@@ -89,6 +90,8 @@ cad_clie le_dados_cad();
 
 hotel le_dados_hotel();
 
+cate_aco le_dados_categ_acomod();
+
 acomodacao le_dados_acomod();
 
 produto le_dados_produto();
@@ -118,6 +121,8 @@ void menuHotel(int tipoArquivo);
 void menuCliente(int tipoArquivo);
 
 void menuReserva(int tipoArquivo);
+
+void menuAcomodacoes(int tipoArquivo);
 
 //BIN
 void salva_cadastro_pessoa_bin(cad_clie saves);
@@ -151,6 +156,10 @@ void le_todos_cadastro_pessoa_txt();
 void altera_txt();
 
 void remover_txt();
+
+//  Acomodação
+
+void salva_cadastro_tipo_acomodacao_txt(cate_aco dados);
 
 
 /////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\\\
@@ -457,11 +466,36 @@ hotel le_dados_hotel() {
     return dados;
 }
 
-acomodacao le_dados_acomod(cate_aco tipo){
+cate_aco le_dados_categ_acomod() {
     //variaveis
+    cate_aco dados;
+    
+    //coleta de dados
+    dados.delet = 0;
+    setbuf(stdin, NULL);
+    printf("Digite o código da categoria da acomodação: \n");
+    scanf("%f", &dados.codigo);
+    setbuf(stdin, NULL);
+    printf("Digite a descrição da acomodação: \n");
+    scanf("%s", dados.descri);
+    setbuf(stdin, NULL);
+    printf("Digite o valor da diária: \n");
+    scanf("%f", &dados.diaria);
+    setbuf(stdin, NULL);
+    printf("Digite a quantia de pessoas que a acomodação comporta: \n");
+    scanf("%d", &dados.qnt_pessoas);
+    setbuf(stdin, NULL);
+    
+    return dados;
+}
+
+acomodacao le_dados_acomod(){
+    //variaveis
+    
     acomodacao dados;
     
     //coleta de dados
+    dados.delet = 0;
     setbuf(stdin, NULL);
     printf("Digite o código do quarto: \n");
     scanf("%f", dados.codigo);
@@ -586,6 +620,7 @@ void menuPrincipal() {
         printf("\tHotel - 1\n");
         printf("\tClientes - 2\n");
         printf("\tReservas - 3\n");
+        printf("\tAcomodações - 4\n");
         printf("\tConfigurações de salvamento - 9\n");
         printf("\tEncerrar - 0\n");
 
@@ -601,6 +636,9 @@ void menuPrincipal() {
                 break;
             case 3:
                 menuReserva(binOUtxt);
+                break;
+            case 4:
+                menuAcomodacoes(binOUtxt);
                 break;
             case 9:
                 binOUtxt = selecionarTipoArquivo();
@@ -695,7 +733,7 @@ void menuCliente(int tipoArquivo) {
 
         switch (opcao) {
             case 1:
-                dados = le_dados_cad(binOUtxt);
+                dados = le_dados_cad();
                 if (binOUtxt == 0) {
                     salva_cadastro_pessoa_bin(dados);
                 } else {
@@ -759,6 +797,76 @@ void menuReserva(int tipoArquivo) {
         scanf("%d", &opcao);
     }
     menuPrincipal();
+}
+
+void menuAcomodacoes(int tipoArquivo) {
+    int opcao = 0, binOUtxt = tipoArquivo;
+    cate_aco categ;
+    acomodacao dados;
+    while (opcao != 9) {
+
+        setbuf(stdin, NULL);
+
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastro de acomodação - 1\n");
+        printf("\tListar todas acomodações - 2\n");
+        printf("\tAlterar acomodação - 3\n");
+        printf("\tExcluir acomodação - 4\n");
+        printf("\tCadastro de um tipo de acomodação - 5\n");
+        printf("\tListar tipos de acomodação - 6\n");
+        printf("\tAlterar um tipo de acomodação - 7\n");
+        printf("\tExcluir um tipo de acomodação - 8\n");
+        printf("\tVoltar ao menu principal - 9\n");
+
+        printf("Opcão: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                dados = le_dados_acomod();
+                if (binOUtxt == 0) {
+                    //salva_cadastro_acomodacao_bin(dados);
+                } else {
+                    //salva_cadastro_acomodacao_txt(dados);
+                }
+                break;
+            case 2:
+                if (binOUtxt == 0) {
+                    //le_todos_acomodacao_bin();
+                } else
+                    //le_todos_acomodacao_txt();
+                break;
+            case 3:
+                if (binOUtxt == 0) {
+                    //altera_acomodacao_bin();
+                } else {
+                    //altera_acomodacao_txt();
+                }
+                break;
+            case 4:
+                if (binOUtxt == 0) {
+                    //remove_acomodacao_bin();
+                } else {
+                    //remove_acomodacao_txt();
+                }
+                break;
+            case 5:
+                categ = le_dados_categ_acomod();
+                if (binOUtxt == 0) {
+                    //salva_cadastro_tipo_acomodacao_bin(categ);
+                } else {
+                    salva_cadastro_tipo_acomodacao_txt(categ);
+                }
+                break;
+            case 9:
+                menuPrincipal();
+            default:
+                printf("\nNúmero inválido, digite novamente!\n");
+                break;
+        }
+        getchar();
+    }
 }
 
 //      Bin
@@ -1648,6 +1756,25 @@ void remover_txt() {
     rename("temp.txt", "cadastro.txt");
 }
 
+//  Acomodação
+
+void salva_cadastro_tipo_acomodacao_txt(cate_aco dados){
+    FILE *salva;
+    int salvar;
+    
+    salva = fopen("categoria_acomo.txt", "a");
+    if (salva == NULL) {
+        printf("Erro de criação de arquivo !\n");
+    }
+    
+    salvar = fprintf(salva, "%d;%0.0f;%s;%0.2f;%d", dados.delet, dados.codigo, dados.descri, dados.diaria, dados.qnt_pessoas);
+    if (salvar < 0) {
+        printf("Erro no salvamento do tipo de acomodação !\n");
+    }
+    
+    fclose(salva);
+}
+
 //MAIN 
 
 int main() {
@@ -1658,11 +1785,11 @@ int main() {
     char txt[20] = "cliente.txt", bin[20] = "cliente.bin";
 
     //menuPrincipal();
-    //menuPrincipal();
+    menuPrincipal();
     
     
-    tamanho = tam_clientes();
-    a = retorna_id(txt, bin, tamanho);
+    //tamanho = tam_clientes();
+    //a = retorna_id(txt, bin, tamanho);
     
     printf("O retorno da função foi: %0.0f", a);
     
