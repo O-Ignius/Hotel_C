@@ -104,9 +104,11 @@ operador le_dados_operador();
 
 int tam_clientes();
 
-int tamanhoArquivoBin();
+int tam_categ_acomod();
 
-int tamanhoArquivoTXT();
+int tam_acomodacao();
+
+int tamanhoArquivoBin();
 
 int selecionarTipoArquivo();
 
@@ -161,6 +163,11 @@ void remover_txt();
 
 void salva_cadastro_tipo_acomodacao_txt(cate_aco dados);
 
+void le_todos_tipo_acomodacao_txt();
+
+void altera_tipo_acomodacao_txt();
+
+void remover_tipo_acomodacao_txt();
 
 /////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\\\
 \
@@ -172,6 +179,22 @@ int tam_clientes() {
     int tamanho = 0;
     
     tamanho = sizeof(cad_clie) - sizeof(float);
+    
+    return tamanho;
+}
+
+int tam_categ_acomod() {
+    int tamanho = 0;
+    
+    tamanho = sizeof(cate_aco) - sizeof(float);
+    
+    return tamanho;
+}
+
+int tam_acomodacao() {
+    int tamanho = 0;
+    
+    tamanho = sizeof(acomodacao) - sizeof(float);
     
     return tamanho;
 }
@@ -859,6 +882,27 @@ void menuAcomodacoes(int tipoArquivo) {
                     salva_cadastro_tipo_acomodacao_txt(categ);
                 }
                 break;
+            case 6:
+                if (binOUtxt == 0) {
+                    //le_todos_tipo_acomodacao_bin();
+                } else {
+                    le_todos_tipo_acomodacao_txt();
+                }
+                break;
+            case 7:
+                if (binOUtxt == 0) {
+                    //le_todos_tipo_acomodacao_bin();
+                } else {
+                    altera_tipo_acomodacao_txt();
+                }
+                break;
+            case 8:
+                if (binOUtxt == 0) {
+                    //remover_tipo_acomodacao_bin();
+                } else {
+                    remover_tipo_acomodacao_txt();
+                }
+                break;
             case 9:
                 menuPrincipal();
             default:
@@ -1052,10 +1096,11 @@ void salva_cadastro_hotel_txt(hotel saves) {
     hot = fprintf(salva, "%d;%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;", saves.delet, saves.nome_hot, saves.raz_soci, saves.inscri_estad, saves.cnpj, saves.email, saves.telefone_hot, saves.nome_respo, saves.telefone_respo, saves.lucro);
 
     if (hot < 0) {
-
         printf("!! Erro em salvar os dados do hotel!!");
-
         exit(1);
+    }
+    else {
+        printf("Dados do hotel salvos com sucesso!\n");
     }
 
     //      Endereço
@@ -1063,19 +1108,21 @@ void salva_cadastro_hotel_txt(hotel saves) {
     end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;", saves.local.cep, saves.local.cidade, saves.local.bairro, saves.local.rua, saves.local.numero);
 
     if (end < 0) {
-
         printf("!! Erro em salvar o endereço do hotel !!");
-
         exit(1);
+    }
+    else{
+        printf("Endereço salvo com sucesso!\n");
     }
     
     chek = fprintf(salva, "%d;%d;%d;%d;\n", saves.in.hora, saves.in.min, saves.out.hora, saves.out.min);
     
     if (chek < 0) {
-
         printf("!! Erro em salvar os dados de check-in e check-out do hotel !!");
-
         exit(1);
+    }
+    else {
+        printf("Check-in e check-out salvos com sucesso!\n");
     }
 
     //      Fechar arquivo
@@ -1084,7 +1131,7 @@ void salva_cadastro_hotel_txt(hotel saves) {
 
 void le_cadastro_hotel_txt() {
     FILE *le;
-    char linha[300], *token;
+    char linha[(sizeof(hotel))], *token;
    
     //      abrir arquivo
     le = fopen("hotel.txt", "r");
@@ -1095,7 +1142,7 @@ void le_cadastro_hotel_txt() {
         exit(1);
     }
    
-    while (fgets(linha, sizeof (hotel), le) != NULL) {
+    while (fgets(linha, sizeof(hotel), le) != NULL) {
         token = strtok(linha, ";");
         if (strcmp(token, "0") == 0) {
             token = strtok(NULL, ";");
@@ -1145,7 +1192,7 @@ void le_cadastro_hotel_txt() {
 
 void altera_hotel_txt() {
     FILE *le, *altera;
-    char linha[500], *token;
+    char linha[(sizeof(hotel))], *token;
     hotel txt;
     int hot, end, chek;
     
@@ -1162,11 +1209,12 @@ void altera_hotel_txt() {
         }
     
     // lê linha a linha do arquivo, armazenando os dados antigos, fazendo exclusão lógica
-    while (fgets(linha, sizeof(cad_clie), le) != NULL) {
+    while (fgets(linha, sizeof(hotel), le) != NULL) {
         // exclui logicamente os dados
         txt.delet = 1;
         //pega cada dado e adiciona a um campo da struct o transformando para o tipo do dado
         token = strtok(linha, ";");
+        token = strtok(NULL, ";");
         strcpy(txt.nome_hot, token);
         token = strtok(NULL, ";");
         strcpy(txt.raz_soci, token);
@@ -1281,7 +1329,7 @@ void exclui_hotel_txt() {
     FILE *deletar, *altera;
     hotel txt;
     int hot, end, chek;
-    char linha[300], *token;
+    char linha[sizeof(hotel)], *token;
     
     deletar = fopen("hotel.txt", "r");
     
@@ -1292,7 +1340,7 @@ void exclui_hotel_txt() {
         }
     
     // lê linha a linha do arquivo, armazenando os dados antigos, fazendo exclusão lógica
-    while (fgets(linha, sizeof(cad_clie), deletar) != NULL) {
+    while (fgets(linha, sizeof(hotel), deletar) != NULL) {
         // exclui logicamente os dados
         txt.delet = 1;
         //pega cada dado e adiciona a um campo da struct o transformando para o tipo do dado
@@ -1398,9 +1446,12 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     if (pessoa < 0) {
 
-        printf("!! Erro em salvar os dados !!");
+        printf("!! Erro em salvar os dados !!\n");
 
         exit(1);
+    }
+    else {
+        printf("Dados do cliente salvos com sucesso! \n");
     }
 
     //      Endereço
@@ -1409,9 +1460,12 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     if (end < 0) {
 
-        printf("!! Erro em salvar o endereço !!");
+        printf("!! Erro em salvar o endereço !!\n");
 
         exit(1);
+    }
+    else {
+        printf("Dados do endereço salvos com sucesso! \n");
     }
 
     //      Fechar arquivo
@@ -1421,7 +1475,7 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
 void le_cadastro_pessoa_txt() {
 
     FILE *le;
-    char linha[300], *token, codigo[10];
+    char linha[(sizeof(cad_clie))], *token, codigo[10];
     int found = 0;
    
     //      Coletar código
@@ -1437,7 +1491,7 @@ void le_cadastro_pessoa_txt() {
         exit(1);
     }
    
-    while (fgets(linha, sizeof (linha), le) != NULL) {
+    while (fgets(linha, sizeof(cad_clie), le) != NULL) {
         // pega o primeiro dado (se o arquivo foi ou não excluido logicamente)
         token = strtok(linha, ";");
         
@@ -1488,7 +1542,7 @@ void le_cadastro_pessoa_txt() {
 
 void le_todos_cadastro_pessoa_txt() {
     FILE *ler;
-    char linha[500], *token;
+    char linha[(sizeof(cad_clie))], *token;
     int i = 0;
 
     ler = fopen("cliente.txt", "r");
@@ -1498,7 +1552,7 @@ void le_todos_cadastro_pessoa_txt() {
     }
     
     //verificar quantas linhas:
-    while (fgets(linha, sizeof (linha), ler) != NULL) {
+    while (fgets(linha, sizeof(cad_clie), ler) != NULL) {
         token = strtok(linha, ";");
         
         if (strcmp(token, "0") == 0) {
@@ -1541,7 +1595,7 @@ void le_todos_cadastro_pessoa_txt() {
 
 void altera_txt(){
     FILE *le, *altera;
-    char linha[500], *token;
+    char linha[(sizeof(cad_clie))], *token;
     int tam = 0, i = 0, encontrado = 0;
     float codigo;
     
@@ -1659,22 +1713,19 @@ void altera_txt(){
     
     if (encontrado == 0) {
         printf("Cliente não encontrado!\n");
-        return;
     }
     else {
         printf("Dados alterados com sucesso!\n");
     }
     
-    fclose(altera);
-    
     remove("cliente.txt");
-    rename("temp.txt", "cadastro.txt");
+    rename("temp.txt", "cliente.txt");
 }
 
 void remover_txt() {
     FILE *remover, *le;
-    char linha[500], *token;
-    int tam = 0, i = 0;
+    char linha[(sizeof(cad_clie))], *token;
+    int tam = 0, i = 0, encontrado = 0;
     float codigo;
     
     printf("Digite o código do cliente a ser excluido:\n");
@@ -1739,6 +1790,7 @@ void remover_txt() {
             txt[i].delet = 1;
             fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
             fprintf(remover, "%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
+            encontrado = 1;
         }
         
         else {
@@ -1752,12 +1804,20 @@ void remover_txt() {
     fclose(remover);
     fclose(le);
     
+    if (encontrado == 0) {
+        printf("Cliente não encontrado!\n");
+    }
+    else {
+        printf("Dados alterados com sucesso!\n");
+    }
+    
     remove("cliente.txt");
     rename("temp.txt", "cadastro.txt");
 }
 
 //  Acomodação
 
+//tipo:
 void salva_cadastro_tipo_acomodacao_txt(cate_aco dados){
     FILE *salva;
     int salvar;
@@ -1765,15 +1825,225 @@ void salva_cadastro_tipo_acomodacao_txt(cate_aco dados){
     salva = fopen("categoria_acomo.txt", "a");
     if (salva == NULL) {
         printf("Erro de criação de arquivo !\n");
+        exit(1);
     }
     
     salvar = fprintf(salva, "%d;%0.0f;%s;%0.2f;%d", dados.delet, dados.codigo, dados.descri, dados.diaria, dados.qnt_pessoas);
     if (salvar < 0) {
         printf("Erro no salvamento do tipo de acomodação !\n");
     }
+    else {
+        printf("Salvo com sucesso!\n");
+    }
     
     fclose(salva);
 }
+
+void le_todos_tipo_acomodacao_txt() {
+    FILE *ler;
+    char linha[(sizeof(cate_aco))], *token;
+    
+    ler = fopen("categoria_acomo.txt", "r");
+    if (ler == NULL) {
+        printf("Erro de abertura de arquivo !\n");
+        exit(1);
+    }
+    
+    while (fgets(linha, sizeof(cate_aco), ler)) {
+        token = strtok(linha, ";");
+        
+        if (strcmp(token, "0") == 0) {
+            token = strtok(NULL, ";");
+            printf("Código: %s\n", token);
+            token = strtok(NULL, ";");
+            printf("Descrição: %s\n", token);
+            token = strtok(NULL, ";");
+            printf("Diária: R$%s\n", token);
+            token = strtok(NULL, ";");
+            printf("Quantia de pessoas que suporta: %s\n", token);
+        }
+    }
+    
+    fclose(ler);
+}
+
+void altera_tipo_acomodacao_txt() {
+    FILE *le, *altera;
+    char linha[(sizeof(cate_aco))], *token;
+    int tam = 0, encontrado = 0, i = 0;
+    float codigo;
+    
+    printf("Digite o código do tipo da acomodação: \n");
+    scanf("%f", &codigo);
+    
+    le = fopen("categoria_acomo.txt", "r");
+    if (le == NULL) {
+        printf("Erro na abertura do arquivo das categorias de acomodações! \n");
+        exit(1);
+    }
+    
+    while(fgets(linha, sizeof(cate_aco), le) != NULL){
+        tam++;
+    }
+    
+    fclose(le);
+    
+    cate_aco dados[tam];
+    
+    le = fopen("categoria_acomo.txt", "r");
+    if (le == NULL) {
+        printf("Erro na abertura do arquivo das categorias de acomodações! \n");
+        exit(1);
+    }
+    
+    altera = fopen("temp.txt", "a");
+    if (altera == NULL) {
+        printf("Erro na abertura do arquivo das categorias de acomodações! \n");
+        exit(1);
+    }
+    
+    while(fgets(linha, sizeof(cate_aco), le) != NULL){
+        token = strtok(linha, ";");
+        
+        if (strcmp(token, "0") == 0) {
+            dados[i].delet = atoi(token);
+            token = strtok(NULL, ";");
+            dados[i].codigo = atoff(token);
+            
+            if (dados[i].codigo == codigo) {
+                dados[i] = le_dados_categ_acomod();
+                dados[i].codigo = codigo;
+                encontrado = 1;
+            }
+            else {
+                token = strtok(NULL, ";");
+                strcpy(dados[i].descri, token);
+                token = strtok(NULL, ";");
+                dados[i].diaria = atoff(token);
+                token = strtok(NULL, ";");
+                dados[i].qnt_pessoas = atoi(token);
+            }
+        }
+        else {
+            dados[i].delet = atoi(token);
+            token = strtok(NULL, ";");
+            dados[i].codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(dados[i].descri, token);
+            token = strtok(NULL, ";");
+            dados[i].diaria = atoff(token);
+            token = strtok(NULL, ";");
+            dados[i].qnt_pessoas = atoi(token);
+        }
+        
+        fprintf(altera, "%d;%0.0f;%s;%0.2f;%d", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].diaria, dados[i].qnt_pessoas);
+        i++;
+    }
+    fclose(altera);
+    fclose(le);
+    
+    if (encontrado == 1) {
+        printf("Dados alterados com sucesso!\n");
+    }
+    else {
+        printf("Código digitado não encontrado!\n");
+    }
+    
+    remove("categoria_acomo.txt");
+    rename("temp.txt","categoria_acomo.txt");
+}
+
+void remover_tipo_acomodacao_txt(){
+    FILE *remover, *le;
+    char linha[(sizeof(cad_clie))], *token;
+    int tam = 0, i = 0, encontrado = 0;
+    float codigo;
+    
+    printf("Digite o código do cliente a ser excluido:\n");
+    scanf("%f", &codigo);
+    
+    le = fopen("categoria_acomo.txt", "r");
+    if (le == NULL) {
+        printf("Erro na abertura do arquivo das categorias de acomodações! \n");
+        exit(1);
+    }
+    
+    while(fgets(linha, sizeof(cate_aco), le) != NULL){
+        tam++;
+    }
+    
+    fclose(le);
+    
+    cate_aco dados[tam];
+    
+    le = fopen("categoria_acomo.txt", "r");
+    if (le == NULL) {
+        printf("Erro na abertura do arquivo das categorias de acomodações! \n");
+        exit(1);
+    }
+    
+    remover = fopen("temp.txt", "r");
+    if (remover == NULL) {
+        printf("Erro na abertura do arquivo das categorias de acomodações! \n");
+        exit(1);
+    }
+    
+    while(fgets(linha, sizeof(cate_aco), le) != NULL){
+        token = strtok(linha, ";");
+        
+        if (strcmp(token, "0") == 0) {
+            dados[i].delet = atoi(token);
+            token = strtok(NULL, ";");
+            dados[i].codigo = atoff(token);
+            
+            if (dados[i].codigo == codigo) {
+                dados[i].delet = 1;
+                token = strtok(NULL, ";");
+                strcpy(dados[i].descri, token);
+                token = strtok(NULL, ";");
+                dados[i].diaria = atoff(token);
+                token = strtok(NULL, ";");
+                dados[i].qnt_pessoas = atoi(token);
+                encontrado = 1;
+            }
+            else {
+                token = strtok(NULL, ";");
+                strcpy(dados[i].descri, token);
+                token = strtok(NULL, ";");
+                dados[i].diaria = atoff(token);
+                token = strtok(NULL, ";");
+                dados[i].qnt_pessoas = atoi(token);
+            }
+        }
+        else {
+            dados[i].delet = atoi(token);
+            token = strtok(NULL, ";");
+            dados[i].codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(dados[i].descri, token);
+            token = strtok(NULL, ";");
+            dados[i].diaria = atoff(token);
+            token = strtok(NULL, ";");
+            dados[i].qnt_pessoas = atoi(token);
+        }
+        
+        fprintf(remover, "%d;%0.0f;%s;%0.2f;%d", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].diaria, dados[i].qnt_pessoas);
+        i++;
+    }
+    
+    fclose(remover);
+    fclose(le);
+    
+    if (encontrado == 1) {
+        printf("Dados deletados com sucesso!\n");
+    }
+    else {
+        printf("Código digitado não encontrado!\n");
+    }
+}
+
+//geral:
+
 
 //MAIN 
 
