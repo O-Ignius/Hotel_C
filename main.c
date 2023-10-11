@@ -1264,9 +1264,9 @@ void alteraCliente(){
 
         fclose(altera);
         fclose(le);
-
-        remove("cliente.txt");
-        rename("temp.txt", "cliente.txt");
+        if(remove("cliente.txt") == 0 && rename("temp.txt", "cliente.txt")){
+            printf("\nDeu\n");
+        }
     }
 
     if (encontrado == 1) {
@@ -1279,7 +1279,7 @@ void alteraCliente(){
 
 void removeCliente(){
     //      Variáveis
-    FILE *arquivoBin, *arquivoTxt;
+    FILE *arquivoBin;
     cad_clie cliente;
 
     float codigo;
@@ -1289,24 +1289,27 @@ void removeCliente(){
     scanf("%f", &codigo);
 
     //      abrir arquivo
-    arquivoBin = fopen("cliente.bin", "rb");
-    arquivoTxt = fopen("cliente.txt", "r");
+    arquivoBin = fopen("cliente.bin", "rb+wb");
 
-    if (arquivoBin == NULL || arquivoTxt == NULL) {
+    if (arquivoBin == NULL) {
         printf("\n\t!! Erro de abertura de arquivo !! \n");
         exit(1);
     }
     while (fread(&cliente, sizeof (cad_clie), 1, arquivoBin)) {
         if (cliente.codigo == codigo && cliente.delet == 0) {
                 encontrado = 1;
+                //Salva-se os dados na va, substituindo o valor do campo delet de 0 para 1
+                cliente.delet = 1;
                 //Volta para o inicio da linha de cadastro desse cliente, permitindo que se altere o cliente correto
                 fseek(arquivoBin, -sizeof (cad_clie), SEEK_CUR);
-                //Com o ponteiro no local correto, salva-se os novos dados, substituindo o valor do campo delet de 0 para 1 
-                cliente.delet = 1;
+                //Com o ponteiro no local correto, 
                 fwrite(&cliente, sizeof (cad_clie), 1, arquivoBin);
+                printf("\n\ta");
             break;
         }
     }
+    fclose(arquivoBin);
+
     if(encontrado == 0){
         FILE *remover, *le;
         char linha[(sizeof (cad_clie))], *token;
@@ -1391,7 +1394,7 @@ void removeCliente(){
         if (encontrado == 0) {
             printf("Cliente não encontrado!\n");
         } else {
-            printf("Dados alterados com sucesso!\n");
+            printf("Cliente excluido com sucesso!\n");
         }
 
         remove("cliente.txt");
