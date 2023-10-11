@@ -349,7 +349,13 @@ cad_clie le_dados_cad() {
     setbuf(stdin, NULL);
 
     
-     printf("Digite sua cidade: \n");
+    printf("Digite seu estado: \n");
+
+    scanf("%[a-z A-Z][^\n]s", dados.local.estado);
+
+    setbuf(stdin, NULL); 
+    
+    printf("Digite sua cidade: \n");
 
     scanf("%[a-z A-Z][^\n]s", dados.local.cidade);
 
@@ -941,7 +947,7 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
 
     //      Endereço
 
-    end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;\n", saves.local.cep, saves.local.cidade, saves.local.bairro, saves.local.rua, saves.local.numero);
+    end = fprintf(salva, "%s;%0.0f;%s;%s;%s;%0.0f;\n", saves.local.estado, saves.local.cep, saves.local.cidade, saves.local.bairro, saves.local.rua, saves.local.numero);
 
     if (end < 0) {
 
@@ -1018,6 +1024,8 @@ void le_cadastro_pessoa() {
                     token = strtok(NULL, ";");
                     printf("Nascimento: %s\n\t", token);
                     token = strtok(NULL, ";");
+                    printf("Estado: %s\n\t", token);
+                    token = strtok(NULL, ";");
                     printf("CEP: %s\n\t", token);
                     token = strtok(NULL, ";");
                     printf("Cidade: %s\n\t", token);
@@ -1080,6 +1088,8 @@ void le_todos_cadastro_pessoa() {
                     token = strtok(NULL, ";");
                     printf("Nascimento: %s\n\t", token);
                     token = strtok(NULL, ";");
+                    printf("Estado: %s\n\t", token);
+                    token = strtok(NULL, ";");
                     printf("CEP: %s\n\t", token);
                     token = strtok(NULL, ";");
                     printf("Cidade: %s\n\t", token);
@@ -1140,12 +1150,8 @@ void alteraCliente(){
         
         int tam = 0, i = 0;
         
-        char linha[(sizeof (cad_clie))], *token, cod[10];
-
-        //Passa o cod de float para string
-        sprintf(cod, "%.0f", codigo);
-        printf("\n\ncodigin: %s\n\n",cod);
-
+        char linha[(sizeof (cad_clie))], *token;
+        
         le = fopen("cliente.txt", "r");
         if (le == NULL) {
             printf("Erro de abertura de arquivo!\n");
@@ -1159,7 +1165,8 @@ void alteraCliente(){
 
         //cria um vetor de struct do tipo cad_clie variante a quantia de linha do arquivo
         cad_clie txt[tam];
-
+        
+        le = fopen("cliente.txt", "r");
         if (le == NULL) {
             printf("Erro de abertura de arquivo!\n");
             exit(1);
@@ -1203,6 +1210,10 @@ void alteraCliente(){
                     token = strtok(NULL, ";");
                     strcpy(txt[i].nascimento, token);
                     token = strtok(NULL, ";");
+                    strcpy(txt[i].local.estado, token);
+                    token = strtok(NULL, ";");
+                    txt[i].local.cep = atoff(token);
+                    token = strtok(NULL, ";");
                     strcpy(txt[i].local.cidade, token);
                     token = strtok(NULL, ";");
                     strcpy(txt[i].local.bairro, token);
@@ -1231,6 +1242,10 @@ void alteraCliente(){
                 token = strtok(NULL, ";");
                 strcpy(txt[i].nascimento, token);
                 token = strtok(NULL, ";");
+                strcpy(txt[i].local.estado, token);
+                token = strtok(NULL, ";");
+                txt[i].local.cep = atoff(token);
+                token = strtok(NULL, ";");
                 strcpy(txt[i].local.cidade, token);
                 token = strtok(NULL, ";");
                 strcpy(txt[i].local.bairro, token);
@@ -1241,20 +1256,14 @@ void alteraCliente(){
             }
 
             //salva os dados no arquivo temporario altera 
-            fprintf(altera, "%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
-            fprintf(altera, "%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
+            fprintf(altera, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
+            fprintf(altera, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
 
             i++;
         }
 
         fclose(altera);
         fclose(le);
-
-        if (encontrado == 0) {
-            printf("Cliente não encontrado!\n");
-        } else {
-            printf("Dados alterados com sucesso!\n");
-        }
 
         remove("cliente.txt");
         rename("temp.txt", "cliente.txt");
@@ -1284,7 +1293,7 @@ void removeCliente(){
     arquivoTxt = fopen("cliente.txt", "r");
 
     if (arquivoBin == NULL || arquivoTxt == NULL) {
-        printf("\n\t!! Erro de leitura do Cadastro !! \n");
+        printf("\n\t!! Erro de abertura de arquivo !! \n");
         exit(1);
     }
     while (fread(&cliente, sizeof (cad_clie), 1, arquivoBin)) {
@@ -1350,6 +1359,10 @@ void removeCliente(){
             token = strtok(NULL, ";");
             strcpy(txt[i].nascimento, token);
             token = strtok(NULL, ";");
+            strcpy(txt[i].local.estado, token);
+            token = strtok(NULL, ";");
+            txt[i].local.cep = atoff(token);
+            token = strtok(NULL, ";");
             strcpy(txt[i].local.cidade, token);
             token = strtok(NULL, ";");
             strcpy(txt[i].local.bairro, token);
@@ -1361,12 +1374,12 @@ void removeCliente(){
             if (txt[i].codigo == codigo) {
                 txt[i].delet = 1;
                 fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
-                fprintf(remover, "%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
+                fprintf(remover, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
                 encontrado = 1;
             }
             else {
                 fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
-                fprintf(remover, "%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
+                fprintf(remover, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
             }
 
             i++;
@@ -1382,7 +1395,7 @@ void removeCliente(){
         }
 
         remove("cliente.txt");
-        rename("temp.txt", "cadastro.txt");
+        rename("temp.txt", "cliente.txt");
     }
 }
 
