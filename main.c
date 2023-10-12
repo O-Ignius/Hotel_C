@@ -24,7 +24,7 @@ int main() {
     fopen("acomodacoes.bin","a");
     fopen("categoria_acomo.bin","a");
     fopen("categoria_acomo.txt","a");
-
+    
     menuPrincipal();
     return 0;
 }
