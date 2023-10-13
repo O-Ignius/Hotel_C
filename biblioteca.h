@@ -146,7 +146,7 @@ void menuAcomodacoes(int tipoArquivo);
 
 //  Hotel
 
-void salva_cadastro_hotel_txt(hotel saves);
+void salva_cadastro_hotel();
 
 void le_cadastro_hotel_txt();
 
