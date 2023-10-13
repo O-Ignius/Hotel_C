@@ -134,8 +134,6 @@ int tam_categ_acomod();
 
 int tam_acomodacao();
 
-int tamanhoArquivoBin();
-
 int selecionarTipoArquivo();
 
 float retorna_id(char *nome_txt, char *nome_bin, int tam);
@@ -155,7 +153,7 @@ void menuAcomodacoes(int tipoArquivo);
 
 //  Hotel
 
-void salva_cadastro_hotel_txt(hotel saves);
+void salva_cadastro_hotel();
 
 void le_cadastro_hotel_txt();
 

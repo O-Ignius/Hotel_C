@@ -280,7 +280,7 @@ hotel le_dados_hotel() {
     scanf("%s", dados.email);
     setbuf(stdin, NULL);
     printf("Digite o número de telefone do hotel: \n");
-    scanf("%[0-9][^\n]s", dados.telefone_hot);
+    scanf("%[0-9][^\n]f", &dados.telefone_hot);
     setbuf(stdin, NULL);
     printf("Digite a sigla do estado em que se encontra o hotel: \n");
     scanf("%[a-z A-Z][^\n]s", dados.local.estado);
@@ -289,7 +289,7 @@ hotel le_dados_hotel() {
     scanf("%[a-z A-Z][^\n]s", dados.local.cidade);
     setbuf(stdin, NULL);
     printf("Digite o CEP da cidade do hotel: \n");
-    scanf("%f", dados.local.cep);
+    scanf("%f", &dados.local.cep);
     setbuf(stdin, NULL);
     printf("Digite o bairro do hotel: \n");
     scanf("%[a-z A-Z][^\n]s", dados.local.bairro);
@@ -298,30 +298,30 @@ hotel le_dados_hotel() {
     scanf("%[a-z A-Z][^\n]s", dados.local.rua);
     setbuf(stdin, NULL);
     printf("Digite o número do hotel: \n");
-    scanf("%f", dados.local.numero);
+    scanf("%f", &dados.local.numero);
     setbuf(stdin, NULL);
     printf("Digite o nome do gerente do hotel: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome_respo);
     setbuf(stdin, NULL);
     printf("Digite o telefone do gerente do hotel: \n");
-    scanf("%f", dados.telefone_respo);
+    scanf("%f", &dados.telefone_respo);
     setbuf(stdin, NULL);
     printf("Digite o horario de check-in do hotel: \n");
     printf("horas: ");
-    scanf("%d", dados.in.hora);
+    scanf("%d", &dados.in.hora);
     setbuf(stdin, NULL);
     printf("\nminutos: ");
-    scanf("%d", dados.in.min);
+    scanf("%d", &dados.in.min);
     setbuf(stdin, NULL);
     printf("Digite o horario de check-out do hotel: \n");
     printf("horas: ");
-    scanf("%d", dados.out.hora);
+    scanf("%d", &dados.out.hora);
     setbuf(stdin, NULL);
     printf("\nminutos: ");
-    scanf("%d", dados.out.min);
+    scanf("%d", &dados.out.min);
     setbuf(stdin, NULL);
     printf("Digite a margem de lucro dos produtos vendidos pelo hotel: ");
-    scanf("%f", dados.lucro);
+    scanf("%f", &dados.lucro);
 
     return dados;
 }
@@ -337,7 +337,7 @@ cate_aco le_dados_categ_acomod() {
     scanf("%f", &dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
-    scanf("%s", dados.descri);
+    scanf("%[^\n]s", dados.descri);
     setbuf(stdin, NULL);
     printf("Digite o valor da diária: \n");
     scanf("%f", &dados.diaria);
@@ -535,12 +535,6 @@ void menuHotel(int tipoArquivo) {
 
         switch (opcao) {
             case 1:
-                dados = le_dados_hotel();
-                if (binOUtxt == 0) {
-                    //salva_cadastro_hotel_bin(dados);
-                } else {
-                    salva_cadastro_hotel_txt(dados);
-                }
                 break;
             case 2:
                 if (binOUtxt == 0) {
@@ -1219,55 +1213,74 @@ void removeCliente() {
 
 //  Hotel
 
-void salva_cadastro_hotel_txt(hotel saves) {
+void salva_cadastro_hotel() {
     FILE *salva;
+    hotel hotel1;
+    int tam = 0;
 
-    int end, hot, chek;
 
-    //      abrir arquivo
-
-    salva = fopen("hotel.txt", "a");
-
-    if (salva == NULL) {
-
-        printf("\n\t!! Erro de salvamento de Cadasto !! \n");
-
-        exit(1);
+    salva = fopen("hotel.bin","rb");
+    while (fread(&hotel1, sizeof (cad_clie), 1, salva)) {
+        if(hotel1.delet == 0){
+            tam++;
+        }
     }
-
-    //      Escrever no arquivo
-
-    hot = fprintf(salva, "%d;%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;", saves.delet, saves.nome_hot, saves.raz_soci, saves.inscri_estad, saves.cnpj, saves.email, saves.telefone_hot, saves.nome_respo, saves.telefone_respo, saves.lucro);
-
-    if (hot < 0) {
-        printf("!! Erro em salvar os dados do hotel!!");
-        exit(1);
-    } else {
-        printf("Dados do hotel salvos com sucesso!\n");
-    }
-
-    //      Endereço
-
-    end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;", saves.local.cep, saves.local.cidade, saves.local.bairro, saves.local.rua, saves.local.numero);
-
-    if (end < 0) {
-        printf("!! Erro em salvar o endereço do hotel !!");
-        exit(1);
-    } else {
-        printf("Endereço salvo com sucesso!\n");
-    }
-
-    chek = fprintf(salva, "%d;%d;%d;%d;\n", saves.in.hora, saves.in.min, saves.out.hora, saves.out.min);
-
-    if (chek < 0) {
-        printf("!! Erro em salvar os dados de check-in e check-out do hotel !!");
-        exit(1);
-    } else {
-        printf("Check-in e check-out salvos com sucesso!\n");
-    }
-
-    //      Fechar arquivo
     fclose(salva);
+
+    if(tam == 0){
+        //Salvando em binário
+        salva = fopen("hotel.bin","wb");
+        hotel1 = le_dados_hotel();
+        fwrite(&hotel1, sizeof(hotel), 1 , salva);
+        
+        //Salvando em txt
+        int end, hot, chek;
+
+        //      abrir arquivo
+        fclose(salva);
+        salva = fopen("hotel.txt", "a");
+
+        if (salva == NULL) {
+
+            printf("\n\t!! Erro de salvamento de Cadasto !! \n");
+
+            exit(1);
+        }
+
+        //      Escrever no arquivo
+
+        hot = fprintf(salva, "%d;%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;", hotel1.delet, hotel1.nome_hot, hotel1.raz_soci, hotel1.inscri_estad, hotel1.cnpj, hotel1.email, hotel1.telefone_hot, hotel1.nome_respo, hotel1.telefone_respo, hotel1.lucro);
+
+        if (hot < 0) {
+            printf("!! Erro em salvar os dados do hotel!!");
+            exit(1);
+        } else {
+            printf("Dados do hotel salvos com sucesso!\n");
+        }
+
+        //      Endereço
+
+        end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;", hotel1.local.cep, hotel1.local.cidade, hotel1.local.bairro, hotel1.local.rua, hotel1.local.numero);
+
+        if (end < 0) {
+            printf("!! Erro em salvar o endereço do hotel !!");
+            exit(1);
+        } else {
+            printf("Endereço salvo com sucesso!\n");
+        }
+
+        chek = fprintf(salva, "%d;%d;%d;%d;\n", hotel1.in.hora, hotel1.in.min, hotel1.out.hora, hotel1.out.min);
+
+        if (chek < 0) {
+            printf("!! Erro em salvar os dados de check-in e check-out do hotel !!");
+            exit(1);
+        } else {
+            printf("Check-in e check-out salvos com sucesso!\n");
+        }
+
+        //      Fechar arquivo
+        fclose(salva);
+    }
 }
 
 void le_cadastro_hotel_txt() {
