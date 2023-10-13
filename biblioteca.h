@@ -188,3 +188,5 @@ void salva_cadastro_acomodacao_bin(acomodacao dados);
 void le_todas_acomodacoes();
 
 void altera_acomodacoes();
+
+void exclui_acomodacoes();
