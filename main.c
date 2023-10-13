@@ -25,9 +25,12 @@ int main() {
     fopen("categoria_acomo.bin","ab");
     fopen("categoria_acomo.txt","a");
     fopen("hotel.bin","ab");
-    fopen("protudos.bin","ab");
+    fopen("produtos.bin","ab");
+    fopen("produtos.txt","a");
     fopen("fornecedores.bin","ab");
+    fopen("fornecedores.txt","a");
     fopen("operadores.bin","ab");
+    fopen("operadores.txt","a");
     salva_cadastro_hotel();
     menuPrincipal();
     return 0;

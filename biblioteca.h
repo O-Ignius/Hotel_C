@@ -78,24 +78,25 @@ typedef struct {
 
 //struct produtos
 typedef struct {
-    int delet, codigo, estoque, estoque_min;
-    float custo, venda;
+    int delet, estoque, estoque_min;
+    float codigo, custo, venda;
     char descricao[300];
 
 } produto;
 
 //struct fornecedores
 typedef struct {
-    int codigo, delet;
+    int delet;
     char nome[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
-    float telefone;
+    float codigo, telefone;
     endereco local;
 
 } fornecedor;
 
 //struct operadores sistema
 typedef struct {
-    int codigo, acesso, delet;
+    int acesso, delet;
+    float codigo;
     char nome[100], user[100], senha[100];
 
 } operador;
