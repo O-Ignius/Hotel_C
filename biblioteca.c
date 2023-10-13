@@ -262,9 +262,10 @@ hotel le_dados_hotel() {
     hotel dados;
 
     //coleta de dados
+    printf("////////// Cadastre su HOTEL \\\\\\\\\\");
     dados.delet = 0;
     setbuf(stdin, NULL);
-    printf("Digite o nome do hotel: \n");
+    printf("\n\nDigite o nome do hotel: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome_hot);
     setbuf(stdin, NULL);
     printf("Digite a razão social: \n");
@@ -355,7 +356,6 @@ acomodacao le_dados_acomod() {
     acomodacao dados;
 
     //coleta de dados
-    dados.delet = 0;
     setbuf(stdin, NULL);
     printf("Digite o código do quarto: \n");
     scanf("%f", &dados.codigo);
@@ -366,7 +366,10 @@ acomodacao le_dados_acomod() {
     printf("Digite as facilidades da acomodação (como ar condicionado, TV, ...): \n");
     scanf("%[^\n]s", dados.facilidades);
     setbuf(stdin, NULL);
-
+    printf("Digite o código do tipo de acomodação:\n");
+    scanf("%f", &dados.tipo.codigo);
+    setbuf(stdin,NULL);
+    dados.delet = 0;
     return dados;
 }
 
@@ -377,23 +380,23 @@ produto le_dados_produto() {
     //coleta dados
     setbuf(stdin, NULL);
     printf("Digite o código do produto: \n");
-    scanf("%d", dados.codigo);
+    scanf("%d", &dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite a descrição do produto: \n");
     scanf("%[a-z A-Z][^\n]s", dados.descricao);
     setbuf(stdin, NULL);
     printf("Digite o estoque do produto: \n");
-    scanf("%d", dados.estoque);
+    scanf("%d", &dados.estoque);
     setbuf(stdin, NULL);
     printf("Digite o estoque minimo do produto: \n");
-    scanf("%d", dados.estoque_min);
+    scanf("%d", &dados.estoque_min);
     setbuf(stdin, NULL);
     printf("Digite o preço de custo do produto: \n");
-    scanf("%f", dados.custo);
+    scanf("%f", &dados.custo);
     setbuf(stdin, NULL);
     printf("Digite o preço de venda do produto: \n");
-    scanf("%f", dados.venda);
-
+    scanf("%f", &dados.venda);
+    dados.delet = 0;
     return dados;
 }
 
@@ -404,7 +407,7 @@ fornecedor le_dados_fornecedor() {
     //coleta dados
     setbuf(stdin, NULL);
     printf("Digite o código do fornecedor: \n");
-    scanf("%f", dados.codigo);
+    scanf("%d", &dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite o nome do fornecedor: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -419,7 +422,7 @@ fornecedor le_dados_fornecedor() {
     scanf("%[^\n]s", dados.cnpj);
     setbuf(stdin, NULL);
     printf("Digite o telefone do fornecedor: \n");
-    scanf("%f", dados.telefone);
+    scanf("%f", &dados.telefone);
     setbuf(stdin, NULL);
     printf("Digite o email do fornecedor: \n");
     scanf("%[^\n]s", dados.email);
@@ -431,7 +434,7 @@ fornecedor le_dados_fornecedor() {
     scanf("%[a-z A-Z][^\n]s", dados.local.cidade);
     setbuf(stdin, NULL);
     printf("Digite o CEP da cidade do fornecedor: \n");
-    scanf("%f", dados.local.cep);
+    scanf("%f", &dados.local.cep);
     setbuf(stdin, NULL);
     printf("Digite o bairro do fornecedor: \n");
     scanf("%[a-z A-Z][^\n]s", dados.local.bairro);
@@ -440,8 +443,8 @@ fornecedor le_dados_fornecedor() {
     scanf("%[a-z A-Z][^\n]s", dados.local.rua);
     setbuf(stdin, NULL);
     printf("Digite o número do fornecedor: \n");
-    scanf("%f", dados.local.numero);
-
+    scanf("%f", &dados.local.numero);
+    dados.delet = 0;
     return dados;
 }
 
@@ -452,7 +455,7 @@ operador le_dados_operador() {
     //coleta dados
     setbuf(stdin, NULL);
     printf("Digite o código do operador: \n");
-    scanf("%f", dados.codigo);
+    scanf("%d", &dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite o nome do operador: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -464,8 +467,8 @@ operador le_dados_operador() {
     scanf("%[^\n]s", dados.senha);
     setbuf(stdin, NULL);
     printf("Digite qual a permissão de acesso do fornecedor: \n");
-    scanf("%f", dados.acesso);
-
+    scanf("%d", &dados.acesso);
+    dados.delet = 0;
     return dados;
 }
 
@@ -481,6 +484,9 @@ void menuPrincipal() {
         printf("\tClientes - 2\n");
         printf("\tReservas - 3\n");
         printf("\tAcomodações - 4\n");
+        printf("\tProdutos - 5\n");
+        printf("\tFornecedores - 6\n");
+        printf("\tOperadores - 7\n");
         printf("\tConfigurações de salvamento - 9\n");
         printf("\tEncerrar - 0\n");
 
@@ -500,25 +506,32 @@ void menuPrincipal() {
             case 4:
                 menuAcomodacoes(binOUtxt);
                 break;
+            case 5:
+                menuProdutos(binOUtxt);
+                break;
+            case 6:
+                menuFornecedores(binOUtxt);
+                break;
+            case 7:
+                menuOperadores(binOUtxt);
+                break;
             case 9:
                 binOUtxt = selecionarTipoArquivo();
                 break;
-            case 0:
-                printf("Fechando programa...");
-                exit(1);
             default:
                 printf("Opcao invalida, digite novamente: ");
                 scanf("%d", &opcao);
                 break;
         }
     }
-
+    printf("Fechando programa...");
+    exit(1);
 }
 
-void menuHotel(int tipoArquivo) {
-    int opcao = 0, binOUtxt = tipoArquivo;
+void menuHotel() {
+    int opcao = 0;
     hotel dados;
-    while (opcao != 6) {
+    while (opcao != 4) {
 
         setbuf(stdin, NULL);
 
@@ -534,31 +547,30 @@ void menuHotel(int tipoArquivo) {
 
         switch (opcao) {
             case 1:
-                    le_cadastro_hotel_txt();
+                    le_cadastro_hotel();
+                    getchar();
+                break;
             case 2:
-                if (binOUtxt == 0) {
-                    //altera_hotel_bin();
-                } else {
-                    //altera_hotel_txt();
-                }
+                    altera_hotel();
+                    getchar();
                 break;
             case 3:
-                    //exclui_hotel();
+                    exclui_hotel();
+                    getchar();
                 break;
-            case 4:
-                menuPrincipal();
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        getchar();
+        
     }
+    menuPrincipal();
 }
 
 void menuCliente(int tipoArquivo) {
-    int opcao = 0, binOUtxt = tipoArquivo;
+    int opcao = 0;
     cad_clie dados;
-    while (opcao != 5) {
+    while (opcao != 6) {
         setbuf(stdin, NULL);
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
         printf("Digite a opcao desejada:\n\n");
@@ -575,7 +587,7 @@ void menuCliente(int tipoArquivo) {
         switch (opcao) {
             case 1:
                 dados = le_dados_cad();
-                if (binOUtxt == 0) {
+                if (tipoArquivo == 0) {
                     salva_cadastro_pessoa_bin(dados);
                 } else {
                     salva_cadastro_pessoa_txt(dados);
@@ -593,8 +605,6 @@ void menuCliente(int tipoArquivo) {
             case 5:
                 removeCliente();
                 break;
-            case 6:
-                menuPrincipal();
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
@@ -602,10 +612,11 @@ void menuCliente(int tipoArquivo) {
         printf("\nPRESSIONE QUALQUER TECLA PARA CONTINUAR...");
         getchar();
     }
+    menuPrincipal();
 }
 
 void menuReserva(int tipoArquivo) {
-    int opcao, binOUtxt = tipoArquivo;
+    int opcao;
     cad_clie dados;
 
 
@@ -627,7 +638,7 @@ void menuReserva(int tipoArquivo) {
 }
 
 void menuAcomodacoes(int tipoArquivo) {
-    int opcao = 0, binOUtxt = tipoArquivo;
+    int opcao = 0;
     cate_aco categ;
     acomodacao dados;
     while (opcao != 9) {
@@ -652,7 +663,7 @@ void menuAcomodacoes(int tipoArquivo) {
         switch (opcao) {
             case 1:
                 dados = le_dados_acomod();
-                if (binOUtxt == 0) {
+                if (tipoArquivo == 0) {
                     salva_cadastro_acomodacao_bin(dados);
                 } else {
                     salva_cadastro_acomodacao_txt(dados);
@@ -669,7 +680,7 @@ void menuAcomodacoes(int tipoArquivo) {
                 break;
             case 5:
                 categ = le_dados_categ_acomod();
-                if (binOUtxt == 0) {
+                if (tipoArquivo == 0) {
                     salva_cadastro_tipo_acomodacao_bin(categ);
                 } else {
                     salva_cadastro_tipo_acomodacao_txt(categ);
@@ -684,16 +695,161 @@ void menuAcomodacoes(int tipoArquivo) {
             case 8:
                 remover_tipo_acomodacao();
                 break;
-            case 9:
-                menuPrincipal();
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
         getchar();
     }
+    menuPrincipal();
 }
 
+void menuProdutos(int tipoAquivo){
+    int opcao = 0;
+    produto dados;
+    while (opcao != 6) {
+
+        setbuf(stdin, NULL);
+
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastro de produtos - 1\n");
+        printf("\tListar todos os produtos - 2\n");
+        printf("\tListar um dos produtos - 3\n");
+        printf("\tAlterar produtos - 4\n");
+        printf("\tExcluir produtos - 5\n");
+        printf("\tVoltar ao menu principal - 6\n");
+
+        printf("Opcão: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                dados = le_dados_produto();
+                if (tipoAquivo == 0) {
+                    salva_cadastro_produtos_bin(dados);
+                } else {
+                    salva_cadastro_produtos_txt(dados);
+                }
+                break;
+            case 2:
+                le_todos_produtos();
+                break;
+            case 3:
+                le_produtos();
+                break;
+            case 4:
+                altera_produto();
+                break;
+            case 5:
+                exclui_produto();
+                break;
+            default:
+                printf("\nNúmero inválido, digite novamente!\n");
+                break;
+        }
+        getchar();
+    }
+    menuPrincipal();
+}
+
+void menuFornecedores(int tipoAquivo){
+    int opcao = 0;
+    fornecedor dados;
+    while (opcao != 6) {
+
+        setbuf(stdin, NULL);
+
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastro de fornecedores - 1\n");
+        printf("\tListar todos os fornecedores - 2\n");
+        printf("\tListar um dos fornecedores - 3\n");
+        printf("\tAlterar fornecedores - 4\n");
+        printf("\tExcluir fornecedores - 5\n");
+        printf("\tVoltar ao menu principal - 6\n");
+
+        printf("Opcão: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                dados = le_dados_fornecedor();
+                if (tipoAquivo == 0) {
+                    salva_cadastro_fornecedores_bin(dados);
+                } else {
+                    salva_cadastro_fornecedores_txt(dados);
+                }
+                break;
+            case 2:
+                le_todos_fonecedores();
+                break;
+            case 3:
+                le_fonecedor();
+                break;
+            case 4:
+                altera_fonecedor();
+                break;
+            case 5:
+                exclui_fonecedor();
+                break;
+            default:
+                printf("\nNúmero inválido, digite novamente!\n");
+                break;
+        }
+        getchar();
+    }
+    menuPrincipal();
+}
+
+void menuOperadores(int tipoAquivo){
+    int opcao = 0;
+    operador dados;
+    while (opcao != 6) {
+
+        setbuf(stdin, NULL);
+
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastro de operadores - 1\n");
+        printf("\tListar todos os operadores - 2\n");
+        printf("\tListar um dos operadores - 3\n");
+        printf("\tAlterar operadores - 4\n");
+        printf("\tExcluir operadores - 5\n");
+        printf("\tVoltar ao menu principal - 6\n");
+
+        printf("Opcão: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                dados = le_dados_operador();
+                if (tipoAquivo == 0) {
+                    salva_cadastro_operadores_bin(dados);
+                } else {
+                    salva_cadastro_operadores_txt(dados);
+                }
+                break;
+            case 2:
+                le_todos_operadores();
+                break;
+            case 3:
+                le_operador();
+                break;
+            case 4:
+                alterar_operador();
+                break;
+            case 5:
+                exclui_operador();
+                break;
+            default:
+                printf("\nNúmero inválido, digite novamente!\n");
+                break;
+        }
+        getchar();
+    }
+    menuPrincipal();
+}
 //  Clientes
 
 void salva_cadastro_pessoa_bin(cad_clie saves) {
@@ -1272,7 +1428,7 @@ void salva_cadastro_hotel() {
     }
 }
 
-void le_cadastro_hotel_txt() {
+void le_cadastro_hotel() {
     FILE *le;
     char linha[(sizeof (hotel))], *token;
 
@@ -1333,7 +1489,7 @@ void le_cadastro_hotel_txt() {
     getchar();
 }
 
-void altera_hotel_txt() {
+void altera_hotel() {
     FILE *le, *altera;
     char linha[(sizeof (hotel))], *token;
     hotel txt;
@@ -1468,7 +1624,7 @@ void altera_hotel_txt() {
     rename("temp.txt", "hotel.txt");
 }
 
-void exclui_hotel_txt() {
+void exclui_hotel() {
     FILE *deletar, *altera;
     hotel txt;
     int hot, end, chek;
@@ -1649,6 +1805,7 @@ void le_todos_tipo_acomodacao() {
 void le_tipo_acomodacao(float codigo) {
     FILE *ler;
     cate_aco acomodacao;
+
     char linha[(sizeof (cate_aco))], *token;
     int encontrado = 0;
 
@@ -1683,11 +1840,11 @@ void le_tipo_acomodacao(float codigo) {
 
                 //se o código foi igual ao digitado ele altera
                 if (cod == codigo) {
-                    printf("\nCódigo: %s\n", token);
+                    printf("\nCódigo: %s\n\t", token);
                     token = strtok(NULL, ";");
-                    printf("Descrição: %s\n", token);
+                    printf("Descrição: %s\n\t", token);
                     token = strtok(NULL, ";");
-                    printf("Diária: R$%s\n", token);
+                    printf("Diária: R$%s\n\t", token);
                     token = strtok(NULL, ";");
                     printf("Quantia de pessoas que suporta: %s\n", token);
                 }
@@ -2018,8 +2175,10 @@ void le_todas_acomodacoes() {
 
     if (arquivo == NULL) {
         printf("Erro ao abrir arquivo de acomofações!");
-    } else {
-        while (fread(&acomod, sizeof (acomodacao), 1, arquivo)) {
+        exit(1);
+    } 
+
+    while (fread(&acomod, sizeof (acomodacao), 1, arquivo)) {
             if (acomod.delet == 0) {
                 printf("\nCódigo: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
                         acomod.codigo, acomod.descri, acomod.facilidades);
@@ -2027,8 +2186,6 @@ void le_todas_acomodacoes() {
                 le_tipo_acomodacao(acomod.tipo.codigo);
             }
         }
-    }
-    
     fclose(arquivo);
         
     arquivo = fopen("acomodacoes.txt", "r");
@@ -2043,11 +2200,11 @@ void le_todas_acomodacoes() {
             //caso não tenha sido excluido
             if (strcmp(token, "0") == 0) {
                 token = strtok(NULL, ";");
-                printf("Código do quarto: %s\n", token);
+                printf("Código do quarto: %s\n\t", token);
                 token = strtok(NULL, ";");
-                printf("Descrição: %s\n", token);
+                printf("Descrição: %s\n\t", token);
                 token = strtok(NULL, ";");
-                printf("Facilidades: %s\n", token);
+                printf("Facilidades: %s\n\t", token);
                 printf("Dados do tipo de acomodação:");
                 token = strtok(NULL, ";");
                 token = strtok(NULL, ";");
@@ -2347,5 +2504,425 @@ void exclui_acomodacoes(){
     }
     else {
         printf("Dados Excluídos com sucesso!\n");
+    }
+}
+
+//Produtos
+
+void salva_cadastro_produtos_bin(produto dados){
+    FILE *arquivo;
+    
+    arquivo = fopen("protudos.bin","ab");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de produtos!");
+        exit(1);
+    }
+    printf("Codigo do prod: %d", dados.codigo);
+    fwrite(&dados, sizeof(produto), 1 ,arquivo);
+    printf("\nProduto cadastrado com sucesso!");
+    fclose(arquivo);
+}
+// IVANNNN - Cadastro em TXT dps apago o comentario
+void salva_cadastro_produtos_txt(produto dados){}
+
+void le_produtos(){
+    FILE *arquivo;
+    int codigo;
+    produto dados;
+    int encontrado = 0;
+
+    arquivo = fopen("protudos.bin","rb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de produtos!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do produto que deseja ler: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(produto), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            printf("\nCódigo: %d\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+                    dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
+    }
+}
+
+void le_todos_produtos(){
+    FILE *arquivo;
+    produto dados;
+
+    arquivo = fopen("protudos.bin","rb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de produtos!");
+        exit(1);
+    }
+
+    while (fread(&dados, sizeof(produto), 1 ,arquivo)){
+            if(dados.delet == 0){
+                printf("\nCódigo: %d\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+                    dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);   
+            } 
+    }
+    
+    fclose(arquivo);
+
+    //Parte txt
+}
+
+void altera_produto(){
+    FILE *arquivo;
+    int codigo;
+    produto dados;
+    int encontrado = 0;
+
+    arquivo = fopen("protudos.bin","rb+wb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de produtos!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do produto que deseja alterar: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(produto), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            dados = le_dados_produto();
+            fseek(arquivo, -sizeof(produto), 1);
+            fwrite(&dados,sizeof(produto), 1, arquivo);
+            printf("\nProduto alterado com sucesso!");
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+
+    if(encontrado == 0){
+        //Parte txt
+    }
+}
+
+void exclui_produto(){
+
+    FILE *arquivo;
+    int codigo;
+    produto dados;
+    int encontrado = 0;
+
+    arquivo = fopen("protudos.bin","rb+wb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de produtos!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do produto que deseja excluir: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(produto), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            dados.delet = 1;
+            fseek(arquivo, -sizeof(produto), 1);
+            fwrite(&dados,sizeof(produto), 1, arquivo);
+            printf("\nProduto excluido com sucesso!");
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+
+    if(encontrado == 0){
+        //Parte txt
+    }
+}
+
+//Fornecedor
+
+void salva_cadastro_fornecedores_bin(fornecedor dados){
+    FILE *arquivo;
+    
+    arquivo = fopen("fornecedores.bin","ab");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de fonecedores!");
+        exit(1);
+    }
+    fwrite(&dados, sizeof(fornecedor), 1 ,arquivo);
+
+    fclose(arquivo);
+}
+// IVANNNN - Cadastro em TXT dps apago o comentario
+void salva_cadastro_fornecedores_txt(fornecedor dados){}
+
+void le_fonecedor(){
+    FILE *arquivo;
+    int codigo;
+    fornecedor dados;
+    int encontrado = 0;
+
+    arquivo = fopen("fornecedores.bin","rb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de fornecedores!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do fornecedor que deseja ler: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(fornecedor), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            printf("\nCódigo: %d\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f", 
+                    dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone, dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero); 
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
+    } 
+    if(encontrado == 0){
+        printf("Nenhum fornecedor encontrado com esse código");
+    } 
+}
+
+void le_todos_fonecedores(){
+    FILE *arquivo;
+    fornecedor dados;
+
+    arquivo = fopen("fornecedores.bin","rb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de fornecedores!");
+        exit(1);
+    }
+
+    while (fread(&dados, sizeof(fornecedor), 1 ,arquivo)){
+        if(dados.delet == 0){
+            printf("\nCódigo: %d\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f", 
+                dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone, dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero); 
+            } 
+    }
+    
+    fclose(arquivo);
+
+    //Parte txt
+}
+
+void altera_fonecedor(){
+    FILE *arquivo;
+    int codigo;
+    fornecedor dados;
+    int encontrado = 0;
+
+    arquivo = fopen("fornecedores.bin","rb+wb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de fornecedores!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do fornecedor que deseja alterar: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(fornecedor), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            dados = le_dados_fornecedor();
+            fseek(arquivo, -sizeof(fornecedor), 1);
+            fwrite(&dados,sizeof(fornecedor), 1, arquivo);
+            printf("\nFornecedor alterado com sucesso!");
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
+    }
+    
+}
+
+void exclui_fonecedor(){
+    FILE *arquivo;
+    int codigo;
+    fornecedor dados;
+    int encontrado = 0;
+
+    arquivo = fopen("fornecedores.bin","rb+wb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de fornecedores!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do fornecedor que deseja excluir: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(fornecedor), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            dados.delet = 1;
+            fseek(arquivo, -sizeof(fornecedor), 1);
+            fwrite(&dados,sizeof(fornecedor), 1, arquivo);
+            printf("\nFornecedor excluido com sucesso!");
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
+    }
+}
+
+//Operador
+
+void salva_cadastro_operadores_bin(operador dados){
+    FILE *arquivo;
+    
+    arquivo = fopen("operadores.bin","ab");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de operadores!");
+        exit(1);
+    }
+    fwrite(&dados, sizeof(operador), 1 ,arquivo);
+    printf("\nOperador salvo com sucesso!");
+    fclose(arquivo);
+}
+// IVANNNN - Cadastro em TXT dps apago o comentario
+void salva_cadastro_operadores_txt(operador dados){}
+
+void le_operador(){
+    FILE *arquivo;
+    int codigo;
+    operador dados;
+    int encontrado = 0;
+
+    arquivo = fopen("operadores.bin","rb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de operadores!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do operador que deseja ler: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(operador), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            printf("\nCódigo: %d\n\tAcesso: %d\n\tNome: %s\n\tUser: %s\n\tSenha: %s",
+                dados.codigo, dados.acesso, dados.nome, dados.user, dados.senha);
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
+    }
+}
+
+void le_todos_operadores(){
+    FILE *arquivo;
+    operador dados;
+
+    arquivo = fopen("operadores.bin","rb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de operadoreses!");
+        exit(1);
+    }
+
+    while (fread(&dados, sizeof(operador), 1 ,arquivo)){
+        if(dados.delet == 0){
+                printf("\nCódigo: %d\n\tAcesso: %d\n\tNome: %s\n\tUser: %s\n\tSenha: %s",
+                dados.codigo, dados.acesso, dados.nome, dados.user, dados.senha);
+            }
+    }
+    
+    fclose(arquivo);
+
+    //Parte txt
+}
+
+void alterar_operador(){
+    FILE *arquivo;
+    int codigo;
+    operador dados;
+    int encontrado = 0;
+
+    arquivo = fopen("operadores.bin","rb+wb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de operadores!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do operador que deseja alterar: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(operador), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            dados = le_dados_operador();
+            fseek(arquivo, -sizeof(operador), 1);
+            fwrite(&dados,sizeof(operador), 1, arquivo);
+            printf("\nOperador alterado com sucesso!");
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
+    }
+}
+
+void exclui_operador(){
+    FILE *arquivo;
+    int codigo;
+    operador dados;
+    int encontrado = 0;
+
+    arquivo = fopen("operadores.bin","rb+wb");
+
+    if(arquivo == NULL){
+        printf("\nErro ao abrir arquivo de operadores!");
+        exit(1);
+    }
+    
+    printf("Digite o codigo do operadores que deseja excluir: ");
+    scanf("%d",&codigo);
+
+    while (fread(&dados, sizeof(operador), 1 ,arquivo)){
+        if(dados.delet == 0 && dados.codigo == codigo){
+            dados.delet = 1;
+            fseek(arquivo, -sizeof(operador), 1);
+            fwrite(&dados,sizeof(operador), 1, arquivo);
+            printf("\nOperador excluido com sucesso!");
+            encontrado = 1;
+        }
+    }
+    
+    fclose(arquivo);
+    
+    if(encontrado == 0){
+        //Parte txt
     }
 }

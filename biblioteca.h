@@ -78,7 +78,7 @@ typedef struct {
 
 //struct produtos
 typedef struct {
-    int codigo, estoque, estoque_min;
+    int delet, codigo, estoque, estoque_min;
     float custo, venda;
     char descricao[300];
 
@@ -86,7 +86,7 @@ typedef struct {
 
 //struct fornecedores
 typedef struct {
-    int codigo;
+    int codigo, delet;
     char nome[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
     float telefone;
     endereco local;
@@ -95,7 +95,7 @@ typedef struct {
 
 //struct operadores sistema
 typedef struct {
-    int codigo, acesso;
+    int codigo, acesso, delet;
     char nome[100], user[100], senha[100];
 
 } operador;
@@ -125,8 +125,6 @@ int tam_clientes();
 int tam_categ_acomod();
 /* Retorna um inteiro com relação ao tamanho da acomodacao para usar com relação ao ID */
 int tam_acomodacao();
-/* Retorna um inteiro com relação ao tamanho do arquivo binário */
-int tamanhoArquivoBin();
 /* Retorna um inteiro com relação ao tipo de arquivo (0 = bin --- !0 = txt) */
 int selecionarTipoArquivo();
 /* Retorna um float que é um numero de ID válido. Recebe o nome do arquivo txt, o nome do arquivo binário e o tamanho da struct guardada nos arquivos */
@@ -135,7 +133,7 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam);
 //Menus
 void menuPrincipal();
 
-void menuHotel(int tipoArquivo);
+void menuHotel();
 
 void menuCliente(int tipoArquivo);
 
@@ -143,14 +141,21 @@ void menuReserva(int tipoArquivo);
 
 void menuAcomodacoes(int tipoArquivo);
 
+void menuProdutos(int tipoAquivo);
+
+void menuFornecedores(int tipoAquivo);
+
+void menuOperadores(int tipoAquivo);
 
 //  Hotel
 
 void salva_cadastro_hotel();
 
-void le_cadastro_hotel_txt();
+void le_cadastro_hotel();
 
-void altera_hotel_txt();
+void altera_hotel();
+
+void exclui_hotel();
 
 //  Clientes
 void salva_cadastro_pessoa_bin(cad_clie saves);
@@ -190,3 +195,45 @@ void le_todas_acomodacoes();
 void altera_acomodacoes();
 
 void exclui_acomodacoes();
+
+//Produtos
+
+void salva_cadastro_produtos_bin(produto dados);
+
+void salva_cadastro_produtos_txt(produto dados);
+
+void le_produtos();
+
+void le_todos_produtos();
+
+void altera_produto();
+
+void exclui_produto();
+
+//Fornecedor
+
+void salva_cadastro_fornecedores_bin(fornecedor dados);
+
+void salva_cadastro_fornecedores_txt(fornecedor dados);
+
+void le_fonecedor();
+
+void le_todos_fonecedores();
+
+void altera_fonecedor();
+
+void exclui_fonecedor();
+
+//Operador
+
+void salva_cadastro_operadores_bin(operador dados);
+
+void salva_cadastro_operadores_txt(operador dados);
+
+void le_operador();
+
+void le_todos_operadores();
+
+void alterar_operador();
+
+void exclui_operador();
