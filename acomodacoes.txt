@@ -1,0 +1,2 @@
+0;2;grande;sala;0;1;boaaaaaaaaaaaaaa;1000.00;10;
+0;3;giga;loooi;0;2;boaaa;500.00;5;

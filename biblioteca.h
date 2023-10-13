@@ -36,13 +36,11 @@ typedef struct {
 } endereco;
 
 //struct check
-
 typedef struct {
     int hora, min;
 } check;
 
 //struct cadastro hotel
-
 typedef struct {
     int delet;
     char nome_hot[100], nome_respo[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
@@ -53,7 +51,6 @@ typedef struct {
 } hotel;
 
 // struct cadastro cliente
-
 typedef struct {
     int delet;
     float codigo, cpf, telefone;
@@ -63,7 +60,6 @@ typedef struct {
 } cad_clie;
 
 //struct categoria acomodações
-
 typedef struct {
     char descri[300];
     float codigo, diaria;
@@ -72,7 +68,6 @@ typedef struct {
 } cate_aco;
 
 //struct acomodações
-
 typedef struct {
     int delet;
     float codigo;
@@ -82,7 +77,6 @@ typedef struct {
 } acomodacao;
 
 //struct produtos
-
 typedef struct {
     int codigo, estoque, estoque_min;
     float custo, venda;
@@ -91,7 +85,6 @@ typedef struct {
 } produto;
 
 //struct fornecedores
-
 typedef struct {
     int codigo;
     char nome[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
@@ -101,7 +94,6 @@ typedef struct {
 } fornecedor;
 
 //struct operadores sistema
-
 typedef struct {
     int codigo, acesso;
     char nome[100], user[100], senha[100];
@@ -111,35 +103,36 @@ typedef struct {
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 //Coleta dados
-
+/* Coleta os dados do cliente e os retorna em uma struct do tipo cad_clie*/
 cad_clie le_dados_cad();
-
+/* Coleta os dados do hotel e os retorna em uma struct do tipo hotel */
 hotel le_dados_hotel();
-
+/* Coleta os dados do tipo de acomodação e os retorna em uma struct do tipo cate_aco */
 cate_aco le_dados_categ_acomod();
-
+/* Coleta os dados da acomodação e os retorna em uma struct do tipo acomodacao */
 acomodacao le_dados_acomod();
-
+/* Coleta os dados do produto e os retorna em uma struct do tipo produto */
 produto le_dados_produto();
-
+/* Coleta os dados do fornecedor e os retorna em uma struct do tipo fornecedor */
 fornecedor le_dados_fornecedor();
-
+/* Coleta os dados do operador do sistema e os retorna em uma struct do tipo operador */
 operador le_dados_operador();
 
 //Variadas
-
+/* Retorna um inteiro com relação ao tamanho da struct cliente para usar com relação ao ID */
 int tam_clientes();
-
+/* Retorna um inteiro com relação ao tamanho da struct cate_aco para usar com relação ao ID */
 int tam_categ_acomod();
-
+/* Retorna um inteiro com relação ao tamanho da acomodacao para usar com relação ao ID */
 int tam_acomodacao();
-
+/* Retorna um inteiro com relação ao tamanho do arquivo binário */
+int tamanhoArquivoBin();
+/* Retorna um inteiro com relação ao tipo de arquivo (0 = bin --- !0 = txt) */
 int selecionarTipoArquivo();
-
+/* Retorna um float que é um numero de ID válido. Recebe o nome do arquivo txt, o nome do arquivo binário e o tamanho da struct guardada nos arquivos */
 float retorna_id(char *nome_txt, char *nome_bin, int tam);
 
 //Menus
-
 void menuPrincipal();
 
 void menuHotel(int tipoArquivo);
@@ -176,6 +169,8 @@ void removeCliente();
 
 void salva_cadastro_tipo_acomodacao_txt(cate_aco dados);
 
+void salva_cadastro_tipo_acomodacao_bin(cate_aco dados);
+
 void le_todos_tipo_acomodacao();
 
 void le_tipo_acomodacao(float codigo);
@@ -187,3 +182,9 @@ void remover_tipo_acomodacao();
 // geral
 
 void salva_cadastro_acomodacao_txt(acomodacao dados);
+
+void salva_cadastro_acomodacao_bin(acomodacao dados);
+
+void le_todas_acomodacoes();
+
+void altera_acomodacoes();

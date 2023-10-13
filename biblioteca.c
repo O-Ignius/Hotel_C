@@ -361,10 +361,10 @@ acomodacao le_dados_acomod() {
     scanf("%f", &dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
-    scanf("%s", dados.descri);
+    scanf("%[^\n]s", dados.descri);
     setbuf(stdin, NULL);
     printf("Digite as facilidades da acomodação (como ar condicionado, TV, ...): \n");
-    scanf("%s", dados.facilidades);
+    scanf("%[^\n]s", dados.facilidades);
     setbuf(stdin, NULL);
 
     return dados;
@@ -380,7 +380,7 @@ produto le_dados_produto() {
     scanf("%d", dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite a descrição do produto: \n");
-    scanf("%[a-z A-Z]s", dados.descricao);
+    scanf("%[a-z A-Z][^\n]s", dados.descricao);
     setbuf(stdin, NULL);
     printf("Digite o estoque do produto: \n");
     scanf("%d", dados.estoque);
@@ -407,22 +407,22 @@ fornecedor le_dados_fornecedor() {
     scanf("%f", dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite o nome do fornecedor: \n");
-    scanf("%[a-z A-Z]%s", dados.nome);
+    scanf("%[a-z A-Z][^\n]s", dados.nome);
     setbuf(stdin, NULL);
     printf("Digite a razão social do fornecedor: \n");
-    scanf("%s", dados.raz_soci);
+    scanf("%[^\n]s", dados.raz_soci);
     setbuf(stdin, NULL);
     printf("Digite a inscrição estadual do fornecedor: \n");
-    scanf("%s", dados.inscri_estad);
+    scanf("%[^\n]s", dados.inscri_estad);
     setbuf(stdin, NULL);
     printf("Digite o CNPJ do fornecedor: \n");
-    scanf("%s", dados.cnpj);
+    scanf("%[^\n]s", dados.cnpj);
     setbuf(stdin, NULL);
     printf("Digite o telefone do fornecedor: \n");
     scanf("%f", dados.telefone);
     setbuf(stdin, NULL);
     printf("Digite o email do fornecedor: \n");
-    scanf("%s", dados.email);
+    scanf("%[^\n]s", dados.email);
     setbuf(stdin, NULL);
     printf("Digite a sigla do estado do fornecedor: \n");
     scanf("%[a-z A-Z][^\n]s", dados.local.estado);
@@ -455,13 +455,13 @@ operador le_dados_operador() {
     scanf("%f", dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite o nome do operador: \n");
-    scanf("%[a-z A-Z]", dados.nome);
+    scanf("%[a-z A-Z][^\n]s", dados.nome);
     setbuf(stdin, NULL);
     printf("Digite o usuário do operador: \n");
-    scanf("%s", dados.user);
+    scanf("%[^\n]s", dados.user);
     setbuf(stdin, NULL);
     printf("Digite a senha do operador: \n");
-    scanf("%s", dados.senha);
+    scanf("%[^\n]s", dados.senha);
     setbuf(stdin, NULL);
     printf("Digite qual a permissão de acesso do fornecedor: \n");
     scanf("%f", dados.acesso);
@@ -524,39 +524,28 @@ void menuHotel(int tipoArquivo) {
 
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
         printf("Digite a opcao desejada:\n\n");
-        printf("\tCadastrar Hotel - 1\n");
-        printf("\tListar dados do Hotel - 2\n");
-        printf("\tAlterar dados do Hotel - 3\n");
-        printf("\tExcluir dados do Hotel - 4\n");
-        printf("\tVoltar ao menu inicial - 5\n");
+        printf("\tListar dados do Hotel - 1\n");
+        printf("\tAlterar dados do Hotel - 2\n");
+        printf("\tExcluir dados do Hotel - 3\n");
+        printf("\tVoltar ao menu inicial - 4\n");
 
         printf("Opc�o: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                break;
-            case 2:
-                if (binOUtxt == 0) {
-                    //le_cadastro_hotel_bin();
-                } else
                     le_cadastro_hotel_txt();
-                break;
-            case 3:
+            case 2:
                 if (binOUtxt == 0) {
                     //altera_hotel_bin();
                 } else {
                     //altera_hotel_txt();
                 }
                 break;
-            case 4:
-                if (binOUtxt == 0) {
-                    //exclui_hotel_bin();
-                } else {
-                    //exclui_hotel_txt();
-                }
+            case 3:
+                    //exclui_hotel();
                 break;
-            case 5:
+            case 4:
                 menuPrincipal();
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
@@ -673,7 +662,7 @@ void menuAcomodacoes(int tipoArquivo) {
                 le_todas_acomodacoes();
                 break;
             case 3:
-                //altera
+                altera_acomodacoes();
                 break;
             case 4:
                 //remove
@@ -1667,7 +1656,7 @@ void le_tipo_acomodacao(float codigo) {
 
     while (fread(&acomodacao, sizeof (cate_aco), 1, ler)) {
         if (acomodacao.delet == 0 && acomodacao.codigo == codigo) {
-            printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d",
+            printf("\nCódigo: %.0f\nDescrição: %s\nValor diária: %.2f\nNúmero de pessoas: %d",
                     acomodacao.codigo, acomodacao.descri, acomodacao.diaria, acomodacao.qnt_pessoas);
             encontrado = 1;
         }
@@ -1694,7 +1683,6 @@ void le_tipo_acomodacao(float codigo) {
 
                 //se o código foi igual ao digitado ele altera
                 if (cod == codigo) {
-                    token = strtok(NULL, ";");
                     printf("\nCódigo: %s\n", token);
                     token = strtok(NULL, ";");
                     printf("Descrição: %s\n", token);
@@ -1735,6 +1723,7 @@ void altera_tipo_acomodacao() {
     }
 
     fclose(le);
+    
     if (encontrado == 0) {
         le = fopen("categoria_acomo.txt", "r");
         if (le == NULL) {
@@ -1925,6 +1914,8 @@ void salva_cadastro_acomodacao_txt(acomodacao dados) {
     cate_aco dados_tipo;
 
     while (valido == 0) {
+        le_todos_tipo_acomodacao();
+        
         setbuf(stdin, NULL);
         printf("Digite o código do tipo de acomodação:\n");
         scanf("%f", &codigo);
@@ -1959,37 +1950,48 @@ void salva_cadastro_acomodacao_txt(acomodacao dados) {
                     valido = 1;
 
                     dados_geral.tipo = dados_tipo;
-
-                    salvar = fprintf(salva, "%d;%0.0f;%s;%d;%0.0f;%s;%0.2f;%d;%s;\n", dados_geral.delet, dados_geral.codigo, dados_geral.descri, dados_geral.tipo.delet, dados_geral.tipo.codigo, dados_geral.tipo.descri, dados_geral.tipo.diaria, dados_geral.tipo.qnt_pessoas, dados_geral.facilidades);
-                    if (salvar < 0) {
-                        printf("Erro no salvamento do arquivo!\n");
-                        exit(1);
-                    }
                 }
             }
         }
-
+        
+        fclose(tipo);
+        
         if (valido == 0) {
-            setbuf(stdin, NULL);
-            printf("Tipo digitado inválido, deseja cadastrar um novo tipo?\n  1- Sim    2- Não\n");
-            scanf("%d", &op);
-            setbuf(stdin, NULL);
-
-            switch (op) {
-                case 1:
-                    dados_tipo = le_dados_categ_acomod();
-                    salva_cadastro_tipo_acomodacao_txt(dados_tipo);
-                    break;
-                case 2:
-                    break;
-                default:
-                    printf("Opção inválida!\n");
-                    break;
+            tipo = fopen("categoria_acomo.bin", "rb");
+            if (tipo == NULL) {
+                printf("Erro ao abrir arquivo!\n");
+                exit(1);
             }
+            
+            while(fread(&dados_tipo, sizeof(cate_aco), 1, tipo)){
+                if (dados_tipo.delet == 0 && dados_tipo.codigo == codigo) {
+                    dados_geral.tipo.delet = dados_tipo.delet;
+                    dados_geral.tipo.codigo = dados_tipo.codigo;
+                    strcpy(dados_geral.tipo.descri, dados_tipo.descri);
+                    dados_geral.tipo.diaria = dados_tipo.diaria;
+                    dados_geral.tipo.qnt_pessoas = dados_tipo.qnt_pessoas;
+                    valido = 1;
+                }
+            }
+            
+            fclose(tipo);
+        }
+        
+        if (valido == 1) {
+            salvar = fprintf(salva, "%d;%0.0f;%s;%s;%d;%0.0f;%s;%0.2f;%d;\n", dados_geral.delet, dados_geral.codigo, dados_geral.descri, dados_geral.facilidades, dados_geral.tipo.delet, dados_geral.tipo.codigo, dados_geral.tipo.descri, dados_geral.tipo.diaria, dados_geral.tipo.qnt_pessoas);
+            if (salvar < 0) {
+                printf("Erro no salvamento do arquivo!\n");
+                exit(1);
+            }
+            else {
+                printf("Salvo com sucesso!\n");
+            }
+        }
+        else {
+            printf("Código da acomodação é inválido!\n");
         }
 
         fclose(salva);
-        fclose(tipo);
     }
 }
 
@@ -1999,7 +2001,7 @@ void salva_cadastro_acomodacao_bin(acomodacao dados) {
     arquivo = fopen("acomodacoes.bin", "ab");
 
     if (arquivo == NULL) {
-        printf("Erro ao abrir arquivo de acomofações!");
+        printf("Erro ao abrir arquivo de acomodações!");
     } else {
         fwrite(&dados, sizeof (acomodacao), 1, arquivo);
         printf("Acomodação cadastrada com sucesso!");
@@ -2008,19 +2010,252 @@ void salva_cadastro_acomodacao_bin(acomodacao dados) {
 
 void le_todas_acomodacoes() {
     FILE *arquivo;
-    acomodacao acomodacao;
+    char linha[(sizeof(acomodacao))], *token;
+    float codigo;
+    acomodacao acomod;
+    
     arquivo = fopen("acomodacoes.bin", "rb");
 
     if (arquivo == NULL) {
         printf("Erro ao abrir arquivo de acomofações!");
     } else {
-        while (fread(&acomodacao, sizeof (acomodacao), 1, arquivo)) {
-            if (acomodacao.delet == 0) {
+        while (fread(&acomod, sizeof (acomodacao), 1, arquivo)) {
+            if (acomod.delet == 0) {
                 printf("\nCódigo: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
-                        acomodacao.codigo, acomodacao.descri, acomodacao.facilidades);
+                        acomod.codigo, acomod.descri, acomod.facilidades);
                 printf("\nTipo acomodação:\n");
-                le_tipo_acomodacao(acomodacao.tipo.codigo);
+                le_tipo_acomodacao(acomod.tipo.codigo);
             }
         }
+    }
+    
+    fclose(arquivo);
+        
+    arquivo = fopen("acomodacoes.txt", "r");
+    if (arquivo == NULL) {
+        printf("Falha ao abrir o arquivo txt!\n");
+        exit(1);
+    }
+    else {
+        while (fgets(linha, sizeof(acomodacao), arquivo)) {
+            //separa o primeiro elemento que diz se foi excluido ou não
+            token = strtok(linha, ";");
+            //caso não tenha sido excluido
+            if (strcmp(token, "0") == 0) {
+                token = strtok(NULL, ";");
+                printf("Código do quarto: %s\n", token);
+                token = strtok(NULL, ";");
+                printf("Descrição: %s\n", token);
+                token = strtok(NULL, ";");
+                printf("Facilidades: %s\n", token);
+                printf("Dados do tipo de acomodação:");
+                token = strtok(NULL, ";");
+                token = strtok(NULL, ";");
+                codigo = atoff(token);
+                le_tipo_acomodacao(codigo);
+                printf("\n");
+            }
+        }
+    }
+    
+    fclose(arquivo);
+}
+
+void altera_acomodacoes() {
+    FILE *le, *altera, *tipo;
+    cate_aco tipo_aco;
+    acomodacao acomod, novo;
+    char linha[(sizeof (acomodacao))], linha_tipo[(sizeof(cate_aco))], *token, cod_str[(sizeof(float))];
+    int tam = 0, encontrado = 0, i = 0, op = 0, alterado = 0, salvar;
+    float codigo, tipo_cod;
+
+    printf("Digite o código da acomodação que deseja alterar: \n");
+    scanf("%f", &codigo);
+    
+    le = fopen("acomodacoes.bin", "rb+wb");
+    if (le == NULL) {
+        printf("Erro de abertura de arquivo acomodacoes.bin!\n");
+        exit(1);
+    }
+    
+    /*
+     Senhor André refaz ou conserta essa buceta aqui pra mim? c quiser usar o txt de base, acho q ta funfando ksakasks
+    */
+    
+    while (fread(&acomod, sizeof(acomodacao), 1, le)) {
+        if (acomod.delet == 0 && acomod.codigo == codigo) {
+            encontrado = 1;
+            acomod = le_dados_acomod();
+            acomod.codigo = codigo;
+            fseek(le, -sizeof(acomodacao), SEEK_CUR);
+            fwrite(&acomod, sizeof(acomodacao), 1, le);
+            printf("Acomodação alterada com sucesso!");
+        }
+    }
+    
+    fclose(le);
+    
+    if (encontrado == 0) {
+        le = fopen("acomodacoes.txt", "r");
+        if (le == NULL) {
+            printf("Erro de abertura de arquivo acomodacoes.txt!\n");
+            exit(1);
+        }
+        
+        while(fgets(linha, sizeof(acomodacao), le)) {
+            tam++;
+        }
+        
+        fclose(le);
+        
+        acomodacao dados[tam];
+        
+        le = fopen("acomodacoes.txt", "r");
+        if (le == NULL) {
+            printf("Erro de abertura de arquivo acomodacoes.txt!\n");
+            exit(1);
+        }
+        
+        altera = fopen("temp.txt", "a");
+        if (le == NULL) {
+            printf("Erro de criação de arquivo temp.txt!\n");
+            exit(1);
+        }
+        
+        while(fgets(linha, sizeof(acomodacao), le)) {
+            token = strtok(linha, ";");
+            dados[i].delet == atoi(token);
+            
+            if (strcmp(token, "0") == 0) {
+                token = strtok(NULL, ";");
+                dados[i].codigo = atoff(token);
+                if (dados[i].codigo == codigo) {
+                    token = strtok(NULL, ";");
+                    strcpy(dados[i].descri, token);
+                    token = strtok(NULL, ";");
+                    strcpy(dados[i].facilidades, token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.delet = atoi(token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.codigo = atoff(token);
+                    token = strtok(NULL, ";");
+                    strcpy(dados[i].tipo.descri, token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.diaria = atoff(token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.qnt_pessoas = atoi(token);
+                    tipo_aco = dados[i].tipo;
+                    dados[i] = le_dados_acomod();
+                    dados[i].codigo = codigo;
+                    dados[i].tipo = tipo_aco;
+
+                    printf("Deseja editar o tipo de acomodação?\n    1- Sim    2- Não\n");
+                    scanf("%d", &op);
+
+                    switch (op) {
+                        case 1:
+                            le_todos_tipo_acomodacao();
+
+                            printf("Digite o código do tipo de acomodação que deseja alterar: \n");
+                            scanf("%f", &tipo_cod);
+                            
+                            sprintf(cod_str, "%0.0f", tipo_cod);
+
+                            tipo = fopen("categoria_acomo.txt", "r");
+                            if (tipo == NULL) {
+                                printf("Erro ao abrir arquivo!\n");
+                                exit(1);
+                            }
+
+                            while(fgets(linha_tipo, sizeof(cate_aco), tipo)) {
+                                token = strtok(linha_tipo, ";");
+
+                                if (strcmp(token, "0") == 0) {
+                                    token = strtok(NULL, ";");
+
+                                    if (strcmp(token, cod_str) == 0) {
+                                        dados[i].tipo.delet = 0;
+                                        dados[i].tipo.codigo = atoff(token);
+                                        token = strtok(NULL, ";");
+                                        strcpy(dados[i].tipo.descri, token);
+                                        token = strtok(NULL, ";");
+                                        dados[i].tipo.diaria = atoff(token);
+                                        token = strtok(NULL, ";");
+                                        dados[i].tipo.diaria = atoi(token);
+                                        alterado = 1;
+                                    }
+                                }
+                            }
+
+                            fclose(tipo);
+
+                            if (alterado == 0) {
+                                tipo = fopen("categoria_acomo.bin", "rb");
+                                if (tipo == NULL) {
+                                    printf("Erro ao abrir arquivo!\n");
+                                    exit(1);
+                                }
+
+                                while(fread(&tipo_aco, sizeof(cate_aco), 1, tipo)){
+                                    if (tipo_aco.delet == 0 && tipo_aco.codigo == tipo_cod) {
+                                        dados[i].tipo.delet = tipo_aco.delet;
+                                        dados[i].tipo.codigo = tipo_aco.codigo;
+                                        strcpy(dados[i].tipo.descri, tipo_aco.descri);
+                                        dados[i].tipo.diaria = tipo_aco.diaria;
+                                        dados[i].tipo.qnt_pessoas = tipo_aco.qnt_pessoas;
+                                        alterado = 1;
+                                    }
+                                }
+
+                                fclose(tipo);
+                            }
+
+                            break;
+                        case 2:
+                            dados[i].tipo = tipo_aco;
+                            break;
+                        default:
+                            printf("Opção inválida!\n");
+                    }
+                }
+                else {
+                    token = strtok(NULL, ";");
+                    strcpy(dados[i].descri, token);
+                    token = strtok(NULL, ";");
+                    strcpy(dados[i].facilidades, token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.delet = atoi(token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.codigo = atoff(token);
+                    token = strtok(NULL, ";");
+                    strcpy(dados[i].tipo.descri, token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.diaria = atoff(token);
+                    token = strtok(NULL, ";");
+                    dados[i].tipo.qnt_pessoas = atoi(token);
+                }
+            }
+            
+            salvar = fprintf(altera, "%d;%0.0f;%s;%s;%d;%0.0f;%s;%0.2f;%d;\n", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].facilidades, dados[i].tipo.delet, dados[i].tipo.codigo, dados[i].tipo.descri, dados[i].tipo.diaria, dados[i].tipo.qnt_pessoas);
+            if (salvar < 0) {
+                printf("Erro no salvamento do arquivo!\n");
+                exit(1);
+            }
+            
+            i++;
+        }
+        
+        fclose(le);
+        fclose(altera);
+        
+        remove("acomodacoes.txt");
+        rename("temp.txt", "acomodacoes.txt");
+    }
+    
+    if (encontrado == 0) {
+        printf("Código digitado não encontrado!\n");
+    }
+    else {
+        printf("Alterado com sucesso!\n");
     }
 }
