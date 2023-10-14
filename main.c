@@ -15,7 +15,7 @@
 int main() {
     // setar linguagem pt-br
     setlocale(LC_ALL, "Portuguese");
-    
+
     //Cria caso não existam
     fopen("cliente.txt", "a");
     fopen("cliente.bin", "ab");
@@ -31,7 +31,13 @@ int main() {
     fopen("fornecedores.txt","a");
     fopen("operadores.bin","ab");
     fopen("operadores.txt","a");
-    salva_cadastro_hotel();
+    
+    if(verifica_Hotel() == 0){
+        hotel dados;
+        dados = le_dados_hotel();
+        salva_cadastro_hotel(dados);
+    }
+    
     menuPrincipal();
     return 0;
 }

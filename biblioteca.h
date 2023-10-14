@@ -26,7 +26,8 @@ extern "C" {
 
 #endif /* BIBLIOTECA_H */
 
-/////////////////////////////   Structs  \\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////   Structs  \\\\\\\\\\\\\\\\\\\\\\\\
+\
 
 //struct moradia
 typedef struct {
@@ -36,11 +37,13 @@ typedef struct {
 } endereco;
 
 //struct check
+
 typedef struct {
     int hora, min;
 } check;
 
 //struct cadastro hotel
+
 typedef struct {
     int delet;
     char nome_hot[100], nome_respo[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
@@ -51,6 +54,7 @@ typedef struct {
 } hotel;
 
 // struct cadastro cliente
+
 typedef struct {
     int delet;
     float codigo, cpf, telefone;
@@ -60,6 +64,7 @@ typedef struct {
 } cad_clie;
 
 //struct categoria acomodações
+
 typedef struct {
     char descri[300];
     float codigo, diaria;
@@ -68,6 +73,7 @@ typedef struct {
 } cate_aco;
 
 //struct acomodações
+
 typedef struct {
     int delet;
     float codigo;
@@ -77,6 +83,7 @@ typedef struct {
 } acomodacao;
 
 //struct produtos
+
 typedef struct {
     int delet, estoque, estoque_min;
     float codigo, custo, venda;
@@ -85,6 +92,7 @@ typedef struct {
 } produto;
 
 //struct fornecedores
+
 typedef struct {
     int delet;
     char nome[100], raz_soci[150], inscri_estad[100], cnpj[50], email[150];
@@ -94,9 +102,10 @@ typedef struct {
 } fornecedor;
 
 //struct operadores sistema
+
 typedef struct {
     int acesso, delet;
-    float codigo;
+float codigo;
     char nome[100], user[100], senha[100];
 
 } operador;
@@ -149,12 +158,11 @@ void menuFornecedores(int tipoAquivo);
 void menuOperadores(int tipoAquivo);
 
 //  Hotel
+int verifica_Hotel();
 
-void salva_cadastro_hotel();
+void salva_cadastro_hotel(hotel dados);
 
 void le_cadastro_hotel();
-
-void altera_hotel();
 
 void exclui_hotel();
 
