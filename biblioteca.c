@@ -1557,7 +1557,7 @@ void exclui_hotel() {
         }
     }
     fclose(deletar);
-    /*
+
     //TXT
         deletar = fopen("hotel.txt", "r");
 
@@ -1647,7 +1647,6 @@ void exclui_hotel() {
     remove("hotel.txt");
     //renomeia o arquivo temporário
     rename("temp.txt", "hotel.txt");
-     */
 }
 
 
