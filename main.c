@@ -31,12 +31,7 @@ int main() {
     fopen("fornecedores.txt","a");
     fopen("operadores.bin","ab");
     fopen("operadores.txt","a");
-    
-    if(verifica_Hotel() == 0){
-        hotel dados;
-        dados = le_dados_hotel();
-        salva_cadastro_hotel(dados);
-    }
+    fopen("reservas.bin","ab");
     
     menuPrincipal();
     return 0;

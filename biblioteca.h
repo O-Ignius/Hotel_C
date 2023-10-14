@@ -110,6 +110,18 @@ float codigo;
 
 } operador;
 
+//Structs reservas
+
+typedef struct {
+    int dia, mes, ano;
+} data;
+
+typedef struct {
+    int delet;
+    data inicio, fim;
+    float codQuarto;
+} reserva;
+
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 //Coleta dados
@@ -127,6 +139,10 @@ produto le_dados_produto();
 fornecedor le_dados_fornecedor();
 /* Coleta os dados do operador do sistema e os retorna em uma struct do tipo operador */
 operador le_dados_operador();
+/*Coleta os dados de datas, retornando uma struct com dia, mes e ano*/
+data le_dados_data();
+/*Coleta os dados de reservas, retornando uma struct com cod do quarto, data de começo e fim*/
+reserva le_dados_reserva();
 
 //Variadas
 /* Retorna um inteiro com relação ao tamanho da struct cliente para usar com relação ao ID */
@@ -246,3 +262,11 @@ void le_todos_operadores();
 void alterar_operador();
 
 void exclui_operador();
+
+//Reserva
+//n sei pq ta indefinido
+void salva_cadastro_reserva_bin(reserva dados);
+
+void salva_cadastro_reserva_txt(reserva dados);
+
+int valida_data(data inicio, data fim);
