@@ -32,6 +32,7 @@ int main() {
     fopen("operadores.bin","ab");
     fopen("operadores.txt","a");
     fopen("reservas.bin","ab");
+    fopen("reservas.txt","a");
     
     if(verifica_Hotel() == 0){
         hotel dados;

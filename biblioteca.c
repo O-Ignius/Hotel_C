@@ -35,6 +35,30 @@ int tam_acomodacao() {
     return tamanho;
 }
 
+int tam_produto() {
+    int tamanho = 0;
+    
+    tamanho = sizeof(produto) - sizeof(float);
+    
+    return tamanho;
+}
+
+int tam_fornecedor() {
+    int tamanho = 0;
+    
+    tamanho = sizeof(fornecedor) - sizeof(float);
+    
+    return tamanho;
+}
+
+int tam_operador() {
+    int tamanho = 0;
+    
+    tamanho = sizeof(operador) - sizeof(float);
+    
+    return tamanho;
+}
+
 int selecionarTipoArquivo() {
     int tipoArquivo = 0;
 
@@ -158,16 +182,13 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam) {
 //    Coleta dados:
 
 cad_clie le_dados_cad() {
+    char bin[30] = "cliente.bin", txt[30] = "cliente.txt";
 
     cad_clie dados;
 
     dados.delet = 0;
 
-    setbuf(stdin, NULL);
-
-    printf("\nDigite o id: ");
-
-    scanf("%f", &dados.codigo);
+    dados.codigo = retorna_id(txt, bin, tam_clientes());
 
     setbuf(stdin, NULL);
 
@@ -330,12 +351,11 @@ hotel le_dados_hotel() {
 cate_aco le_dados_categ_acomod() {
     //variaveis
     cate_aco dados;
+    char bin[30] = "categoria_acomo.bin", txt[30] = "categoria_acomo.txt";
 
     //coleta de dados
     dados.delet = 0;
-    setbuf(stdin, NULL);
-    printf("Digite o código da categoria da acomodação: \n");
-    scanf("%f", &dados.codigo);
+    dados.codigo = retorna_id(txt, bin, tam_categ_acomod());
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
     scanf("%[^\n]s", dados.descri);
@@ -352,13 +372,11 @@ cate_aco le_dados_categ_acomod() {
 
 acomodacao le_dados_acomod() {
     //variaveis
-
+    char txt[30] = "acomodacoes.txt", bin[30] = "acomodacoes.bin";
     acomodacao dados;
 
     //coleta de dados
-    setbuf(stdin, NULL);
-    printf("Digite o código do quarto: \n");
-    scanf("%f", &dados.codigo);
+    dados.codigo = retorna_id(txt, bin, tam_acomodacao());
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
     scanf("%[^\n]s", dados.descri);
@@ -376,11 +394,10 @@ acomodacao le_dados_acomod() {
 produto le_dados_produto() {
     // variaveis
     produto dados;
+    char txt[30] = "produtos.txt", bin[30] = "produtos.bin";
 
     //coleta dados
-    setbuf(stdin, NULL);
-    printf("Digite o código do produto: \n");
-    scanf("%f", &dados.codigo);
+    dados.codigo = retorna_id(txt, bin, tam_produto());
     setbuf(stdin, NULL);
     printf("Digite a descrição do produto: \n");
     scanf("%[a-z A-Z][^\n]s", dados.descricao);
@@ -403,11 +420,10 @@ produto le_dados_produto() {
 fornecedor le_dados_fornecedor() {
     //variaveis
     fornecedor dados;
-
+    char txt[30] = "fornecedores.txt", bin[30] = "fornecedores.bin";
+    
     //coleta dados
-    setbuf(stdin, NULL);
-    printf("Digite o código do fornecedor: \n");
-    scanf("%f", &dados.codigo);
+    dados.codigo = retorna_id(txt, bin, tam_fornecedor());
     setbuf(stdin, NULL);
     printf("Digite o nome do fornecedor: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -451,11 +467,10 @@ fornecedor le_dados_fornecedor() {
 operador le_dados_operador() {
     //variaveis
     operador dados;
+    char txt[30] = "operadores.txt", bin[30] = "operadores.bin";
 
     //coleta dados
-    setbuf(stdin, NULL);
-    printf("Digite o código do operador: \n");
-    scanf("%f", &dados.codigo);
+    dados.codigo = retorna_id(txt, bin, tam_operador());
     setbuf(stdin, NULL);
     printf("Digite o nome do operador: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -697,6 +712,7 @@ void menuReserva(int tipoArquivo) {
                 }
                 break;
             case 2:
+                le_todas_reservas();
                 break;
             case 3:
                 break;
@@ -1885,7 +1901,6 @@ void altera_tipo_acomodacao() {
         rename("temp.txt", "categoria_acomo.txt");
     }
 }
-//Problema no exclui tipo txt 
 
 void remover_tipo_acomodacao() {
     FILE *remover, *le;
@@ -1932,7 +1947,7 @@ void remover_tipo_acomodacao() {
             exit(1);
         }
 
-        remover = fopen("temp.txt", "r+w");
+        remover = fopen("temp.txt", "a");
         if (remover == NULL) {
             printf("Erro na abertura do arquivo das categorias de acomodações! \n");
             exit(1);
@@ -1940,31 +1955,23 @@ void remover_tipo_acomodacao() {
 
         while (fgets(linha, sizeof (cate_aco), le) != NULL) {
             token = strtok(linha, ";");
+            dados[i].delet = atoi(token);
 
             if (strcmp(token, "0") == 0) {
-                dados[i].delet = atoi(token);
                 token = strtok(NULL, ";");
                 dados[i].codigo = atoff(token);
+                token = strtok(NULL, ";");
+                strcpy(dados[i].descri, token);
+                token = strtok(NULL, ";");
+                dados[i].diaria = atoff(token);
+                token = strtok(NULL, ";");
+                dados[i].qnt_pessoas = atoi(token);
 
                 if (dados[i].codigo == codigo) {
                     dados[i].delet = 1;
-                    token = strtok(NULL, ";");
-                    strcpy(dados[i].descri, token);
-                    token = strtok(NULL, ";");
-                    dados[i].diaria = atoff(token);
-                    token = strtok(NULL, ";");
-                    dados[i].qnt_pessoas = atoi(token);
                     encontrado = 1;
-                } else {
-                    token = strtok(NULL, ";");
-                    strcpy(dados[i].descri, token);
-                    token = strtok(NULL, ";");
-                    dados[i].diaria = atoff(token);
-                    token = strtok(NULL, ";");
-                    dados[i].qnt_pessoas = atoi(token);
                 }
             } else {
-                dados[i].delet = atoi(token);
                 token = strtok(NULL, ";");
                 dados[i].codigo = atoff(token);
                 token = strtok(NULL, ";");
@@ -1981,6 +1988,9 @@ void remover_tipo_acomodacao() {
 
         fclose(remover);
         fclose(le);
+        
+        remove("categoria_acomo.txt");
+        rename("temp.txt", "categoria_acomo.txt");
     }
 
     if (encontrado == 1) {
@@ -3535,15 +3545,35 @@ void salva_cadastro_reserva_bin(reserva dados) {
     fclose(arquivo);
 }
 
-//SUA PARTE IVAN
-
 void salva_cadastro_reserva_txt(reserva dados) {
+    FILE *txt;
+    int salva;
+    
+    
+    if (valida_data(dados.inicio, dados.fim) == 0) {
+        txt = fopen("reservas.txt", "a");
+        if (txt == NULL) {
+            printf("Erro de abertura reservas.txt!\n");
+            exit(1);
+        }
+        
+        salva = fprintf(txt, "%d;%0.0f;%d;%d;%d;%d;%d;%d", dados.delet, dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);  
+        if (salva < 0) {
+            printf("Erro de salvamento de reserva!\n");
+        }
+        fclose(txt);
+    }
+    else {
+        printf("Data Inválida!\n");
+    }
 }
 
+//espero que sua valida data esteja certa, usei o mesmo código para implementar a parte de validar em txt e modifiquei um pouco a parte binaria para não levar informação deletada!
 int valida_data(data inicio, data fim) {
     FILE *arquivo;
     reserva dados;
     int valido = 0;
+    char linha[(sizeof(reserva))], *token;
 
     arquivo = fopen("reservas.bin", "rb");
 
@@ -3554,23 +3584,116 @@ int valida_data(data inicio, data fim) {
 
     while (fread(&dados, sizeof (reserva), 1, arquivo)) {
         //Verifica se o ano ou mes de entrada ou saída são iguais, caso seja verifica o dia
-        printf("\nEntrou while");
-        // Ano
-        if (inicio.ano == dados.inicio.ano || fim.ano == dados.fim.ano) {
-            printf("\nEntrou ano");
-            //Mes
-            if (inicio.mes == dados.inicio.mes || fim.mes == dados.fim.mes) {
-                printf("\nEntrou mes");
-                //dia
-                if (inicio.dia <= dados.fim.dia || fim.dia <= dados.inicio.dia) {
-                    valido = 1;
-                    printf("\nEntrou dia, val:  %d", valido);
-                    break;
+        if (dados.delet == 0) {
+            // Ano
+            if (inicio.ano == dados.inicio.ano || fim.ano == dados.fim.ano) {
+                printf("\nEntrou ano");
+                //Mes
+                if (inicio.mes == dados.inicio.mes || fim.mes == dados.fim.mes) {
+                    printf("\nEntrou mes");
+                    //dia
+                    if (inicio.dia >= dados.fim.dia || fim.dia <= dados.inicio.dia) {
+                        valido = 1;
+                        printf("\nEntrou dia, val:  %d", valido);
+                        break;
+                    }
                 }
             }
-
         }
     }
     fclose(arquivo);
+    
+    if (valido == 0) {
+        arquivo = fopen("reservas.txt", "r");
+        if (arquivo == NULL) {
+            printf("\nErro ao abrir arquivo de reservas!");
+            exit(1);
+        }
+        
+        while(fgets(linha, sizeof(reserva), arquivo)) {
+            token = strtok(linha, ";");
+            if (strcmp(token, "0") == 0) {
+                token = strtok(NULL, ";");
+                dados.codQuarto = atoff(token);
+                token = strtok(NULL, ";");
+                dados.inicio.dia = atoi(token);
+                token = strtok(NULL, ";");
+                dados.inicio.mes = atoi(token);
+                token = strtok(NULL, ";");
+                dados.inicio.ano = atoi(token);
+                token = strtok(NULL, ";");
+                dados.fim.dia = atoi(token);
+                token = strtok(NULL, ";");
+                dados.fim.mes = atoi(token);
+                token = strtok(NULL, ";");
+                dados.fim.ano = atoi(token);
+
+                // Ano
+                if (inicio.ano == dados.inicio.ano || fim.ano == dados.fim.ano) {
+                    //Mes
+                    if (inicio.mes == dados.inicio.mes || fim.mes == dados.fim.mes) {
+                        //dia
+                        if (inicio.dia >= dados.fim.dia || fim.dia <= dados.inicio.dia) {
+                            valido = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        fclose(arquivo);
+    }
+    
     return valido;
+}
+
+void le_todas_reservas() {
+    FILE *txt, *bin;
+    reserva dados;
+    char linha[(sizeof(reserva))], *token;
+    
+    bin = fopen("reservas.bin", "rb");
+    if (bin == NULL) {
+        printf("Erro de leitura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+    
+    while(fread(&dados, sizeof(reserva), 1, bin)) {
+        if (dados.delet == 0) {
+            printf("Código do quarto: %0.0f \nData Inicial: %d/%d/%d \nData Final: %d/%d/%d\n", dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);
+        }
+    }
+    
+    fclose(bin);
+    
+    txt = fopen("reservas.txt", "r");
+    if (txt == NULL) {
+        printf("Erro de leitura de arquivo reservas.txt!\n");
+        exit(1);
+    }
+    
+    while(fgets(linha, sizeof(reserva), txt) != NULL) {
+        token = strtok(linha, ";");
+        
+        if (strcmp(token, "0") == 0) {
+            token = strtok(NULL, ";");
+            printf("Código do quarto: %s\n", token);
+            token = strtok(NULL, ";");
+            printf("Data inicial: %s/", token);
+            token = strtok(NULL, ";");
+            printf("%s/", token);
+            token = strtok(NULL, ";");
+            printf("%s\n", token);
+            token = strtok(NULL, ";");
+            printf("Data final: %s/", token);
+            token = strtok(NULL, ";");
+            printf("%s/", token);
+            token = strtok(NULL, ";");
+            printf("%s\n", token);
+        }
+    }
+    
+    fclose(txt);
+    getchar();
 }

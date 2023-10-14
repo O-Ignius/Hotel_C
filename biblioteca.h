@@ -264,9 +264,10 @@ void alterar_operador();
 void exclui_operador();
 
 //Reserva
-//n sei pq ta indefinido
 void salva_cadastro_reserva_bin(reserva dados);
 
 void salva_cadastro_reserva_txt(reserva dados);
 
 int valida_data(data inicio, data fim);
+
+void le_todas_reservas();
