@@ -278,4 +278,6 @@ void exclui_reservas();
 
 void pesquisa_reserva_facilidade();
 
+void pesquisa_reserva_data();
+
 void pesquisa_reserva();
