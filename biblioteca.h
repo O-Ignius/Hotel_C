@@ -275,3 +275,7 @@ int valida_id_acomodacao(float id);
 void le_todas_reservas();
 
 void exclui_reservas();
+
+void pesquisa_reserva_facilidade();
+
+void pesquisa_reserva();
