@@ -1728,6 +1728,11 @@ void le_todos_tipo_acomodacao() {
 
     ler = fopen("categoria_acomo.bin", "rb");
 
+    if (ler == NULL) {
+        printf("Erro ao abrir arquivo de categorias!");
+        exit(1);
+    }
+
     while (fread(&acomodacao, sizeof (cate_aco), 1, ler)) {
         if (acomodacao.delet == 0) {
             printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d",
@@ -1769,6 +1774,11 @@ void le_tipo_acomodacao(float codigo) {
     int encontrado = 0;
 
     ler = fopen("categoria_acomo.bin", "rb");
+
+    if (ler == NULL) {
+        printf("Erro ao abrir arquivo de categorias!");
+        exit(1);
+    }
 
     while (fread(&acomodacao, sizeof (cate_aco), 1, ler)) {
         if (acomodacao.delet == 0 && acomodacao.codigo == codigo) {
@@ -1825,6 +1835,11 @@ void altera_tipo_acomodacao() {
     scanf("%f", &codigo);
 
     le = fopen("categoria_acomo.bin", "rb+wb");
+
+    if (ler == NULL) {
+        printf("Erro ao abrir arquivo de categorias!");
+        exit(1);
+    }
 
     while (fread(&acomodacao, sizeof (cate_aco), 1, le)) {
         if (acomodacao.delet == 0 && acomodacao.codigo == codigo) {
@@ -1928,6 +1943,11 @@ void remover_tipo_acomodacao() {
 
     le = fopen("categoria_acomo.bin", "rb+wb");
 
+    if (ler == NULL) {
+        printf("Erro ao abrir arquivo de categorias!");
+        exit(1);
+    }
+    
     while (fread(&acomodacao, sizeof (cate_aco), 1, le)) {
         if (acomodacao.delet == 0 && acomodacao.codigo == codigo) {
             acomodacao.delet = 1;
@@ -2123,7 +2143,7 @@ void le_todas_acomodacoes() {
     arquivo = fopen("acomodacoes.bin", "rb");
 
     if (arquivo == NULL) {
-        printf("Erro ao abrir arquivo de acomofações!");
+        printf("Erro ao abrir arquivo de acomodações!");
         exit(1);
     }
 
@@ -3867,6 +3887,41 @@ void exclui_reservas() {
     }
 }
 
+void pesquisa_reserva_IDCategoria(){
+    FILE *arquivo;
+    float codigoCategoria, ;
+    acomodacao acomod;
+    int encontrado = 0;
+
+    printf("Digite o código da categoria de acomodação que deseja filtrar: ");
+    scanf("%f", &codigoCategoria);
+
+    arquivo = fopen("acomodacoes.bin", "rb");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir arquivo de acomodações!");
+        exit(1);
+    }
+
+    while (fread(&acomod, sizeof (acomodacao), 1, arquivo)) {
+        if (acomod.delet == 0 && acomod.tipo.codigo == codigoCategoria) {
+            printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
+                    acomod.codigo, acomod.descri, acomod.facilidades);
+            printf("\nTipo da acomodação:");
+            le_tipo_acomodacao(acomod.tipo.codigo);
+            encontrado = 1;
+        }
+    }
+    fclose(arquivo);
+
+    if(encontrado == 0){
+        //parte TXT
+    }
+    if(encontrado == 0){
+        printf("\nNenhum quarto encontrado!");
+    }
+}
+
 void pesquisa_reserva_facilidade() {
     FILE *rese_txt, *rese_bin, *acomo_bin, *acomo_txt;
     reserva reser;
@@ -4166,6 +4221,7 @@ void pesquisa_reserva() {
         case 1:
             break;
         case 2:
+            pesquisa_reserva_IDCategoria();
             break;
         case 3:
             break;
