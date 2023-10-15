@@ -119,7 +119,7 @@ typedef struct {
 typedef struct {
     int delet;
     data inicio, fim;
-    float codQuarto;
+    float codigo, codQuarto;
 } reserva;
 
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -268,6 +268,10 @@ void salva_cadastro_reserva_bin(reserva dados);
 
 void salva_cadastro_reserva_txt(reserva dados);
 
-int valida_data(data inicio, data fim);
+int valida_data(data inicio, data fim, float id);
+
+int valida_id_acomodacao(float id);
 
 void le_todas_reservas();
+
+void exclui_reservas();
