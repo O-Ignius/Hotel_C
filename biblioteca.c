@@ -292,7 +292,7 @@ hotel le_dados_hotel() {
 
     //coleta de dados
     printf("////////// Cadastre seu HOTEL \\\\\\\\\\");
-    dados.delet = 0;
+    
     setbuf(stdin, NULL);
     printf("\n\nDigite o nome do hotel: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome_hot);
@@ -352,7 +352,7 @@ hotel le_dados_hotel() {
     setbuf(stdin, NULL);
     printf("Digite a margem de lucro dos produtos vendidos pelo hotel: ");
     scanf("%f", &dados.lucro);
-
+    dados.delet = 0;
     return dados;
 }
 
@@ -1475,7 +1475,7 @@ int verifica_Hotel() {
         printf("Erro ao abrir aquivo do hotel!");
         exit(1);
     }
-    while (fread(&hotel1, sizeof (cad_clie), 1, salva)) {
+    while (fread(&hotel1, sizeof (hotel), 1, salva)) {
         if (hotel1.delet == 0) {
             tam = 1;
             break;
@@ -1488,8 +1488,6 @@ int verifica_Hotel() {
 
 void salva_cadastro_hotel(hotel dados) {
     FILE *salva;
-    hotel hotel1;
-
 
     salva = fopen("hotel.bin", "ab");
 
@@ -1503,6 +1501,7 @@ void salva_cadastro_hotel(hotel dados) {
 
     //      abrir arquivo
     fclose(salva);
+
     salva = fopen("hotel.txt", "a");
 
     if (salva == NULL) {
@@ -1514,7 +1513,7 @@ void salva_cadastro_hotel(hotel dados) {
 
     //      Escrever no arquivo
 
-    hot = fprintf(salva, "%d;%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;\n", hotel1.delet, hotel1.nome_hot, hotel1.raz_soci, hotel1.inscri_estad, hotel1.cnpj, hotel1.email, hotel1.telefone_hot, hotel1.nome_respo, hotel1.telefone_respo, hotel1.lucro);
+    hot = fprintf(salva, "%d;%s;%s;%s;%s;%s;%0.0f;%s;%0.0f;%0.0f;", dados.delet, dados.nome_hot, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone_hot, dados.nome_respo, dados.telefone_respo, dados.lucro);
 
     if (hot < 0) {
         printf("!! Erro em salvar os dados do hotel!!");
@@ -1525,7 +1524,7 @@ void salva_cadastro_hotel(hotel dados) {
 
     //      Endereço
 
-    end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;", hotel1.local.cep, hotel1.local.cidade, hotel1.local.bairro, hotel1.local.rua, hotel1.local.numero);
+    end = fprintf(salva, "%0.0f;%s;%s;%s;%0.0f;", dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
 
     if (end < 0) {
         printf("!! Erro em salvar o endereço do hotel !!");
@@ -1534,7 +1533,7 @@ void salva_cadastro_hotel(hotel dados) {
         printf("Endereço salvo com sucesso!\n");
     }
 
-    chek = fprintf(salva, "%d;%d;%d;%d;\n", hotel1.in.hora, hotel1.in.min, hotel1.out.hora, hotel1.out.min);
+    chek = fprintf(salva, "%d;%d;%d;%d;\n", dados.in.hora, dados.in.min, dados.out.hora, dados.out.min);
 
     if (chek < 0) {
         printf("!! Erro em salvar os dados de check-in e check-out do hotel !!");
@@ -1589,7 +1588,7 @@ void exclui_hotel() {
     fclose(deletar);
 
     //TXT
-        deletar = fopen("hotel.txt", "r");
+    deletar = fopen("hotel.txt", "r");
 
     altera = fopen("temp.txt", "a");
     if (altera == NULL) {
@@ -1677,6 +1676,7 @@ void exclui_hotel() {
     remove("hotel.txt");
     //renomeia o arquivo temporário
     rename("temp.txt", "hotel.txt");
+    
 }
 
 
@@ -2168,7 +2168,7 @@ void le_todas_acomodacoes() {
             //caso não tenha sido excluido
             if (strcmp(token, "0") == 0) {
                 token = strtok(NULL, ";");
-                printf("Código do quarto: %s\n\t", token);
+                printf("\nCódigo do quarto: %s\n\t", token);
                 token = strtok(NULL, ";");
                 printf("Descrição: %s\n\t", token);
                 token = strtok(NULL, ";");
@@ -3891,48 +3891,78 @@ void exclui_reservas() {
     }
 }
 
-void pesquisa_reserva_IDCategoria(){
-    FILE *arquivo;
-    float codigoCategoria;
+void pesquisa_reserva_quantPessoas(){
+    FILE *rese_txt, *rese_bin, *acomo_bin, *acomo_txt;
+    reserva reser;
     acomodacao acomod;
-    int encontrado = 0;
+    int quantPessoas, salva_cod = -1;
+    int encontrado_bin = 0, encontrado_txt = 0;
+    char linha_rese[(sizeof(reserva))], linha_aco[(sizeof(acomodacao))], *token;
+    
+    printf("Digite a quantidade de pessoas a ser pesquisada: ");
+    scanf("%d", &quantPessoas);
 
-    printf("Digite o código da categoria de acomodação que deseja filtrar: ");
-    scanf("%f", &codigoCategoria);
-
-    arquivo = fopen("acomodacoes.bin", "rb");
-
-    if (arquivo == NULL) {
-        printf("Erro ao abrir arquivo de acomodações!");
+    //verifica no bin
+    rese_bin = fopen("reservas.bin", "rb");
+    if (rese_bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
         exit(1);
     }
 
-    while (fread(&acomod, sizeof (acomodacao), 1, arquivo)) {
-        if (acomod.delet == 0 && acomod.tipo.codigo == codigoCategoria) {
-            printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
-                    acomod.codigo, acomod.descri, acomod.facilidades);
-            printf("\nTipo da acomodação:");
-            le_tipo_acomodacao(acomod.tipo.codigo);
-            encontrado = 1;
+    //abre acomodacoes tanto txt quanto bin
+    acomo_bin = fopen("acomodacoes.bin", "rb");
+    if (acomo_bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+
+    //verificar na acomodação binaria
+    while(fread(&reser, sizeof(reserva), 1, rese_bin)) {
+        encontrado_bin = 0;
+
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_bin, 0, SEEK_SET);
+        
+        while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
+            if (reser.delet == 0 && acomod.delet == 0) {
+                    if (reser.codQuarto == acomod.codigo) {
+                        if (acomod.tipo.qnt_pessoas == quantPessoas) {
+                            encontrado_bin = 1;
+                                if (salva_cod == reser.codQuarto) {
+                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                                else {
+                                    salva_cod = reser.codQuarto;
+                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                        }
+                } else {
+                    if (acomod.tipo.qnt_pessoas == quantPessoas){
+                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f com capacidade para %d pessoa(s)", 
+                        acomod.codigo, acomod.tipo.qnt_pessoas);
+                    }
+            }
+            }
         }
     }
-    fclose(arquivo);
+     
+    acomo_txt = fopen("acomodacoes.txt", "r");
+    if (acomo_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
 
-    if(encontrado == 0){
-        char linha[(sizeof (operador))], *token;
-        arquivo = fopen("acomodacoes.txt", "r");
+    //verificar na acomodação txt
+    while(fread(&reser, sizeof(reserva), 1, rese_bin)) {
+        encontrado_bin = 0;
 
-        if (arquivo == NULL) {
-            printf("\nErro ao abrir arquivo de acomodacoes.txt!");
-            exit(1);
-        }
-
-        while (fgets(linha, sizeof (acomodacao), arquivo)) {
-            //Recebe o valor de delet e passa de string para inteiro
-            token = strtok(linha, ";");
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_txt, 0, SEEK_SET);
+        
+        while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
+            // passa os dados do txt pra variavel para facilitar comparação
+            token = strtok(linha_aco, ";");
             acomod.delet = atoi(token);
-
-            //Salta até a posição em que a quantidade de pessoas está salva quanto passa as outras informações para a variável
             token = strtok(NULL, ";");
             acomod.codigo = atoff(token);
             token = strtok(NULL, ";");
@@ -3940,6 +3970,7 @@ void pesquisa_reserva_IDCategoria(){
             token = strtok(NULL, ";");
             strcpy(acomod.facilidades, token);
             token = strtok(NULL, ";");
+            acomod.tipo.delet = atoi(token);
             token = strtok(NULL, ";");
             acomod.tipo.codigo = atoff(token);
             token = strtok(NULL, ";");
@@ -3947,71 +3978,264 @@ void pesquisa_reserva_IDCategoria(){
             token = strtok(NULL, ";");
             acomod.tipo.diaria = atoff(token);
             token = strtok(NULL, ";");
-            //Recebe o valor até primeiro caractere não numerico 
-            acomod.tipo.qnt_pessoas = atoff(token);
+            acomod.tipo.qnt_pessoas = atoi(token);
 
-            if (acomod.delet == 0 && acomod.tipo.codigo == codigoCategoria) {
-                printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
-                    acomod.codigo, acomod.descri, acomod.facilidades);
-
-                printf("\nTipo da acomodação:");    
-                    printf("\nCódigo categoria: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tQuantidade de pessoas: %d",acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.diaria, acomod.tipo.qnt_pessoas);
-                encontrado = 1;
+            if (reser.delet == 0 && acomod.delet == 0) {
+                if (reser.codQuarto == acomod.codigo) {
+                    // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
+                    if (acomod.tipo.qnt_pessoas == quantPessoas) {
+                        encontrado_bin = 1;
+                        
+                        if (encontrado_bin == 1) {
+                            if (salva_cod == reser.codQuarto) {
+                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                            else {
+                                salva_cod = reser.codQuarto;
+                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                        }
+                    } 
+                } else {
+                            if (acomod.tipo.qnt_pessoas == quantPessoas){
+                                printf("\nNão existe reservas cadastradadas para o quarto: %0.0f com capacidade para %d pessoa(s)", 
+                                acomod.codigo, acomod.tipo.qnt_pessoas);
+                            }
+                        } 
             }
         }
+    }
 
-        fclose(arquivo);
+    fclose(acomo_txt);
+
+    fclose(rese_bin);
+
+    //verifica no txt
+    rese_txt = fopen("reservas.txt", "r");
+    if (rese_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
     }
-    if(encontrado == 0){
-        printf("\nNenhum quarto encontrado!");
+
+    //verifica no acomodacoes.bin
+    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
+        //coleta dados do reservas.txt e o coloca em uma struct
+        token = strtok(linha_rese, ";");
+        reser.delet = atoi(token);
+        token = strtok(NULL, ";");
+        reser.codigo = atoff(token);
+        token = strtok(NULL, ";");
+        reser.codQuarto = atoff(token);
+        token = strtok(NULL, ";");
+        reser.inicio.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.ano = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.ano = atoi(token);
+
+        encontrado_txt = 0;
+        
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_bin, 0, SEEK_SET);
+
+        while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
+            if (reser.delet == 0 && acomod.delet == 0) {
+                if (reser.codQuarto == acomod.codigo) {
+                    if (acomod.tipo.qnt_pessoas == quantPessoas){
+                        encontrado_txt = 1;
+                        if (encontrado_bin == 1) {
+                            if (salva_cod == reser.codQuarto) {
+                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                            else {
+                                salva_cod = reser.codQuarto;
+                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                        }
+                    } 
+                } else {
+                        if (acomod.tipo.qnt_pessoas == quantPessoas){
+                            printf("\nNão existe reservas cadastradadas para o quarto: %0.0f com capacidade para %d pessoa(s)", 
+                            acomod.codigo, acomod.tipo.qnt_pessoas);
+                        }
+                    }
+            }
+        }
     }
+
+    fclose(acomo_bin);
+    
+    fclose(rese_txt);
+    
+    rese_txt = fopen("reservas.txt", "r");
+    if (rese_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+
+    acomo_txt = fopen("acomodacoes.txt", "r");
+    if (acomo_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+
+    //verifica no acomodacoes.txt
+    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
+        //coleta dados do reservas.txt e o coloca em uma struct
+        token = strtok(linha_rese, ";");
+        reser.delet = atoi(token);
+        token = strtok(NULL, ";");
+        reser.codigo = atoff(token);
+        token = strtok(NULL, ";");
+        reser.codQuarto = atoff(token);
+        token = strtok(NULL, ";");
+        reser.inicio.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.ano = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.ano = atoi(token);
+
+        encontrado_txt = 0;
+        
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_txt, 0, SEEK_SET);
+
+        while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
+            // passa os dados do txt pra variavel para facilitar comparação
+            token = strtok(linha_aco, ";");
+            acomod.delet = atoi(token);
+            token = strtok(NULL, ";");
+            acomod.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.descri, token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.facilidades, token);
+            token = strtok(NULL, ";");
+            acomod.tipo.delet = atoi(token);
+            token = strtok(NULL, ";");
+            acomod.tipo.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.tipo.descri, token);
+            token = strtok(NULL, ";");
+            acomod.tipo.diaria = atoff(token);
+            token = strtok(NULL, ";");
+            acomod.tipo.qnt_pessoas = atoi(token);
+
+            if (reser.delet == 0) {
+                if (acomod.delet == 0) {
+                    if (reser.codQuarto == acomod.codigo) {
+                        // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
+                        if (acomod.tipo.qnt_pessoas == quantPessoas){
+                            encontrado_txt = 1;
+                            
+                            if (encontrado_bin == 1) {
+                                if (salva_cod == reser.codQuarto) {
+                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                                else {
+                                    salva_cod = reser.codQuarto;
+                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                            }
+                        } 
+                    } else {
+                            if (acomod.tipo.qnt_pessoas == quantPessoas){
+                                printf("\nNão existe reservas cadastradadas para o quarto: %0.0f com capacidade para %d pessoa(s)", 
+                                acomod.codigo, acomod.tipo.qnt_pessoas);
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    fclose(acomo_txt);
+
+    fclose(rese_txt);
 }
 
-//´Quant pessoas - Parte do BIN n fucniona mas TXT ok
-void pesquisa_reserva_quantPessoas(){
-    FILE *arquivo;
-    int quantidade, encontrado = 0;
+void pesquisa_reserva_Categoria() {
+    FILE *rese_txt, *rese_bin, *acomo_bin, *acomo_txt;
+    reserva reser;
     acomodacao acomod;
+    float codigoCategoria, salva_cod = -1;
+    int encontrado_bin = 0, encontrado_txt = 0;
+    char linha_rese[(sizeof(reserva))], linha_aco[(sizeof(acomodacao))], *token;
+    
+    printf("Digite a categoria a ser pesquisada: ");
+    scanf("%f", &codigoCategoria);
 
-    printf("Digite o número de pessoas: ");
-    scanf("%d", &quantidade);
-
-    arquivo = fopen("acomodacoes.bin", "rb");
-
-    if (arquivo == NULL) {
-        printf("Erro ao abrir arquivo de acomodações!");
+    //verifica no bin
+    rese_bin = fopen("reservas.bin", "rb");
+    if (rese_bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
         exit(1);
     }
 
-    while (fread(&acomod, sizeof (acomodacao), 1, arquivo)) {
-        printf("Quant: %d", acomod.tipo.qnt_pessoas);
-        if (acomod.delet == 0 && acomod.tipo.qnt_pessoas == quantidade) {
-            printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
-                    acomod.codigo, acomod.descri, acomod.facilidades);
-            printf("\nTipo da acomodação:");
-            le_tipo_acomodacao(acomod.tipo.codigo);
-            encontrado = 1;
-        }
+    //abre acomodacoes tanto txt quanto bin
+    acomo_bin = fopen("acomodacoes.bin", "rb");
+    if (acomo_bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
     }
-    fclose(arquivo);
-    //TXT
 
-    if(encontrado == 0){
+    //verificar na acomodação binaria
+    while(fread(&reser, sizeof(reserva), 1, rese_bin)) {
+        encontrado_bin = 0;
+
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_bin, 0, SEEK_SET);
         
-        char linha[(sizeof (operador))], *token;
-        arquivo = fopen("acomodacoes.txt", "r");
+        while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
+            if (reser.delet == 0 && acomod.delet == 0) {
+                    if (reser.codQuarto == acomod.codigo) {
+                        
+                            encontrado_bin = 1;
+                                if (salva_cod == reser.codQuarto) {
+                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                                else {
+                                    salva_cod = reser.codQuarto;
+                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                        }
+                }else{
+                    if (acomod.tipo.codigo == codigoCategoria) {
+                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
+                        acomod.codigo, acomod.tipo.codigo);
+                    }
+                }
+            } 
+    }
+    acomo_txt = fopen("acomodacoes.txt", "r");
+    if (acomo_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
 
-        if (arquivo == NULL) {
-            printf("\nErro ao abrir arquivo de acomodacoes.txt!");
-            exit(1);
-        }
+    //verificar na acomodação txt
+    while(fread(&reser, sizeof(reserva), 1, rese_bin)) {
+        encontrado_bin = 0;
 
-        while (fgets(linha, sizeof (acomodacao), arquivo)) {
-            //Recebe o valor de delet e passa de string para inteiro
-            token = strtok(linha, ";");
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_txt, 0, SEEK_SET);
+        
+        while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
+            // passa os dados do txt pra variavel para facilitar comparação
+            token = strtok(linha_aco, ";");
             acomod.delet = atoi(token);
-
-            //Salta até a posição em que a quantidade de pessoas está salva quanto passa as outras informações para a variável
             token = strtok(NULL, ";");
             acomod.codigo = atoff(token);
             token = strtok(NULL, ";");
@@ -4019,6 +4243,7 @@ void pesquisa_reserva_quantPessoas(){
             token = strtok(NULL, ";");
             strcpy(acomod.facilidades, token);
             token = strtok(NULL, ";");
+            acomod.tipo.delet = atoi(token);
             token = strtok(NULL, ";");
             acomod.tipo.codigo = atoff(token);
             token = strtok(NULL, ";");
@@ -4026,33 +4251,207 @@ void pesquisa_reserva_quantPessoas(){
             token = strtok(NULL, ";");
             acomod.tipo.diaria = atoff(token);
             token = strtok(NULL, ";");
-            //Recebe o valor até primeiro caractere não numerico 
-            acomod.tipo.qnt_pessoas = atoff(token);
+            acomod.tipo.qnt_pessoas = atoi(token);
 
-            if (acomod.delet == 0 && acomod.tipo.qnt_pessoas == quantidade) {
-                printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
-                    acomod.codigo, acomod.descri, acomod.facilidades);
-
-                printf("\nTipo da acomodação:");    
-                    printf("\nCódigo categoria: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tQuantidade de pessoas: %d",acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.diaria, acomod.tipo.qnt_pessoas);
-                encontrado = 1;
+            if (reser.delet == 0 && acomod.delet == 0) {
+                if (reser.codQuarto == acomod.codigo) {
+                    // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
+                    if (acomod.tipo.codigo == codigoCategoria) {
+                        encontrado_bin = 1;
+                        
+                        if (encontrado_bin == 1) {
+                            if (salva_cod == reser.codQuarto) {
+                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                            else {
+                                salva_cod = reser.codQuarto;
+                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                        }
+                    }   
+                } else{
+                    if (acomod.tipo.codigo == codigoCategoria) {
+                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
+                        acomod.codigo, acomod.tipo.codigo);
+                    }
+                }
             }
         }
+    }
 
-        fclose(arquivo);
+    fclose(acomo_txt);
+
+    fclose(rese_bin);
+
+    //verifica no txt
+    rese_txt = fopen("reservas.txt", "r");
+    if (rese_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+
+
+    //abre acomodacoes tanto txt quanto bin
+    acomo_bin = fopen("acomodacoes.bin", "rb");
+    if (acomo_bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+
+    //verifica no acomodacoes.bin
+    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
+        //coleta dados do reservas.txt e o coloca em uma struct
+        token = strtok(linha_rese, ";");
+        reser.delet = atoi(token);
+        token = strtok(NULL, ";");
+        reser.codigo = atoff(token);
+        token = strtok(NULL, ";");
+        reser.codQuarto = atoff(token);
+        token = strtok(NULL, ";");
+        reser.inicio.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.ano = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.ano = atoi(token);
+
+        encontrado_txt = 0;
         
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_bin, 0, SEEK_SET);
+
+        while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
+            if (reser.delet == 0 && acomod.delet == 0) {
+                if (reser.codQuarto == acomod.codigo) {
+                    if (acomod.tipo.codigo == codigoCategoria){
+                        encontrado_txt = 1;
+                        if (encontrado_bin == 1) {
+                            if (salva_cod == reser.codQuarto) {
+                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                            else {
+                                salva_cod = reser.codQuarto;
+                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                        }
+                    } 
+                } else{
+                    if (acomod.tipo.codigo == codigoCategoria) {
+                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
+                        acomod.codigo, acomod.tipo.codigo);
+                    }
+                }
+            }
+        }
     }
+
+    fclose(acomo_bin);
     
-    if(encontrado == 0){
-        printf("\nNenhum quarto encontrado!");
+    fclose(rese_txt);
+    
+    rese_txt = fopen("reservas.txt", "r");
+    if (rese_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
     }
+
+    acomo_txt = fopen("acomodacoes.txt", "r");
+    if (acomo_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+
+    //verifica no acomodacoes.txt
+    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
+        //coleta dados do reservas.txt e o coloca em uma struct
+        token = strtok(linha_rese, ";");
+        reser.delet = atoi(token);
+        token = strtok(NULL, ";");
+        reser.codigo = atoff(token);
+        token = strtok(NULL, ";");
+        reser.codQuarto = atoff(token);
+        token = strtok(NULL, ";");
+        reser.inicio.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.ano = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.ano = atoi(token);
+
+        encontrado_txt = 0;
+        
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_txt, 0, SEEK_SET);
+
+        while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
+            // passa os dados do txt pra variavel para facilitar comparação
+            token = strtok(linha_aco, ";");
+            acomod.delet = atoi(token);
+            token = strtok(NULL, ";");
+            acomod.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.descri, token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.facilidades, token);
+            token = strtok(NULL, ";");
+            acomod.tipo.delet = atoi(token);
+            token = strtok(NULL, ";");
+            acomod.tipo.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.tipo.descri, token);
+            token = strtok(NULL, ";");
+            acomod.tipo.diaria = atoff(token);
+            token = strtok(NULL, ";");
+            acomod.tipo.qnt_pessoas = atoi(token);
+
+            if (reser.delet == 0) {
+                if (acomod.delet == 0) {
+                    if (reser.codQuarto == acomod.codigo) {
+                        // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
+                        if (acomod.tipo.codigo == codigoCategoria){
+                            encontrado_txt = 1;
+                            
+                            if (encontrado_bin == 1) {
+                                if (salva_cod == reser.codQuarto) {
+                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                                else {
+                                    salva_cod = reser.codQuarto;
+                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                            }
+                        }
+                    } else{
+                        if (acomod.tipo.codigo == codigoCategoria) {
+                            printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
+                            acomod.codigo, acomod.tipo.codigo);
+                        }
+                }
+                }
+            }
+        }
+    }
+
+    fclose(acomo_txt);
+
+    fclose(rese_txt);
 }
 
 void pesquisa_reserva_facilidade() {
     FILE *rese_txt, *rese_bin, *acomo_bin, *acomo_txt;
     reserva reser;
     acomodacao acomod;
-    float codigo, salva_cod = -1;
+    float salva_cod = -1;
     int encontrado_bin = 0, encontrado_txt = 0;
     char linha_rese[(sizeof(reserva))], linha_aco[(sizeof(acomodacao))], *token, facilidade[100];
     
@@ -4615,7 +5014,84 @@ void pesquisa_reserva_data() {
     }
 }
 
+/*
+void pesquisa_reserva_porTudo(){
+    FILE *ArquivoAcomoda, *ArquivoReser;
+    acomodacao acomod;
+    reserva reser;
+
+    float codigoCategoria;
+    char facilidade[100];
+    int quantidade, encontrado = 0;
+    data inicio, fim; 
+
+    printf("Digite o código da categoria de acomodação que deseja filtrar: ");
+    scanf("%f", &codigoCategoria);
+
+    printf("Digite o número de pessoas: ");
+    scanf("%d", &quantidade);
+
+    printf("Digite a facilidade a ser pesquisada: \n");
+    scanf("%s", facilidade);
+
+    printf("Data Inicial: \n");
+    inicio = le_dados_data();
+    printf("Data Final: \n");
+    fim = le_dados_data();
+
+    ArquivoAcomoda = fopen("acomodacoes.bin","rb");
+    ArquivoReser = fopen("reservas.bin","rb");
+
+    if (ArquivoAcomoda == NULL) {
+        printf("Erro ao abrir acomod de acomodações!");
+        exit(1);
+    }
+
+    
+        
+        while(fread(&reser, sizeof(reserva), 1, ArquivoReser)) {
+        encontrado = 0;
+
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_bin, 0, SEEK_SET);
+        
+        while(fread(&acomod, sizeof(acomodacao), 1, ArquivoAcomoda)) {
+            if (reser.delet == 0) {
+                if (acomod.delet == 0) {
+                    if (reser.codQuarto == acomod.codigo) {
+                        // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
+                        if (strstr(acomod.facilidades, facilidade) != NULL) {
+                            encontrado = 1;
+                            
+                            if (encontrado == 1) {
+                                if (salva_cod == reser.codQuarto) {
+                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                                else {
+                                    salva_cod = reser.codQuarto;
+                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (acomod.delet == 0 && acomod.tipo.codigo == codigoCategoria && acomod.tipo.qnt_pessoas == quantidade) {
+                printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
+                        acomod.codigo, acomod.descri, acomod.facilidades);
+                printf("\nTipo da acomodação:");
+                le_tipo_acomodacao(acomod.tipo.codigo);
+                encontrado = 1;
+            }
+        }
+    }
+
+        
+    }
+*/
+
 void pesquisa_reserva() {
+
     FILE *rese_txt, *rese_bin, *acomo_bin, *acomo_txt;
     reserva reser;
     acomodacao acomod;
@@ -4631,10 +5107,10 @@ void pesquisa_reserva() {
             pesquisa_reserva_data();
             break;
         case 2:
-            pesquisa_reserva_IDCategoria();
+            pesquisa_reserva_Categoria();
             break;
         case 3:
-        pesquisa_reserva_quantPessoas();
+            pesquisa_reserva_quantPessoas();
             break;
         case 4:
             pesquisa_reserva_facilidade();

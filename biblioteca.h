@@ -209,6 +209,8 @@ void altera_tipo_acomodacao();
 
 void remover_tipo_acomodacao();
 
+int valida_id_acomodacao(float id);
+
 // geral
 
 void salva_cadastro_acomodacao_txt(acomodacao dados);
@@ -270,14 +272,17 @@ void salva_cadastro_reserva_txt(reserva dados);
 
 int valida_data(data inicio, data fim, float id);
 
-int valida_id_acomodacao(float id);
-
 void le_todas_reservas();
 
 void exclui_reservas();
+
+void pesquisa_reserva_Categoria();
+
+void pesquisa_reserva_quantPessoas();
 
 void pesquisa_reserva_facilidade();
 
 void pesquisa_reserva_data();
 
 void pesquisa_reserva();
+

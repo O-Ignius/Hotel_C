@@ -1,3 +1,0 @@
-1;2;boaaaaaaaaaaaaaa;1000.00;100;1;Ihull;200.00;3;
-0;1;Demaizi;200.00;3;
-0;2;aaaaaaa;23.00;1;
