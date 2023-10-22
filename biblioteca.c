@@ -87,11 +87,9 @@ int selecionarTipoArquivo() {
 
 float retorna_id(char *nome_txt, char *nome_bin, int tam) {
     FILE *txt, *bin;
-    // cria variaveis so pra ver se o número é diferente ou não do ID
-    int dif_txt = 0, dif_bin = 0;
-    //variaveis para guardar os ID's
-    float id_livre = 0, id_bin = 0, id_txt = 0;
-    char linha[300], *token;
+    int tamanho = 0;
+    char linha[300];
+    void *aux = malloc(tam);
 
     txt = fopen(nome_txt, "r");
     if (txt == NULL) {
@@ -104,99 +102,38 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam) {
         printf("Erro de abertura de arquivo bin!");
         exit(1);
     }
-
-    /* posiciona o cursor dentro do arquivo binário 1 posição (int) a frente com relação ao inicio, já que a primeira posição somente
-    diz se o arquivo foi ou não excluido lógicamente */
-    fseek(bin, sizeof (int), SEEK_CUR);
-
-    // pega linha a linha do arquivo txt e a coloca em uma string
-    while (fgets(linha, sizeof (linha), txt) != NULL) {
-        dif_bin = 0;
-        dif_txt = 0;
-
-        //corta a string até achar um ";" e adereça o resultado a uma variavel do tipo ponteiro, esse primeiro endereço seria o delet da struct
-        token = strtok(linha, ";");
-        //corta a string novamente para coletar o valor do id
-        token = strtok(NULL, ";");
-        //transforma o tipo da string cortada pra um tipo inteiro e salva ele em uma variavel
-        id_txt = atoff(token);
-        //caso não tenha diferença entre o id_txt e o id_livre (basicamente pra iniciar)
-        //inicia verificação no arquivo txt
-        while (dif_txt == 0) {
-            if (id_livre != id_txt) {
-                //inicia a verifição no arquivo binário
-                if (id_livre != id_bin) {
-                    if (id_bin > id_txt) {
-                        /* Enquanto não houver diferença, ele tentará comparar se há diferença entre o id_bin e o id_livre
-                         caso ache a diferença ele define a variavel dif_bin = 1 e quebra o loop.
-                         Caso não ache, quer dizer que é igual, logo, ele aumenta em 1 o id_livre e verifica novamente
-                         Avançando a posição do cursor com relação ao tamanho da struct e parando antes do float de ID*/
-                        while (dif_bin == 0) {
-                            if ((id_livre != id_bin)) {
-                                dif_bin = 1;
-                                break;
-                            } else {
-                                id_livre++;
-                                fseek(bin, tam, SEEK_CUR);
-                                break;
-                            }
-                        }
-                    }//se o id_bin for menor que o id_txt
-                    else {
-                        while (fread(&id_bin, sizeof (float), 1, bin)) {
-                            while (dif_bin == 0) {
-                                if ((id_livre != id_bin)) {
-                                    dif_bin = 1;
-                                    break;
-                                } else {
-                                    id_livre++;
-                                    fseek(bin, tam, SEEK_CUR);
-                                    break;
-                                }
-                            }
-
-                            if (dif_bin == 1) {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (id_txt == id_livre) {
-                        id_livre++;
-                    } else {
-                        dif_txt = 1;
-                    }
-                }//se o id_bin for igual ao id_livre, id_livre aumenta em 1 e a posição do cursor avança com relação ao tamanho da struct
-                else {
-                    id_livre++;
-                    fseek(bin, tam, SEEK_CUR);
-                }
-            }//caso o id_livre é igual ao txt
-            else {
-                id_livre++;
-            }
-        }
+    
+    while(fgets(linha, sizeof(linha), txt)){
+        tamanho++;
     }
-
+    
+    while(fread(aux, tam, 1, bin)){
+        tamanho++;
+    }
+    
     //fecha binario
     fclose(bin);
 
     //fecha txt
     fclose(txt);
-
-    return id_livre;
+    
+    //libera alocação dinamica
+    free(aux);
+    
+    return tamanho;
 }
 
 //    Coleta dados:
 
 cad_clie le_dados_cad() {
     char bin[30] = "cliente.bin", txt[30] = "cliente.txt";
+    int tam = sizeof(cad_clie);
 
     cad_clie dados;
 
     dados.delet = 0;
 
-    dados.codigo = retorna_id(txt, bin, tam_clientes());
+    dados.codigo = retorna_id(txt, bin, tam);
 
     setbuf(stdin, NULL);
 
@@ -360,13 +297,14 @@ cate_aco le_dados_categ_acomod() {
     //variaveis
     cate_aco dados;
     char bin[30] = "categoria_acomo.bin", txt[30] = "categoria_acomo.txt";
+    int tam = sizeof(cate_aco);
 
     //coleta de dados
     dados.delet = 0;
-    dados.codigo = retorna_id(txt, bin, tam_categ_acomod());
+    dados.codigo = retorna_id(txt, bin, tam);
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
-    scanf("%[^\n]s", dados.descri);
+    scanf("%[^\n]", dados.descri);
     setbuf(stdin, NULL);
     printf("Digite o valor da diária: \n");
     scanf("%f", &dados.diaria);
@@ -381,10 +319,11 @@ cate_aco le_dados_categ_acomod() {
 acomodacao le_dados_acomod() {
     //variaveis
     char txt[30] = "acomodacoes.txt", bin[30] = "acomodacoes.bin";
+    int tam = sizeof(acomodacao);
     acomodacao dados;
 
     //coleta de dados
-    dados.codigo = retorna_id(txt, bin, tam_acomodacao());
+    dados.codigo = retorna_id(txt, bin, tam);
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
     scanf("%[^\n]s", dados.descri);
@@ -400,9 +339,10 @@ produto le_dados_produto() {
     // variaveis
     produto dados;
     char txt[30] = "produtos.txt", bin[30] = "produtos.bin";
+    int tam = sizeof(produto);
 
     //coleta dados
-    dados.codigo = retorna_id(txt, bin, tam_produto());
+    dados.codigo = retorna_id(txt, bin, tam);
     setbuf(stdin, NULL);
     printf("Digite a descrição do produto: \n");
     scanf("%[a-z A-Z][^\n]s", dados.descricao);
@@ -426,9 +366,10 @@ fornecedor le_dados_fornecedor() {
     //variaveis
     fornecedor dados;
     char txt[30] = "fornecedores.txt", bin[30] = "fornecedores.bin";
+    int tam = sizeof(fornecedor);
     
     //coleta dados
-    dados.codigo = retorna_id(txt, bin, tam_fornecedor());
+    dados.codigo = retorna_id(txt, bin, tam);
     setbuf(stdin, NULL);
     printf("Digite o nome do fornecedor: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -473,9 +414,10 @@ operador le_dados_operador() {
     //variaveis
     operador dados;
     char txt[30] = "operadores.txt", bin[30] = "operadores.bin";
+    int tam = sizeof(operador);
 
     //coleta dados
-    dados.codigo = retorna_id(txt, bin, tam_operador());
+    dados.codigo = retorna_id(txt, bin, tam);
     setbuf(stdin, NULL);
     printf("Digite o nome do operador: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -525,9 +467,10 @@ data le_dados_data() {
 reserva le_dados_reserva() {
     reserva dados;
     char txt[30] = "reservas.txt", bin[30] = "reservas.bin";
+    int tam = sizeof(reserva);
 
     dados.delet = 0;
-    dados.codigo = retorna_id(txt, bin, tam_reserva());
+    dados.codigo = retorna_id(txt, bin, tam);
     
     printf("Digite o código do quarto: ");
     scanf("%f", &dados.codQuarto);
