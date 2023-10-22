@@ -392,9 +392,6 @@ acomodacao le_dados_acomod() {
     printf("Digite as facilidades da acomodação (como ar condicionado, TV, ...): \n");
     scanf("%[^\n]s", dados.facilidades);
     setbuf(stdin, NULL);
-    printf("Digite o código do tipo de acomodação:\n");
-    scanf("%f", &dados.tipo.codigo);
-    setbuf(stdin, NULL);
     dados.delet = 0;
     return dados;
 }
@@ -1169,10 +1166,11 @@ void le_todos_cadastro_pessoa() {
 }
 
 void alteraCliente() {
-    FILE *arquivoBin;
+    FILE *arquivoBin, *le, *altera;
     cad_clie cliente, novo;
     int encontrado = 0;
     float codigo;
+    char linha[(sizeof(cad_clie))], *token;
 
     //      abrir arquivo
     arquivoBin = fopen("cliente.bin", "rb+wb");
@@ -1207,26 +1205,6 @@ void alteraCliente() {
     fclose(arquivoBin);
 
     if (encontrado == 0) {
-        FILE *le, *altera;
-
-        int tam = 0, i = 0;
-
-        char linha[(sizeof (cad_clie))], *token;
-
-        le = fopen("cliente.txt", "r");
-        if (le == NULL) {
-            printf("Erro de abertura de arquivo!\n");
-            exit(1);
-        }
-
-        //verificar quantas linhas:
-        while (fgets(linha, sizeof (cad_clie), le) != NULL) {
-            tam++;
-        }
-
-        //cria um vetor de struct do tipo cad_clie variante a quantia de linha do arquivo
-        cad_clie txt[tam];
-
         le = fopen("cliente.txt", "r");
         if (le == NULL) {
             printf("Erro de abertura de arquivo!\n");
@@ -1245,89 +1223,86 @@ void alteraCliente() {
             token = strtok(linha, ";");
             //compara o primeiro dado, caso ele seja 0, o arquivo não foi excluido
             if (strcmp(token, "0") == 0) {
-                txt[i].delet = atoi(token);
+                cliente.delet = atoi(token);
                 token = strtok(NULL, ";");
-                txt[i].codigo = atoff(token);
+                cliente.codigo = atoff(token);
 
                 //se o código foi igual ao digitado ele altera
-                if (txt[i].codigo == codigo) {
-                    txt[i] = le_dados_cad();
-                    txt[i].codigo = codigo;
+                if (cliente.codigo == codigo) {
+                    cliente = le_dados_cad();
+                    cliente.codigo = codigo;
                     encontrado = 1;
                 }//caso o código digitado seja diferente
                 else {
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].nome, token);
+                    strcpy(cliente.nome, token);
                     token = strtok(NULL, ";");
-                    txt[i].cpf = atoff(token);
+                    cliente.cpf = atoff(token);
                     token = strtok(NULL, ";");
-                    txt[i].telefone = atoff(token);
+                    cliente.telefone = atoff(token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].email, token);
+                    strcpy(cliente.email, token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].sexo, token);
+                    strcpy(cliente.sexo, token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].estado_civil, token);
+                    strcpy(cliente.estado_civil, token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].nascimento, token);
+                    strcpy(cliente.nascimento, token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].local.estado, token);
+                    strcpy(cliente.local.estado, token);
                     token = strtok(NULL, ";");
-                    txt[i].local.cep = atoff(token);
+                    cliente.local.cep = atoff(token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].local.cidade, token);
+                    strcpy(cliente.local.cidade, token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].local.bairro, token);
+                    strcpy(cliente.local.bairro, token);
                     token = strtok(NULL, ";");
-                    strcpy(txt[i].local.rua, token);
+                    strcpy(cliente.local.rua, token);
                     token = strtok(NULL, ";");
-                    txt[i].local.numero = atoff(token);
+                    cliente.local.numero = atoff(token);
                 }
             }//caso os dados já tenham sido deletados
             else {
-                txt[i].delet = atoi(token);
+                cliente.delet = atoi(token);
                 token = strtok(NULL, ";");
-                txt[i].codigo = atoff(token);
+                cliente.codigo = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].nome, token);
+                strcpy(cliente.nome, token);
                 token = strtok(NULL, ";");
-                txt[i].cpf = atoff(token);
+                cliente.cpf = atoff(token);
                 token = strtok(NULL, ";");
-                txt[i].telefone = atoff(token);
+                cliente.telefone = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].email, token);
+                strcpy(cliente.email, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].sexo, token);
+                strcpy(cliente.sexo, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].estado_civil, token);
+                strcpy(cliente.estado_civil, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].nascimento, token);
+                strcpy(cliente.nascimento, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.estado, token);
+                strcpy(cliente.local.estado, token);
                 token = strtok(NULL, ";");
-                txt[i].local.cep = atoff(token);
+                cliente.local.cep = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.cidade, token);
+                strcpy(cliente.local.cidade, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.bairro, token);
+                strcpy(cliente.local.bairro, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.rua, token);
+                strcpy(cliente.local.rua, token);
                 token = strtok(NULL, ";");
-                txt[i].local.numero = atoff(token);
+                cliente.local.numero = atoff(token);
             }
 
             //salva os dados no arquivo temporario altera 
-            fprintf(altera, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
-            fprintf(altera, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
-
-            i++;
+            fprintf(altera, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", cliente.delet, cliente.codigo, cliente.nome, cliente.cpf, cliente.telefone, cliente.email, cliente.sexo, cliente.estado_civil, cliente.nascimento);
+            fprintf(altera, "%s;%0.0f;%s;%s;%s;%0.0f;\n", cliente.local.estado, cliente.local.cep, cliente.local.cidade, cliente.local.bairro, cliente.local.rua, cliente.local.numero);
         }
 
         fclose(altera);
         fclose(le);
-        if (remove("cliente.txt") == 0 && rename("temp.txt", "cliente.txt")) {
-            printf("\nDeu\n");
-        }
+        remove("cliente.txt");
+        rename("temp.txt", "cliente.txt");
     }
 
     if (encontrado == 1) {
@@ -1374,23 +1349,6 @@ void removeCliente() {
     if (encontrado == 0) {
         FILE *remover, *le;
         char linha[(sizeof (cad_clie))], *token;
-        int tam = 0, i = 0, encontrado = 0;
-
-        le = fopen("cliente.txt", "r");
-        if (le == NULL) {
-            printf("Erro de abertura de arquivo!\n");
-            exit(1);
-        }
-
-        //verificar quantas linhas:
-        while (fgets(linha, sizeof (cad_clie), le) != NULL) {
-            tam++;
-        }
-
-        fclose(le);
-
-        cad_clie txt[tam];
-
         le = fopen("cliente.txt", "r");
         if (le == NULL) {
             printf("Erro de abertura de arquivo!\n");
@@ -1405,60 +1363,58 @@ void removeCliente() {
 
         while (fgets(linha, sizeof (cad_clie), le) != NULL) {
             token = strtok(linha, ";");
-            txt[i].delet = atoi(token);
+            cliente.delet = atoi(token);
             token = strtok(NULL, ";");
-            txt[i].codigo = atoff(token);
+            cliente.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].nome, token);
+            strcpy(cliente.nome, token);
             token = strtok(NULL, ";");
-            txt[i].cpf = atoff(token);
+            cliente.cpf = atoff(token);
             token = strtok(NULL, ";");
-            txt[i].telefone = atoff(token);
+            cliente.telefone = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].email, token);
+            strcpy(cliente.email, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].sexo, token);
+            strcpy(cliente.sexo, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].estado_civil, token);
+            strcpy(cliente.estado_civil, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].nascimento, token);
+            strcpy(cliente.nascimento, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.estado, token);
+            strcpy(cliente.local.estado, token);
             token = strtok(NULL, ";");
-            txt[i].local.cep = atoff(token);
+            cliente.local.cep = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.cidade, token);
+            strcpy(cliente.local.cidade, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.bairro, token);
+            strcpy(cliente.local.bairro, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.rua, token);
+            strcpy(cliente.local.rua, token);
             token = strtok(NULL, ";");
-            txt[i].local.numero = atoff(token);
+            cliente.local.numero = atoff(token);
 
-            if (txt[i].codigo == codigo) {
-                txt[i].delet = 1;
-                fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
-                fprintf(remover, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
+            if (cliente.codigo == codigo) {
+                cliente.delet = 1;
+                fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", cliente.delet, cliente.codigo, cliente.nome, cliente.cpf, cliente.telefone, cliente.email, cliente.sexo, cliente.estado_civil, cliente.nascimento);
+                fprintf(remover, "%s;%0.0f;%s;%s;%s;%0.0f;\n", cliente.local.estado, cliente.local.cep, cliente.local.cidade, cliente.local.bairro, cliente.local.rua, cliente.local.numero);
                 encontrado = 1;
             } else {
-                fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].cpf, txt[i].telefone, txt[i].email, txt[i].sexo, txt[i].estado_civil, txt[i].nascimento);
-                fprintf(remover, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
+                fprintf(remover, "%d;%0.0f;%s;%0.0f;%0.0f;%s;%s;%s;%s;", cliente.delet, cliente.codigo, cliente.nome, cliente.cpf, cliente.telefone, cliente.email, cliente.sexo, cliente.estado_civil, cliente.nascimento);
+                fprintf(remover, "%s;%0.0f;%s;%s;%s;%0.0f;\n", cliente.local.estado, cliente.local.cep, cliente.local.cidade, cliente.local.bairro, cliente.local.rua, cliente.local.numero);
             }
-
-            i++;
         }
 
         fclose(remover);
         fclose(le);
 
-        if (encontrado == 0) {
-            printf("Cliente não encontrado!\n");
-        } else {
-            printf("Cliente excluido com sucesso!\n");
-        }
-
         remove("cliente.txt");
         rename("temp.txt", "cliente.txt");
+    }
+    
+    if (encontrado == 0) {
+        printf("Cliente não encontrado!\n");
+    } else {
+        printf("Cliente excluido com sucesso!\n");
     }
 }
 
@@ -1862,20 +1818,6 @@ void altera_tipo_acomodacao() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (cate_aco), le) != NULL) {
-            tam++;
-        }
-
-        fclose(le);
-
-        cate_aco dados[tam];
-
-        le = fopen("categoria_acomo.txt", "r");
-        if (le == NULL) {
-            printf("Erro na abertura do arquivo das categorias de acomodações! \n");
-            exit(1);
-        }
-
         altera = fopen("temp.txt", "a");
         if (altera == NULL) {
             printf("Erro na abertura do arquivo das categorias de acomodações! \n");
@@ -1886,48 +1828,47 @@ void altera_tipo_acomodacao() {
             token = strtok(linha, ";");
 
             if (strcmp(token, "0") == 0) {
-                dados[i].delet = atoi(token);
+                acomodacao.delet = atoi(token);
                 token = strtok(NULL, ";");
-                dados[i].codigo = atoff(token);
+                acomodacao.codigo = atoff(token);
 
-                if (dados[i].codigo == codigo) {
-                    dados[i] = le_dados_categ_acomod();
-                    dados[i].codigo = codigo;
+                if (acomodacao.codigo == codigo) {
+                    acomodacao = le_dados_categ_acomod();
+                    acomodacao.codigo = codigo;
                     encontrado = 1;
                 } else {
                     token = strtok(NULL, ";");
-                    strcpy(dados[i].descri, token);
+                    strcpy(acomodacao.descri, token);
                     token = strtok(NULL, ";");
-                    dados[i].diaria = atoff(token);
+                    acomodacao.diaria = atoff(token);
                     token = strtok(NULL, ";");
-                    dados[i].qnt_pessoas = atoi(token);
+                    acomodacao.qnt_pessoas = atoi(token);
                 }
             } else {
-                dados[i].delet = atoi(token);
+                acomodacao.delet = atoi(token);
                 token = strtok(NULL, ";");
-                dados[i].codigo = atoff(token);
+                acomodacao.codigo = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(dados[i].descri, token);
+                strcpy(acomodacao.descri, token);
                 token = strtok(NULL, ";");
-                dados[i].diaria = atoff(token);
+                acomodacao.diaria = atoff(token);
                 token = strtok(NULL, ";");
-                dados[i].qnt_pessoas = atoi(token);
+                acomodacao.qnt_pessoas = atoi(token);
             }
 
-            fprintf(altera, "%d;%0.0f;%s;%0.2f;%d", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].diaria, dados[i].qnt_pessoas);
-            i++;
+            fprintf(altera, "%d;%0.0f;%s;%0.2f;%d", acomodacao.delet, acomodacao.codigo, acomodacao.descri, acomodacao.diaria, acomodacao.qnt_pessoas);
         }
         fclose(altera);
         fclose(le);
 
-        if (encontrado == 1) {
-            printf("Dados alterados com sucesso!\n");
-        } else {
-            printf("Código digitado não encontrado!\n");
-        }
-
         remove("categoria_acomo.txt");
         rename("temp.txt", "categoria_acomo.txt");
+    }
+    
+    if (encontrado == 1) {
+        printf("Dados alterados com sucesso!\n");
+    } else {
+        printf("Código digitado não encontrado!\n");
     }
 }
 
@@ -1967,20 +1908,6 @@ void remover_tipo_acomodacao() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (cate_aco), le) != NULL) {
-            tam++;
-        }
-
-        fclose(le);
-
-        cate_aco dados[tam];
-
-        le = fopen("categoria_acomo.txt", "r");
-        if (le == NULL) {
-            printf("Erro na abertura do arquivo das categorias de acomodações! \n");
-            exit(1);
-        }
-
         remover = fopen("temp.txt", "a");
         if (remover == NULL) {
             printf("Erro na abertura do arquivo das categorias de acomodações! \n");
@@ -1989,35 +1916,34 @@ void remover_tipo_acomodacao() {
 
         while (fgets(linha, sizeof (cate_aco), le) != NULL) {
             token = strtok(linha, ";");
-            dados[i].delet = atoi(token);
+            acomodacao.delet = atoi(token);
 
             if (strcmp(token, "0") == 0) {
                 token = strtok(NULL, ";");
-                dados[i].codigo = atoff(token);
+                acomodacao.codigo = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(dados[i].descri, token);
+                strcpy(acomodacao.descri, token);
                 token = strtok(NULL, ";");
-                dados[i].diaria = atoff(token);
+                acomodacao.diaria = atoff(token);
                 token = strtok(NULL, ";");
-                dados[i].qnt_pessoas = atoi(token);
+                acomodacao.qnt_pessoas = atoi(token);
 
-                if (dados[i].codigo == codigo) {
-                    dados[i].delet = 1;
+                if (acomodacao.codigo == codigo) {
+                    acomodacao.delet = 1;
                     encontrado = 1;
                 }
             } else {
                 token = strtok(NULL, ";");
-                dados[i].codigo = atoff(token);
+                acomodacao.codigo = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(dados[i].descri, token);
+                strcpy(acomodacao.descri, token);
                 token = strtok(NULL, ";");
-                dados[i].diaria = atoff(token);
+                acomodacao.diaria = atoff(token);
                 token = strtok(NULL, ";");
-                dados[i].qnt_pessoas = atoi(token);
+                acomodacao.qnt_pessoas = atoi(token);
             }
 
-            fprintf(remover, "%d;%0.0f;%s;%0.2f;%d", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].diaria, dados[i].qnt_pessoas);
-            i++;
+            fprintf(remover, "%d;%0.0f;%s;%0.2f;%d", acomodacao.delet, acomodacao.codigo, acomodacao.descri, acomodacao.diaria, acomodacao.qnt_pessoas);
         }
 
         fclose(remover);
@@ -2044,14 +1970,13 @@ void salva_cadastro_acomodacao_txt(acomodacao dados) {
     acomodacao dados_geral = dados;
     cate_aco dados_tipo;
 
+    le_todos_tipo_acomodacao();
+    setbuf(stdin, NULL);
+    printf("Digite o código do tipo de acomodação:\n");
+    scanf("%f", &codigo);
+    setbuf(stdin, NULL);
+    
     while (valido == 0) {
-        le_todos_tipo_acomodacao();
-
-        setbuf(stdin, NULL);
-        printf("Digite o código do tipo de acomodação:\n");
-        scanf("%f", &codigo);
-        setbuf(stdin, NULL);
-
         salva = fopen("acomodacoes.txt", "a");
         if (salva == NULL) {
             printf("Erro ao abrir arquivo!\n");
@@ -2121,15 +2046,78 @@ void salva_cadastro_acomodacao_txt(acomodacao dados) {
 }
 
 void salva_cadastro_acomodacao_bin(acomodacao dados) {
-    FILE *arquivo;
-
+    FILE *arquivo, *tipo;
+    float codigo;
+    int valido = 0;
+    char linha[(sizeof (cate_aco))], *token;
+    acomodacao dados_geral = dados;
+    cate_aco dados_tipo;
+    
+    le_todos_tipo_acomodacao();
+    setbuf(stdin, NULL);
+    printf("Digite o código do tipo de acomodação:\n");
+    scanf("%f", &codigo);
+    setbuf(stdin, NULL);
+    
     arquivo = fopen("acomodacoes.bin", "ab");
 
     if (arquivo == NULL) {
         printf("Erro ao abrir arquivo de acomodações!");
     } else {
-        fwrite(&dados, sizeof (acomodacao), 1, arquivo);
-        printf("Acomodação cadastrada com sucesso!");
+        while(valido == 0) {
+            tipo = fopen("categoria_acomo.txt", "r");
+            if (tipo == NULL) {
+                printf("Erro ao abrir arquivo!\n");
+                exit(1);
+            } 
+            
+            while (fgets(linha, sizeof (cate_aco), tipo)) {
+                token = strtok(linha, ";");
+                dados_tipo.delet = atoi(token);
+
+                if (dados_tipo.delet == 0) {
+                    token = strtok(NULL, ";");
+                    dados_tipo.codigo = atoff(token);
+                    if (dados_tipo.codigo == codigo) {
+                        token = strtok(NULL, ";");
+                        strcpy(dados_tipo.descri, token);
+                        token = strtok(NULL, ";");
+                        dados_tipo.diaria = atoff(token);
+                        token = strtok(NULL, ";");
+                        dados_tipo.qnt_pessoas = atoi(token);
+                        valido = 1;
+
+                        dados_geral.tipo = dados_tipo;
+                    }
+                }
+            }
+
+            fclose(tipo);
+
+            if (valido == 0) {
+                tipo = fopen("categoria_acomo.bin", "rb");
+                if (tipo == NULL) {
+                    printf("Erro ao abrir arquivo!\n");
+                    exit(1);
+                }
+
+                while (fread(&dados_tipo, sizeof (cate_aco), 1, tipo)) {
+                    if (dados_tipo.delet == 0 && dados_tipo.codigo == codigo) {
+                        dados_geral.tipo = dados_tipo;
+                        valido = 1;
+                    }
+                }
+
+                fclose(tipo);
+            }
+
+            if (valido == 1) {
+                fwrite(&dados_geral, sizeof (acomodacao), 1, arquivo);
+                printf("Acomodação cadastrada com sucesso!");
+            } else {
+                printf("Código da acomodação é inválido!\n");
+            }
+        }
     }
     fclose(arquivo);
 }
@@ -2152,7 +2140,9 @@ void le_todas_acomodacoes() {
             printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
                     acomod.codigo, acomod.descri, acomod.facilidades);
             printf("\nTipo da acomodação:");
-            le_tipo_acomodacao(acomod.tipo.codigo);
+            codigo = acomod.tipo.codigo;
+            le_tipo_acomodacao(codigo);
+            printf("\n");
         }
     }
     fclose(arquivo);
@@ -2222,20 +2212,6 @@ void altera_acomodacoes() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (acomodacao), le)) {
-            tam++;
-        }
-
-        fclose(le);
-
-        acomodacao dados[tam];
-
-        le = fopen("acomodacoes.txt", "r");
-        if (le == NULL) {
-            printf("Erro de abertura de arquivo acomodacoes.txt!\n");
-            exit(1);
-        }
-
         altera = fopen("temp.txt", "a");
         if (le == NULL) {
             printf("Erro de criação de arquivo temp.txt!\n");
@@ -2244,30 +2220,30 @@ void altera_acomodacoes() {
 
         while (fgets(linha, sizeof (acomodacao), le)) {
             token = strtok(linha, ";");
-            dados[i].delet = atoi(token);
+            acomod.delet = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].codigo = atoff(token);
+            acomod.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].descri, token);
+            strcpy(acomod.descri, token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].facilidades, token);
+            strcpy(acomod.facilidades, token);
             token = strtok(NULL, ";");
-            dados[i].tipo.delet = atoi(token);
+            acomod.tipo.delet = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].tipo.codigo = atoff(token);
+            acomod.tipo.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].tipo.descri, token);
+            strcpy(acomod.tipo.descri, token);
             token = strtok(NULL, ";");
-            dados[i].tipo.diaria = atoff(token);
+            acomod.tipo.diaria = atoff(token);
             token = strtok(NULL, ";");
-            dados[i].tipo.qnt_pessoas = atoi(token);
+            acomod.tipo.qnt_pessoas = atoi(token);
 
-            if (dados[i].delet == 0) {
-                if (dados[i].codigo == codigo) {
-                    tipo_aco = dados[i].tipo;
-                    dados[i] = le_dados_acomod();
-                    dados[i].codigo = codigo;
-                    dados[i].tipo = tipo_aco;
+            if (acomod.delet == 0) {
+                if (acomod.codigo == codigo) {
+                    tipo_aco = acomod.tipo;
+                    acomod = le_dados_acomod();
+                    acomod.codigo = codigo;
+                    acomod.tipo = tipo_aco;
                     encontrado = 1;
 
                     printf("Deseja editar o tipo de acomodação?\n    1- Sim    2- Não\n");
@@ -2295,14 +2271,14 @@ void altera_acomodacoes() {
                                     token = strtok(NULL, ";");
 
                                     if (strcmp(token, cod_str) == 0) {
-                                        dados[i].tipo.delet = 0;
-                                        dados[i].tipo.codigo = atoff(token);
+                                        acomod.tipo.delet = 0;
+                                        acomod.tipo.codigo = atoff(token);
                                         token = strtok(NULL, ";");
-                                        strcpy(dados[i].tipo.descri, token);
+                                        strcpy(acomod.tipo.descri, token);
                                         token = strtok(NULL, ";");
-                                        dados[i].tipo.diaria = atoff(token);
+                                        acomod.tipo.diaria = atoff(token);
                                         token = strtok(NULL, ";");
-                                        dados[i].tipo.diaria = atoi(token);
+                                        acomod.tipo.diaria = atoi(token);
                                         alterado = 1;
                                     }
                                 }
@@ -2319,11 +2295,11 @@ void altera_acomodacoes() {
 
                                 while (fread(&tipo_aco, sizeof (cate_aco), 1, tipo)) {
                                     if (tipo_aco.delet == 0 && tipo_aco.codigo == tipo_cod) {
-                                        dados[i].tipo.delet = tipo_aco.delet;
-                                        dados[i].tipo.codigo = tipo_aco.codigo;
-                                        strcpy(dados[i].tipo.descri, tipo_aco.descri);
-                                        dados[i].tipo.diaria = tipo_aco.diaria;
-                                        dados[i].tipo.qnt_pessoas = tipo_aco.qnt_pessoas;
+                                        acomod.tipo.delet = tipo_aco.delet;
+                                        acomod.tipo.codigo = tipo_aco.codigo;
+                                        strcpy(acomod.tipo.descri, tipo_aco.descri);
+                                        acomod.tipo.diaria = tipo_aco.diaria;
+                                        acomod.tipo.qnt_pessoas = tipo_aco.qnt_pessoas;
                                         alterado = 1;
                                     }
                                 }
@@ -2333,7 +2309,7 @@ void altera_acomodacoes() {
 
                             break;
                         case 2:
-                            dados[i].tipo = tipo_aco;
+                            acomod.tipo = tipo_aco;
                             break;
                         default:
                             printf("Opção inválida!\n");
@@ -2341,13 +2317,11 @@ void altera_acomodacoes() {
                 }
             }
 
-            salvar = fprintf(altera, "%d;%0.0f;%s;%s;%d;%0.0f;%s;%0.2f;%d;\n", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].facilidades, dados[i].tipo.delet, dados[i].tipo.codigo, dados[i].tipo.descri, dados[i].tipo.diaria, dados[i].tipo.qnt_pessoas);
+            salvar = fprintf(altera, "%d;%0.0f;%s;%s;%d;%0.0f;%s;%0.2f;%d;\n", acomod.delet, acomod.codigo, acomod.descri, acomod.facilidades, acomod.tipo.delet, acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.diaria, acomod.tipo.qnt_pessoas);
             if (salvar < 0) {
                 printf("Erro no salvamento do arquivo!\n");
                 exit(1);
             }
-
-            i++;
         }
 
         fclose(le);
@@ -2420,38 +2394,36 @@ void exclui_acomodacoes() {
 
         while (fgets(linha, sizeof (acomodacao), le)) {
             token = strtok(linha, ";");
-            dados[i].delet = atoi(token);
+            acomod.delet = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].codigo = atoff(token);
+            acomod.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].descri, token);
+            strcpy(acomod.descri, token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].facilidades, token);
+            strcpy(acomod.facilidades, token);
             token = strtok(NULL, ";");
-            dados[i].tipo.delet = atoi(token);
+            acomod.tipo.delet = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].tipo.codigo = atoff(token);
+            acomod.tipo.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].tipo.descri, token);
+            strcpy(acomod.tipo.descri, token);
             token = strtok(NULL, ";");
-            dados[i].tipo.diaria = atoff(token);
+            acomod.tipo.diaria = atoff(token);
             token = strtok(NULL, ";");
-            dados[i].tipo.qnt_pessoas = atoi(token);
+            acomod.tipo.qnt_pessoas = atoi(token);
 
-            if (dados[i].delet == 0) {
-                if (dados[i].codigo == codigo) {
-                    dados[i].delet = 1;
+            if (acomod.delet == 0) {
+                if (acomod.codigo == codigo) {
+                    acomod.delet = 1;
                     encontrado = 1;
                 }
             }
 
-            salvar = fprintf(exclui, "%d;%0.0f;%s;%s;%d;%0.0f;%s;%0.2f;%d;\n", dados[i].delet, dados[i].codigo, dados[i].descri, dados[i].facilidades, dados[i].tipo.delet, dados[i].tipo.codigo, dados[i].tipo.descri, dados[i].tipo.diaria, dados[i].tipo.qnt_pessoas);
+            salvar = fprintf(exclui, "%d;%0.0f;%s;%s;%d;%0.0f;%s;%0.2f;%d;\n", acomod.delet, acomod.codigo, acomod.descri, acomod.facilidades, acomod.tipo.delet, acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.diaria, acomod.tipo.qnt_pessoas);
             if (salvar < 0) {
                 printf("Erro no salvamento do arquivo!\n");
                 exit(1);
             }
-
-            i++;
         }
 
         fclose(exclui);
@@ -2644,20 +2616,6 @@ void altera_produto() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (produto), le)) {
-            tam++;
-        }
-
-        fclose(le);
-
-        produto dados[tam];
-
-        le = fopen("produtos.txt", "r");
-        if (le == NULL) {
-            printf("Erro em abrir produto txt!\n");
-            exit(1);
-        }
-
         altera = fopen("temp.txt", "a");
         if (altera == NULL) {
             printf("Erro em abrir produto txt!\n");
@@ -2666,31 +2624,29 @@ void altera_produto() {
 
         while (fgets(linha, sizeof (produto), le)) {
             token = strtok(linha, ";");
-            dados[i].delet = atoi(token);
+            dados.delet = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].codigo = atoff(token);
-            if (dados[i].delet == 0 && dados[i].codigo == codigo) {
-                dados[i] = le_dados_produto();
-                dados[i].codigo = codigo;
+            dados.codigo = atoff(token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados = le_dados_produto();
+                dados.codigo = codigo;
             } else {
                 token = strtok(NULL, ";");
-                strcpy(dados[i].descricao, token);
+                strcpy(dados.descricao, token);
                 token = strtok(NULL, ";");
-                dados[i].estoque_min = atoi(token);
+                dados.estoque_min = atoi(token);
                 token = strtok(NULL, ";");
-                dados[i].estoque = atoi(token);
+                dados.estoque = atoi(token);
                 token = strtok(NULL, ";");
-                dados[i].custo = atoff(token);
+                dados.custo = atoff(token);
                 token = strtok(NULL, ";");
-                dados[i].venda = atoff(token);
+                dados.venda = atoff(token);
             }
 
-            salvar = fprintf(altera, "%d;%0.0f;%s;%d;%d;%0.2f;%0.2f;\n", dados[i].delet, dados[i].codigo, dados[i].descricao, dados[i].estoque_min, dados[i].estoque, dados[i].custo, dados[i].venda);
+            salvar = fprintf(altera, "%d;%0.0f;%s;%d;%d;%0.2f;%0.2f;\n", dados.delet, dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
             if (salvar < 0) {
                 printf("Erro de salvamento de arquivo texto!\n");
             }
-
-            i++;
         }
 
         fclose(le);
@@ -2743,20 +2699,6 @@ void exclui_produto() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (produto), arquivo)) {
-            tam++;
-        }
-
-        fclose(arquivo);
-
-        produto dados[tam];
-
-        arquivo = fopen("produtos.txt", "r");
-        if (arquivo == NULL) {
-            printf("Erro em abrir produto txt!\n");
-            exit(1);
-        }
-
         exclui = fopen("temp.txt", "a");
         if (exclui == NULL) {
             printf("Erro em abrir produto txt!\n");
@@ -2765,30 +2707,28 @@ void exclui_produto() {
 
         while (fgets(linha, sizeof (produto), arquivo)) {
             token = strtok(linha, ";");
-            dados[i].delet = atoi(token);
+            dados.delet = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].codigo = atoff(token);
+            dados.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(dados[i].descricao, token);
+            strcpy(dados.descricao, token);
             token = strtok(NULL, ";");
-            dados[i].estoque_min = atoi(token);
+            dados.estoque_min = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].estoque = atoi(token);
+            dados.estoque = atoi(token);
             token = strtok(NULL, ";");
-            dados[i].custo = atoff(token);
+            dados.custo = atoff(token);
             token = strtok(NULL, ";");
-            dados[i].venda = atoff(token);
-            if (dados[i].delet == 0 && dados[i].codigo == codigo) {
-                dados[i].delet = 1;
+            dados.venda = atoff(token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados.delet = 1;
                 encontrado = 1;
             }
 
-            salvar = fprintf(exclui, "%d;%0.0f;%s;%d;%d;%0.2f;%0.2f;\n", dados[i].delet, dados[i].codigo, dados[i].descricao, dados[i].estoque_min, dados[i].estoque, dados[i].custo, dados[i].venda);
+            salvar = fprintf(exclui, "%d;%0.0f;%s;%d;%d;%0.2f;%0.2f;\n", dados.delet, dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
             if (salvar < 0) {
                 printf("Erro de salvamento de arquivo texto!\n");
             }
-
-            i++;
         }
 
         fclose(arquivo);
@@ -3028,20 +2968,6 @@ void altera_fonecedor() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (fornecedor), arquivo)) {
-            tam++;
-        }
-
-        fclose(arquivo);
-
-        fornecedor txt[tam];
-
-        arquivo = fopen("fornecedores.txt", "r");
-        if (arquivo == NULL) {
-            printf("Erro de abertura de arquivo TXT!\n");
-            exit(1);
-        }
-
         altera = fopen("temp.txt", "a");
         if (arquivo == NULL) {
             printf("Erro de abertura de arquivo TXT!\n");
@@ -3050,45 +2976,43 @@ void altera_fonecedor() {
 
         while (fgets(linha, sizeof (fornecedor), arquivo)) {
             token = strtok(linha, ";");
-            txt[i].delet = atoi(token);
+            dados.delet = atoi(token);
             token = strtok(NULL, ";");
-            txt[i].codigo = atoff(token);
-            if (txt[i].delet == 0 && txt[i].codigo == codigo) {
-                txt[i] = le_dados_fornecedor();
-                txt[i].codigo = codigo;
+            dados.codigo = atoff(token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados = le_dados_fornecedor();
+                dados.codigo = codigo;
 
                 encontrado = 1;
             } else {
                 token = strtok(NULL, ";");
-                strcpy(txt[i].nome, token);
+                strcpy(dados.nome, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].raz_soci, token);
+                strcpy(dados.raz_soci, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].inscri_estad, token);
+                strcpy(dados.inscri_estad, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].cnpj, token);
+                strcpy(dados.cnpj, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].email, token);
+                strcpy(dados.email, token);
                 token = strtok(NULL, ";");
-                txt[i].telefone = atoff(token);
+                dados.telefone = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.estado, token);
+                strcpy(dados.local.estado, token);
                 token = strtok(NULL, ";");
-                txt[i].local.cep = atoff(token);
+                dados.local.cep = atoff(token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.cidade, token);
+                strcpy(dados.local.cidade, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.bairro, token);
+                strcpy(dados.local.bairro, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].local.rua, token);
+                strcpy(dados.local.rua, token);
                 token = strtok(NULL, ";");
-                txt[i].local.numero = atoff(token);
+                dados.local.numero = atoff(token);
             }
 
-            fprintf(altera, "%d;%0.0f;%s;%s;%s;%s;%s;%0.0f;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].raz_soci, txt[i].inscri_estad, txt[i].cnpj, txt[i].email, txt[i].telefone);
-            fprintf(altera, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
-
-            i++;
+            fprintf(altera, "%d;%0.0f;%s;%s;%s;%s;%s;%0.0f;", dados.delet, dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone);
+            fprintf(altera, "%s;%0.0f;%s;%s;%s;%0.0f;\n", dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
         }
 
         fclose(arquivo);
@@ -3141,20 +3065,6 @@ void exclui_fonecedor() {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (fornecedor), arquivo)) {
-            tam++;
-        }
-
-        fclose(arquivo);
-
-        fornecedor txt[tam];
-
-        arquivo = fopen("fornecedores.txt", "r");
-        if (arquivo == NULL) {
-            printf("Erro de abertura de arquivo TXT!\n");
-            exit(1);
-        }
-
         exclui = fopen("temp.txt", "a");
         if (arquivo == NULL) {
             printf("Erro de abertura de arquivo TXT!\n");
@@ -3163,43 +3073,41 @@ void exclui_fonecedor() {
 
         while (fgets(linha, sizeof (fornecedor), arquivo)) {
             token = strtok(linha, ";");
-            txt[i].delet = atoi(token);
+            dados.delet = atoi(token);
             token = strtok(NULL, ";");
-            txt[i].codigo = atoff(token);
+            dados.codigo = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].nome, token);
+            strcpy(dados.nome, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].raz_soci, token);
+            strcpy(dados.raz_soci, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].inscri_estad, token);
+            strcpy(dados.inscri_estad, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].cnpj, token);
+            strcpy(dados.cnpj, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].email, token);
+            strcpy(dados.email, token);
             token = strtok(NULL, ";");
-            txt[i].telefone = atoff(token);
+            dados.telefone = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.estado, token);
+            strcpy(dados.local.estado, token);
             token = strtok(NULL, ";");
-            txt[i].local.cep = atoff(token);
+            dados.local.cep = atoff(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.cidade, token);
+            strcpy(dados.local.cidade, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.bairro, token);
+            strcpy(dados.local.bairro, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].local.rua, token);
+            strcpy(dados.local.rua, token);
             token = strtok(NULL, ";");
-            txt[i].local.numero = atoff(token);
-            if (txt[i].delet == 0 && txt[i].codigo == codigo) {
-                txt[i].delet = 1;
+            dados.local.numero = atoff(token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados.delet = 1;
 
                 encontrado = 1;
             }
 
-            fprintf(exclui, "%d;%0.0f;%s;%s;%s;%s;%s;%0.0f;", txt[i].delet, txt[i].codigo, txt[i].nome, txt[i].raz_soci, txt[i].inscri_estad, txt[i].cnpj, txt[i].email, txt[i].telefone);
-            fprintf(exclui, "%s;%0.0f;%s;%s;%s;%0.0f;\n", txt[i].local.estado, txt[i].local.cep, txt[i].local.cidade, txt[i].local.bairro, txt[i].local.rua, txt[i].local.numero);
-
-            i++;
+            fprintf(exclui, "%d;%0.0f;%s;%s;%s;%s;%s;%0.0f;", dados.delet, dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone);
+            fprintf(exclui, "%s;%0.0f;%s;%s;%s;%0.0f;\n", dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
         }
 
         fclose(arquivo);
@@ -3416,25 +3324,25 @@ void alterar_operador() {
 
         while (fgets(linha, sizeof (operador), arquivo)) {
             token = strtok(linha, ";");
-            txt[i].delet = atoi(token);
+            dados.delet = atoi(token);
             token = strtok(NULL, ";");
-            txt[i].codigo = atoff(token);
-            if (txt[i].delet == 0 && txt[i].codigo == codigo) {
-                txt[i] = le_dados_operador();
-                txt[i].codigo = codigo;
+            dados.codigo = atoff(token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados = le_dados_operador();
+                dados.codigo = codigo;
                 encontrado = 1;
             } else {
                 token = strtok(NULL, ";");
-                txt[i].acesso = atoi(token);
+                dados.acesso = atoi(token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].nome, token);
+                strcpy(dados.nome, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].user, token);
+                strcpy(dados.user, token);
                 token = strtok(NULL, ";");
-                strcpy(txt[i].senha, token);
+                strcpy(dados.senha, token);
             }
 
-            salvar = fprintf(altera, "%d;%0.0f;%d;%s;%s;%s;\n", txt[i].delet, txt[i].codigo, txt[i].acesso, txt[i].nome, txt[i].user, txt[i].senha);
+            salvar = fprintf(altera, "%d;%0.0f;%d;%s;%s;%s;\n", dados.delet, dados.codigo, dados.acesso, dados.nome, dados.user, dados.senha);
             if (salvar < 0) {
                 printf("Erro no salvamento do tipo de acomodação !\n");
             }
@@ -3513,23 +3421,23 @@ void exclui_operador() {
 
         while (fgets(linha, sizeof (operador), arquivo)) {
             token = strtok(linha, ";");
-            txt[i].delet = atoi(token);
+            dados.delet = atoi(token);
             token = strtok(NULL, ";");
-            txt[i].codigo = atoff(token);
+            dados.codigo = atoff(token);
             token = strtok(NULL, ";");
-            txt[i].acesso = atoi(token);
+            dados.acesso = atoi(token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].nome, token);
+            strcpy(dados.nome, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].user, token);
+            strcpy(dados.user, token);
             token = strtok(NULL, ";");
-            strcpy(txt[i].senha, token);
-            if (txt[i].delet == 0 && txt[i].codigo == codigo) {
-                txt[i].delet = 1;
+            strcpy(dados.senha, token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados.delet = 1;
                 encontrado = 1;
             }
 
-            salvar = fprintf(altera, "%d;%0.0f;%d;%s;%s;%s;\n", txt[i].delet, txt[i].codigo, txt[i].acesso, txt[i].nome, txt[i].user, txt[i].senha);
+            salvar = fprintf(altera, "%d;%0.0f;%d;%s;%s;%s;\n", dados.delet, dados.codigo, dados.acesso, dados.nome, dados.user, dados.senha);
             if (salvar < 0) {
                 printf("Erro no salvamento do tipo de acomodação !\n");
             }
@@ -3925,23 +3833,23 @@ void pesquisa_reserva_quantPessoas(){
         
         while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
             if (reser.delet == 0 && acomod.delet == 0) {
-                    if (reser.codQuarto == acomod.codigo) {
-                        if (acomod.tipo.qnt_pessoas == quantPessoas) {
-                            encontrado_bin = 1;
-                                if (salva_cod == reser.codQuarto) {
-                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                                }
-                                else {
-                                    salva_cod = reser.codQuarto;
-                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                                }
-                        }
+                if (reser.codQuarto == acomod.codigo) {
+                    if (acomod.tipo.qnt_pessoas == quantPessoas) {
+                        encontrado_bin = 1;
+                            if (salva_cod == reser.codQuarto) {
+                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                            else {
+                                salva_cod = reser.codQuarto;
+                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                            }
+                    }
                 } else {
                     if (acomod.tipo.qnt_pessoas == quantPessoas){
                         printf("\nNão existe reservas cadastradadas para o quarto: %0.0f com capacidade para %d pessoa(s)", 
                         acomod.codigo, acomod.tipo.qnt_pessoas);
                     }
-            }
+                }
             }
         }
     }
@@ -4177,7 +4085,7 @@ void pesquisa_reserva_Categoria() {
     printf("Digite a categoria a ser pesquisada: ");
     scanf("%f", &codigoCategoria);
 
-    //verifica no bin
+    //abre reserva binario
     rese_bin = fopen("reservas.bin", "rb");
     if (rese_bin == NULL) {
         printf("Erro de abertura de arquivo reservas.bin!\n");
@@ -4190,6 +4098,12 @@ void pesquisa_reserva_Categoria() {
         printf("Erro de abertura de arquivo reservas.bin!\n");
         exit(1);
     }
+    
+    acomo_txt = fopen("acomodacoes.txt", "r");
+    if (acomo_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
 
     //verificar na acomodação binaria
     while(fread(&reser, sizeof(reserva), 1, rese_bin)) {
@@ -4197,202 +4111,25 @@ void pesquisa_reserva_Categoria() {
 
         // reposiciona o cursor no inicio do arquivo
         fseek(acomo_bin, 0, SEEK_SET);
-        
-        while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
-            if (reser.delet == 0 && acomod.delet == 0) {
-                    if (reser.codQuarto == acomod.codigo) {
-                        
-                            encontrado_bin = 1;
-                                if (salva_cod == reser.codQuarto) {
-                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                                }
-                                else {
-                                    salva_cod = reser.codQuarto;
-                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                                }
-                        }
-                }else{
-                    if (acomod.tipo.codigo == codigoCategoria) {
-                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
-                        acomod.codigo, acomod.tipo.codigo);
-                    }
-                }
-            } 
-    }
-    acomo_txt = fopen("acomodacoes.txt", "r");
-    if (acomo_txt == NULL) {
-        printf("Erro de abertura de arquivo reservas.bin!\n");
-        exit(1);
-    }
-
-    //verificar na acomodação txt
-    while(fread(&reser, sizeof(reserva), 1, rese_bin)) {
-        encontrado_bin = 0;
-
-        // reposiciona o cursor no inicio do arquivo
         fseek(acomo_txt, 0, SEEK_SET);
         
-        while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
-            // passa os dados do txt pra variavel para facilitar comparação
-            token = strtok(linha_aco, ";");
-            acomod.delet = atoi(token);
-            token = strtok(NULL, ";");
-            acomod.codigo = atoff(token);
-            token = strtok(NULL, ";");
-            strcpy(acomod.descri, token);
-            token = strtok(NULL, ";");
-            strcpy(acomod.facilidades, token);
-            token = strtok(NULL, ";");
-            acomod.tipo.delet = atoi(token);
-            token = strtok(NULL, ";");
-            acomod.tipo.codigo = atoff(token);
-            token = strtok(NULL, ";");
-            strcpy(acomod.tipo.descri, token);
-            token = strtok(NULL, ";");
-            acomod.tipo.diaria = atoff(token);
-            token = strtok(NULL, ";");
-            acomod.tipo.qnt_pessoas = atoi(token);
-
-            if (reser.delet == 0 && acomod.delet == 0) {
-                if (reser.codQuarto == acomod.codigo) {
-                    // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
-                    if (acomod.tipo.codigo == codigoCategoria) {
-                        encontrado_bin = 1;
-                        
-                        if (encontrado_bin == 1) {
-                            if (salva_cod == reser.codQuarto) {
-                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                            }
-                            else {
-                                salva_cod = reser.codQuarto;
-                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                            }
-                        }
-                    }   
-                } else{
-                    if (acomod.tipo.codigo == codigoCategoria) {
-                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
-                        acomod.codigo, acomod.tipo.codigo);
-                    }
-                }
-            }
-        }
-    }
-
-    fclose(acomo_txt);
-
-    fclose(rese_bin);
-
-    //verifica no txt
-    rese_txt = fopen("reservas.txt", "r");
-    if (rese_txt == NULL) {
-        printf("Erro de abertura de arquivo reservas.bin!\n");
-        exit(1);
-    }
-
-
-    //abre acomodacoes tanto txt quanto bin
-    acomo_bin = fopen("acomodacoes.bin", "rb");
-    if (acomo_bin == NULL) {
-        printf("Erro de abertura de arquivo reservas.bin!\n");
-        exit(1);
-    }
-
-    //verifica no acomodacoes.bin
-    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
-        //coleta dados do reservas.txt e o coloca em uma struct
-        token = strtok(linha_rese, ";");
-        reser.delet = atoi(token);
-        token = strtok(NULL, ";");
-        reser.codigo = atoff(token);
-        token = strtok(NULL, ";");
-        reser.codQuarto = atoff(token);
-        token = strtok(NULL, ";");
-        reser.inicio.dia = atoi(token);
-        token = strtok(NULL, ";");
-        reser.inicio.mes = atoi(token);
-        token = strtok(NULL, ";");
-        reser.inicio.ano = atoi(token);
-        token = strtok(NULL, ";");
-        reser.fim.dia = atoi(token);
-        token = strtok(NULL, ";");
-        reser.fim.mes = atoi(token);
-        token = strtok(NULL, ";");
-        reser.fim.ano = atoi(token);
-
-        encontrado_txt = 0;
-        
-        // reposiciona o cursor no inicio do arquivo
-        fseek(acomo_bin, 0, SEEK_SET);
-
+        //verifica na parte binaria
         while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
             if (reser.delet == 0 && acomod.delet == 0) {
                 if (reser.codQuarto == acomod.codigo) {
-                    if (acomod.tipo.codigo == codigoCategoria){
-                        encontrado_txt = 1;
-                        if (encontrado_bin == 1) {
-                            if (salva_cod == reser.codQuarto) {
-                                printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                            }
-                            else {
-                                salva_cod = reser.codQuarto;
-                                printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
-                            }
+                    encontrado_bin = 1;
+                        if (salva_cod == reser.codQuarto) {
+                            printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
                         }
-                    } 
-                } else{
-                    if (acomod.tipo.codigo == codigoCategoria) {
-                        printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
-                        acomod.codigo, acomod.tipo.codigo);
-                    }
+                        else {
+                            salva_cod = reser.codQuarto;
+                            printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                        }
                 }
             }
         }
-    }
-
-    fclose(acomo_bin);
-    
-    fclose(rese_txt);
-    
-    rese_txt = fopen("reservas.txt", "r");
-    if (rese_txt == NULL) {
-        printf("Erro de abertura de arquivo reservas.bin!\n");
-        exit(1);
-    }
-
-    acomo_txt = fopen("acomodacoes.txt", "r");
-    if (acomo_txt == NULL) {
-        printf("Erro de abertura de arquivo reservas.bin!\n");
-        exit(1);
-    }
-
-    //verifica no acomodacoes.txt
-    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
-        //coleta dados do reservas.txt e o coloca em uma struct
-        token = strtok(linha_rese, ";");
-        reser.delet = atoi(token);
-        token = strtok(NULL, ";");
-        reser.codigo = atoff(token);
-        token = strtok(NULL, ";");
-        reser.codQuarto = atoff(token);
-        token = strtok(NULL, ";");
-        reser.inicio.dia = atoi(token);
-        token = strtok(NULL, ";");
-        reser.inicio.mes = atoi(token);
-        token = strtok(NULL, ";");
-        reser.inicio.ano = atoi(token);
-        token = strtok(NULL, ";");
-        reser.fim.dia = atoi(token);
-        token = strtok(NULL, ";");
-        reser.fim.mes = atoi(token);
-        token = strtok(NULL, ";");
-        reser.fim.ano = atoi(token);
-
-        encontrado_txt = 0;
         
-        // reposiciona o cursor no inicio do arquivo
-        fseek(acomo_txt, 0, SEEK_SET);
-
+        //verifica no txt
         while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
             // passa os dados do txt pra variavel para facilitar comparação
             token = strtok(linha_aco, ";");
@@ -4442,8 +4179,111 @@ void pesquisa_reserva_Categoria() {
         }
     }
 
-    fclose(acomo_txt);
+    fclose(rese_bin);
+    
+    //abre reserva txt
+    rese_txt = fopen("reservas.txt", "r");
+    if (rese_txt == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+    
+    //verificar na acomodação txt
+    while(fgets(linha_rese, sizeof(reserva), rese_txt)) {
+        encontrado_txt = 0;
+        
+        //passa dados do txt para variavel
+        token = strtok(linha_rese, ";");
+        reser.delet = atoi(token);
+        token = strtok(NULL, ";");
+        reser.codigo = atoff(token);
+        token = strtok(NULL, ";");
+        reser.codQuarto = atoff(token);
+        token = strtok(NULL, ";");
+        reser.inicio.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.inicio.ano = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.dia = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.mes = atoi(token);
+        token = strtok(NULL, ";");
+        reser.fim.ano = atoi(token);
 
+        // reposiciona o cursor no inicio do arquivo
+        fseek(acomo_bin, 0, SEEK_SET);
+        fseek(acomo_txt, 0, SEEK_SET);
+        
+        //verifica na parte binaria
+        while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
+            if (reser.delet == 0 && acomod.delet == 0) {
+                if (reser.codQuarto == acomod.codigo) {
+                    encontrado_bin = 1;
+                        if (salva_cod == reser.codQuarto) {
+                            printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                        }
+                        else {
+                            salva_cod = reser.codQuarto;
+                            printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                        }
+                }
+            }
+        }
+        
+        //verifica no txt
+        while(fgets(linha_aco, sizeof(acomodacao), acomo_txt)) {
+            // passa os dados do txt pra variavel para facilitar comparação
+            token = strtok(linha_aco, ";");
+            acomod.delet = atoi(token);
+            token = strtok(NULL, ";");
+            acomod.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.descri, token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.facilidades, token);
+            token = strtok(NULL, ";");
+            acomod.tipo.delet = atoi(token);
+            token = strtok(NULL, ";");
+            acomod.tipo.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            strcpy(acomod.tipo.descri, token);
+            token = strtok(NULL, ";");
+            acomod.tipo.diaria = atoff(token);
+            token = strtok(NULL, ";");
+            acomod.tipo.qnt_pessoas = atoi(token);
+
+            if (reser.delet == 0) {
+                if (acomod.delet == 0) {
+                    if (reser.codQuarto == acomod.codigo) {
+                        // compara se dentro da string facilidade do quarto há a facilidade escrita pela pessoa (pode dar erro por diferenciar maiuscula e minuscula, a ordem importa caso hajá mais de 1 palavra)
+                        if (acomod.tipo.codigo == codigoCategoria){
+                            encontrado_txt = 1;
+                            
+                            if (encontrado_bin == 1) {
+                                if (salva_cod == reser.codQuarto) {
+                                    printf("Ocupado de: %d/%d/%d até %d/%d/%d\n", reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                                else {
+                                    salva_cod = reser.codQuarto;
+                                    printf("Código do quarto: %0.0f \nOcupado de: %d/%d/%d até %d/%d/%d\n", reser.codQuarto, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                                }
+                            }
+                        }
+                    } else{
+                        if (acomod.tipo.codigo == codigoCategoria) {
+                            printf("\nNão existe reservas cadastradadas para o quarto: %0.0f da categoria: %.0f", 
+                            acomod.codigo, acomod.tipo.codigo);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fclose(acomo_txt);
+    fclose(acomo_bin);
     fclose(rese_txt);
 }
 
@@ -4731,6 +4571,7 @@ void pesquisa_reserva_facilidade() {
     fclose(rese_txt);
 }
 
+//ok
 void pesquisa_reserva_data() {
     FILE *rese_txt, *rese_bin, *acomo_bin, *acomo_txt;
     reserva reser;
