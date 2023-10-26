@@ -183,6 +183,7 @@ void le_cadastro_hotel();
 void exclui_hotel();
 
 //  Clientes
+
 void salva_cadastro_pessoa_bin(cad_clie saves);
 
 void salva_cadastro_pessoa_txt(cad_clie saves);
@@ -266,6 +267,7 @@ void alterar_operador();
 void exclui_operador();
 
 //Reserva
+
 void salva_cadastro_reserva_bin(reserva dados);
 
 void salva_cadastro_reserva_txt(reserva dados);
