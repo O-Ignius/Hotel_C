@@ -35,8 +35,16 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/acomodacao.o \
 	${OBJECTDIR}/biblioteca.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/categoria_acomodacao.o \
+	${OBJECTDIR}/clientes.o \
+	${OBJECTDIR}/fornecedor.o \
+	${OBJECTDIR}/hotel.o \
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/operador.o \
+	${OBJECTDIR}/produtos.o \
+	${OBJECTDIR}/reserva.o
 
 
 # C Compiler Flags
@@ -63,15 +71,55 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/acomodacao.o: acomodacao.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/acomodacao.o acomodacao.c
+
 ${OBJECTDIR}/biblioteca.o: biblioteca.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/biblioteca.o biblioteca.c
 
+${OBJECTDIR}/categoria_acomodacao.o: categoria_acomodacao.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/categoria_acomodacao.o categoria_acomodacao.c
+
+${OBJECTDIR}/clientes.o: clientes.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/clientes.o clientes.c
+
+${OBJECTDIR}/fornecedor.o: fornecedor.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/fornecedor.o fornecedor.c
+
+${OBJECTDIR}/hotel.o: hotel.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hotel.o hotel.c
+
 ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/operador.o: operador.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/operador.o operador.c
+
+${OBJECTDIR}/produtos.o: produtos.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/produtos.o produtos.c
+
+${OBJECTDIR}/reserva.o: reserva.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/reserva.o reserva.c
 
 # Subprojects
 .build-subprojects:
