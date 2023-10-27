@@ -123,7 +123,6 @@ void menuHotel() {
         printf("\nPressione qualquer tecla para continuar... ");
         getchar();
     }
-    menuPrincipal();
 }
 
 int verifica_Hotel() {

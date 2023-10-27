@@ -107,7 +107,6 @@ void menuReserva(int tipoArquivo) {
         printf("\nPRESSIONE QUALQUER TECLA PARA CONTINUAR...");
         getchar();
     }
-    menuPrincipal();
 }
 
 //Menu de pesquisa
@@ -142,7 +141,6 @@ void pesquisa_reserva() {
             printf("Opção inválida!\n");
             break;
     }
-    
     getchar();
 }
 

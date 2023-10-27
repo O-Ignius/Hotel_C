@@ -111,6 +111,8 @@ void menuPrincipal() {
             case 9:
                 binOUtxt = selecionarTipoArquivo();
                 break;
+            case 0:
+                break;
             default:
                 printf("Opcao invalida, digite novamente: ");
                 scanf("%d", &opcao);

@@ -110,7 +110,6 @@ void menuFornecedores(int tipoAquivo) {
         }
         getchar();
     }
-    menuPrincipal();
 }
 
 void salva_cadastro_fornecedores_bin(fornecedor dados) {

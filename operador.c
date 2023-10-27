@@ -84,7 +84,6 @@ void menuOperadores(int tipoAquivo) {
         }
         getchar();
     }
-    menuPrincipal();
 }
 
 void salva_cadastro_operadores_bin(operador dados) {

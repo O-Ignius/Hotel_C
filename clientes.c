@@ -159,7 +159,6 @@ void menuCliente(int tipoArquivo) {
         printf("\nPRESSIONE QUALQUER TECLA PARA CONTINUAR...");
         getchar();
     }
-    menuPrincipal();
 }
 
 //  Clientes

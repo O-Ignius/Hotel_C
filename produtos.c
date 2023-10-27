@@ -89,7 +89,6 @@ void menuProdutos(int tipoAquivo) {
         }
         getchar();
     }
-    menuPrincipal();
 }
 
 void salva_cadastro_produtos_bin(produto dados) {

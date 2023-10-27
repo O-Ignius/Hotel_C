@@ -100,7 +100,6 @@ void menuAcomodacoes(int tipoArquivo) {
         printf("\nPressione qualquer tecla para continuar... ");
         getchar();
     }
-    menuPrincipal();
 }
 
 void salva_cadastro_acomodacao_txt(acomodacao dados) {
