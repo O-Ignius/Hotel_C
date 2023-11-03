@@ -6,6 +6,9 @@
 
 #include <string.h>
 
+// -------------- Var Globais --------------
+int GLOBAL_tam_pont_dados_reservas = 1; //ja usado!
+
 int tam_reserva() {
     int tamanho = 0;
     
@@ -50,7 +53,7 @@ reserva le_dados_reserva() {
     int tam = sizeof(reserva);
 
     dados.delet = 0;
-    dados.codigo = retorna_id(txt, bin, tam);
+    dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_reservas);
     
     printf("Digite o código do quarto: ");
     scanf("%f", &dados.codQuarto);
@@ -62,7 +65,7 @@ reserva le_dados_reserva() {
     return dados;
 }
 
-void menuReserva(int tipoArquivo) {
+void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas) {
     reserva dados;
     int opcao = 99;
 

@@ -154,24 +154,25 @@ int tam_acomodacao();
 /* Retorna um inteiro com relação ao tipo de arquivo (0 = bin --- !0 = txt) */
 int selecionarTipoArquivo();
 /* Retorna um float que é um numero de ID válido. Recebe o nome do arquivo txt, o nome do arquivo binário e o tamanho da struct guardada nos arquivos */
-float retorna_id(char *nome_txt, char *nome_bin, int tam);
+float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont);
 
 //Menus
-void menuPrincipal();
+void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, produto *GLOBAL_dados_produtos,
+                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas);
 
-void menuHotel();
+void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel);
 
-void menuCliente(int tipoArquivo);
+void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente);
 
-void menuReserva(int tipoArquivo);
+void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas);
 
-void menuAcomodacoes(int tipoArquivo);
+void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, acomodacao *GLOBAL_dados_acomodacao);
 
-void menuProdutos(int tipoAquivo);
+void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos);
 
-void menuFornecedores(int tipoAquivo);
+void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores);
 
-void menuOperadores(int tipoAquivo);
+void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores);
 
 //  Hotel
 int verifica_Hotel();
@@ -188,13 +189,15 @@ void salva_cadastro_pessoa_bin(cad_clie saves);
 
 void salva_cadastro_pessoa_txt(cad_clie saves);
 
-void le_cadastro_pessoa();
+cad_clie *salva_cadastro_pessoa_mem(cad_clie saves, cad_clie *GLOBAL_dados_cliente);
 
-void le_todos_cadastro_pessoa();
+void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente);
 
-void alteraCliente();
+void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente);
 
-void removeCliente();
+void alteraCliente(cad_clie *GLOBAL_dados_cliente);
+
+void removeCliente(cad_clie *GLOBAL_dados_cliente);
 
 //  Acomodação
 
@@ -202,27 +205,33 @@ void salva_cadastro_tipo_acomodacao_txt(cate_aco dados);
 
 void salva_cadastro_tipo_acomodacao_bin(cate_aco dados);
 
-void le_todos_tipo_acomodacao();
+cate_aco *salva_cadastro_tipo_acomodacao_mem(cate_aco dados, cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void le_tipo_acomodacao(float codigo);
+void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void altera_tipo_acomodacao();
+void le_tipo_acomodacao(float codigo, cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void remover_tipo_acomodacao();
+void altera_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao);
+
+void remover_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao);
 
 int valida_id_acomodacao(float id);
 
 // geral
 
-void salva_cadastro_acomodacao_txt(acomodacao dados);
+cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void salva_cadastro_acomodacao_bin(acomodacao dados);
+void salva_cadastro_acomodacao_txt(acomodacao dados, cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void le_todas_acomodacoes();
+void salva_cadastro_acomodacao_bin(acomodacao dados, cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void altera_acomodacoes();
+acomodacao *salva_cadastro_acomodacao_mem(acomodacao dados, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao);
 
-void exclui_acomodacoes();
+void le_todas_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao);
+
+void altera_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao);
+
+void exclui_acomodacoes(acomodacao *GLOBAL_dados_acomodacao);
 
 //Produtos
 
@@ -230,19 +239,23 @@ void salva_cadastro_produtos_bin(produto dados);
 
 void salva_cadastro_produtos_txt(produto dados);
 
-void le_produtos();
+produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produtos);
 
-void le_todos_produtos();
+void le_produtos(produto *GLOBAL_dados_produtos);
 
-void altera_produto();
+void le_todos_produtos(produto *GLOBAL_dados_produtos);
 
-void exclui_produto();
+void altera_produto(produto *GLOBAL_dados_produtos);
+
+void exclui_produto(produto *GLOBAL_dados_produtos);
 
 //Fornecedor
 
 void salva_cadastro_fornecedores_bin(fornecedor dados);
 
 void salva_cadastro_fornecedores_txt(fornecedor dados);
+
+fornecedor *salva_cadastro_fornecedores_mem(fornecedor dados, fornecedor *GLOBAL_dados_fornecedores);
 
 void le_fonecedor();
 

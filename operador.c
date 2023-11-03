@@ -6,6 +6,9 @@
 
 #include <string.h>
 
+// -------------- Var Globais --------------
+int GLOBAL_tam_pont_dados_operadores = 1; //ja usado!
+
 int tam_operador() {
     int tamanho = 0;
     
@@ -21,7 +24,7 @@ operador le_dados_operador() {
     int tam = sizeof(operador);
 
     //coleta dados
-    dados.codigo = retorna_id(txt, bin, tam);
+    dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_operadores);
     setbuf(stdin, NULL);
     printf("Digite o nome do operador: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -38,7 +41,7 @@ operador le_dados_operador() {
     return dados;
 }
 
-void menuOperadores(int tipoAquivo) {
+void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores) {
     int opcao = 0;
     operador dados;
     while (opcao != 6) {
@@ -62,21 +65,26 @@ void menuOperadores(int tipoAquivo) {
                 dados = le_dados_operador();
                 if (tipoAquivo == 0) {
                     salva_cadastro_operadores_bin(dados);
-                } else {
+                } else if (tipoAquivo == 1) {
                     salva_cadastro_operadores_txt(dados);
+                }
+                else {
+                    
                 }
                 break;
             case 2:
-                le_todos_operadores();
+                le_todos_operadores(GLOBAL_dados_operadores);
                 break;
             case 3:
-                le_operador();
+                le_operador(GLOBAL_dados_operadores);
                 break;
             case 4:
-                alterar_operador();
+                alterar_operador(GLOBAL_dados_operadores);
                 break;
             case 5:
-                exclui_operador();
+                exclui_operador(GLOBAL_dados_operadores);
+                break;
+            case 6:
                 break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
@@ -120,7 +128,7 @@ void salva_cadastro_operadores_txt(operador dados) {
     fclose(salva);
 }
 
-void le_operador() {
+void le_operador(operador *GLOBAL_dados_operadores) {
     FILE *arquivo;
     float codigo;
     operador dados;
@@ -178,7 +186,7 @@ void le_operador() {
     }
 }
 
-void le_todos_operadores() {
+void le_todos_operadores(operador *GLOBAL_dados_operadores) {
     FILE *arquivo;
     operador dados;
     char linha[(sizeof (operador))], *token;
@@ -226,7 +234,7 @@ void le_todos_operadores() {
     fclose(arquivo);
 }
 
-void alterar_operador() {
+void alterar_operador(operador *GLOBAL_dados_operadores) {
     FILE *arquivo, *altera;
     float codigo;
     operador dados;
@@ -323,7 +331,7 @@ void alterar_operador() {
     }
 }
 
-void exclui_operador() {
+void exclui_operador(operador *GLOBAL_dados_operadores) {
     FILE *arquivo, *altera;
     float codigo;
     operador dados;

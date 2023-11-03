@@ -8,6 +8,9 @@
 
 #include <string.h>
 
+// -------------- Var Globais --------------
+int GLOBAL_tam_pont_dados_categ_acomodacao = 1; //ja usado!
+
 int tam_categ_acomod() {
     int tamanho = 0;
 
@@ -24,7 +27,7 @@ cate_aco le_dados_categ_acomod() {
 
     //coleta de dados
     dados.delet = 0;
-    dados.codigo = retorna_id(txt, bin, tam);
+    dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_categ_acomodacao);
     setbuf(stdin, NULL);
     printf("Digite a descrição da acomodação: \n");
     scanf("%[^\n]", dados.descri);
@@ -76,9 +79,34 @@ void salva_cadastro_tipo_acomodacao_bin(cate_aco dados) {
     fclose(arquivo);
 }
 
-void le_todos_tipo_acomodacao() {
+cate_aco *salva_cadastro_tipo_acomodacao_mem(cate_aco dados, cate_aco *GLOBAL_dados_categ_acomodacao) {
+    //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+    if (GLOBAL_tam_pont_dados_categ_acomodacao == 1) {
+        GLOBAL_dados_categ_acomodacao = malloc(sizeof(acomodacao));
+        *GLOBAL_dados_categ_acomodacao = dados;
+    }
+    //caso a variavel GLOBAL_tam_pont_dados_categ_acomodacao tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+    //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+    else {
+        GLOBAL_dados_categ_acomodacao = realloc(GLOBAL_dados_categ_acomodacao, (GLOBAL_tam_pont_dados_categ_acomodacao)*sizeof(acomodacao));
+        *(GLOBAL_dados_categ_acomodacao + (GLOBAL_tam_pont_dados_categ_acomodacao - 1)) = dados;
+    }
+    
+    if (GLOBAL_dados_categ_acomodacao == NULL) {
+        printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+        exit(1);
+    }
+    
+    //aumenta o valor da variavel global
+    GLOBAL_tam_pont_dados_categ_acomodacao++;
+    
+    return GLOBAL_dados_categ_acomodacao;
+}
+
+void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     FILE *ler;
     cate_aco acomodacao;
+    int tam_point = 0;
     char linha[(sizeof (cate_aco))], *token;
 
     ler = fopen("categoria_acomo.bin", "rb");
@@ -88,6 +116,7 @@ void le_todos_tipo_acomodacao() {
         exit(1);
     }
 
+    //bin
     while (fread(&acomodacao, sizeof (cate_aco), 1, ler)) {
         if (acomodacao.delet == 0) {
             printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d",
@@ -103,6 +132,7 @@ void le_todos_tipo_acomodacao() {
         exit(1);
     }
 
+    //txt
     while (fgets(linha, sizeof (cate_aco), ler)) {
         token = strtok(linha, ";");
 
@@ -119,14 +149,26 @@ void le_todos_tipo_acomodacao() {
     }
 
     fclose(ler);
+    
+    //memoria
+    for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_categ_acomodacao; tam_point++) {
+        if (GLOBAL_dados_categ_acomodacao->delet == 0) {
+            printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d \n",
+                    GLOBAL_dados_categ_acomodacao->codigo, GLOBAL_dados_categ_acomodacao->descri, GLOBAL_dados_categ_acomodacao->diaria, GLOBAL_dados_categ_acomodacao->qnt_pessoas);
+        }
+        
+        GLOBAL_dados_categ_acomodacao++;
+    }
+    
+    GLOBAL_dados_categ_acomodacao -= (tam_point - 1);
 }
 
-void le_tipo_acomodacao(float codigo) {
+void le_tipo_acomodacao(float codigo, cate_aco *GLOBAL_dados_categ_acomodacao) {
     FILE *ler;
     cate_aco acomodacao;
 
     char linha[(sizeof (cate_aco))], *token;
-    int encontrado = 0;
+    int encontrado = 0, tam_point = 0;
 
     ler = fopen("categoria_acomo.bin", "rb");
 
@@ -148,7 +190,7 @@ void le_tipo_acomodacao(float codigo) {
     //Testar se essa comparação esta funcionando
 
     if (encontrado == 0) {
-        char cod;
+        float cod;
         ler = fopen("categoria_acomo.txt", "r");
         if (ler == NULL) {
             printf("Erro de abertura de arquivo !\n");
@@ -171,15 +213,39 @@ void le_tipo_acomodacao(float codigo) {
                     printf("Diária: R$%s\n\t", token);
                     token = strtok(NULL, ";");
                     printf("Quantia de pessoas que suporta: %s\n", token);
+                    
+                    encontrado = 1;
+                    break;
                 }
             }
         }
 
         fclose(ler);
     }
+    
+    //memoria
+    if (encontrado == 0) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_categ_acomodacao; tam_point++) {
+            if (GLOBAL_dados_categ_acomodacao->delet == 0) {
+                if (GLOBAL_dados_categ_acomodacao->codigo == codigo) {
+                    printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d \n",
+                        GLOBAL_dados_categ_acomodacao->codigo, GLOBAL_dados_categ_acomodacao->descri, GLOBAL_dados_categ_acomodacao->diaria, GLOBAL_dados_categ_acomodacao->qnt_pessoas);
+                    
+                    encontrado = 1;
+                    break;
+                }
+            }
+
+            //avança uma posição
+            GLOBAL_dados_categ_acomodacao++;
+        }
+        
+        //retorna o ponteiro para primeira posição
+        GLOBAL_dados_categ_acomodacao -= (tam_point - 1);
+    }
 }
 
-void altera_tipo_acomodacao() {
+void altera_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     FILE *le, *altera;
     cate_aco acomodacao, novo;
     char linha[(sizeof (cate_aco))], *token;
@@ -196,6 +262,7 @@ void altera_tipo_acomodacao() {
         exit(1);
     }
 
+    //bin
     while (fread(&acomodacao, sizeof (cate_aco), 1, le)) {
         if (acomodacao.delet == 0 && acomodacao.codigo == codigo) {
             acomodacao = le_dados_categ_acomod();
@@ -210,6 +277,7 @@ void altera_tipo_acomodacao() {
 
     fclose(le);
 
+    //txt
     if (encontrado == 0) {
         le = fopen("categoria_acomo.txt", "r");
         if (le == NULL) {
@@ -264,6 +332,26 @@ void altera_tipo_acomodacao() {
         rename("temp.txt", "categoria_acomo.txt");
     }
     
+    //memoria
+    if (encontrado == 0) {
+        for (i = 1; i < GLOBAL_tam_pont_dados_categ_acomodacao; i++) {
+            if (GLOBAL_dados_categ_acomodacao->delet == 0) {
+                if (GLOBAL_dados_categ_acomodacao->codigo == codigo) {
+                    encontrado = 1;
+                    acomodacao = le_dados_categ_acomod();
+                    acomodacao.codigo = codigo;
+
+                    *(GLOBAL_dados_categ_acomodacao) = acomodacao;
+                    break;
+                }
+            }
+
+            GLOBAL_dados_categ_acomodacao++;
+        }
+
+        GLOBAL_dados_categ_acomodacao -= (i - 1);
+    }
+    
     if (encontrado == 1) {
         printf("Dados alterados com sucesso!\n");
     } else {
@@ -271,7 +359,7 @@ void altera_tipo_acomodacao() {
     }
 }
 
-void remover_tipo_acomodacao() {
+void remover_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     FILE *remover, *le;
     cate_aco acomodacao;
     char linha[(sizeof (cad_clie))], *token;
@@ -288,6 +376,7 @@ void remover_tipo_acomodacao() {
         exit(1);
     }
     
+    //bin
     while (fread(&acomodacao, sizeof (cate_aco), 1, le)) {
         if (acomodacao.delet == 0 && acomodacao.codigo == codigo) {
             acomodacao.delet = 1;
@@ -300,6 +389,7 @@ void remover_tipo_acomodacao() {
 
     fclose(le);
 
+    //txt
     if (encontrado == 0) {
         le = fopen("categoria_acomo.txt", "r");
         if (le == NULL) {
@@ -350,6 +440,23 @@ void remover_tipo_acomodacao() {
         
         remove("categoria_acomo.txt");
         rename("temp.txt", "categoria_acomo.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        for (i = 1; i < GLOBAL_tam_pont_dados_categ_acomodacao; i++) {
+            if (GLOBAL_dados_categ_acomodacao->delet == 0) {
+                if (GLOBAL_dados_categ_acomodacao->codigo == codigo) {
+                    GLOBAL_dados_categ_acomodacao->delet = 1;
+                    
+                    break;
+                }
+            }
+
+            GLOBAL_dados_categ_acomodacao++;
+        }
+
+        GLOBAL_dados_categ_acomodacao -= (i - 1);
     }
 
     if (encontrado == 1) {

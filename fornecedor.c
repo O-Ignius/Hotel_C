@@ -8,6 +8,9 @@
 
 #include <string.h>
 
+// -------------- Var Globais --------------
+int GLOBAL_tam_pont_dados_fornecedores = 1; //ja usado!
+
 int tam_fornecedor() {
     int tamanho = 0;
     
@@ -23,7 +26,7 @@ fornecedor le_dados_fornecedor() {
     int tam = sizeof(fornecedor);
     
     //coleta dados
-    dados.codigo = retorna_id(txt, bin, tam);
+    dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_fornecedores);
     setbuf(stdin, NULL);
     printf("Digite o nome do fornecedor: \n");
     scanf("%[a-z A-Z][^\n]s", dados.nome);
@@ -64,7 +67,7 @@ fornecedor le_dados_fornecedor() {
     return dados;
 }
 
-void menuFornecedores(int tipoAquivo) {
+void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores) {
     int opcao = 0;
     fornecedor dados;
     while (opcao != 6) {
@@ -88,21 +91,26 @@ void menuFornecedores(int tipoAquivo) {
                 dados = le_dados_fornecedor();
                 if (tipoAquivo == 0) {
                     salva_cadastro_fornecedores_bin(dados);
-                } else {
+                } else if (tipoAquivo == 1) {
                     salva_cadastro_fornecedores_txt(dados);
+                }
+                else {
+                    GLOBAL_dados_fornecedores = salva_cadastro_fornecedores_mem(dados, GLOBAL_dados_fornecedores);
                 }
                 break;
             case 2:
-                le_todos_fonecedores();
+                le_todos_fonecedores(GLOBAL_dados_fornecedores);
                 break;
             case 3:
-                le_fonecedor();
+                le_fonecedor(GLOBAL_dados_fornecedores);
                 break;
             case 4:
-                altera_fonecedor();
+                altera_fonecedor(GLOBAL_dados_fornecedores);
                 break;
             case 5:
-                exclui_fonecedor();
+                exclui_fonecedor(GLOBAL_dados_fornecedores);
+                break;
+            case 6:
                 break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
@@ -157,11 +165,35 @@ void salva_cadastro_fornecedores_txt(fornecedor dados) {
     fclose(salva);
 }
 
-void le_fonecedor() {
+fornecedor *salva_cadastro_fornecedores_mem(fornecedor dados, fornecedor *GLOBAL_dados_fornecedores) {
+    //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+    if (GLOBAL_tam_pont_dados_fornecedores == 1) {
+        GLOBAL_dados_fornecedores = malloc(sizeof(acomodacao));
+        *GLOBAL_dados_fornecedores = dados;
+    }
+    //caso a variavel GLOBAL_tam_pont_dados_fornecedores tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+    //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+    else {
+        GLOBAL_dados_fornecedores = realloc(GLOBAL_dados_fornecedores, (GLOBAL_tam_pont_dados_fornecedores)*sizeof(acomodacao));
+        *(GLOBAL_dados_fornecedores + (GLOBAL_tam_pont_dados_fornecedores - 1)) = dados;
+    }
+    
+    if (GLOBAL_dados_fornecedores == NULL) {
+        printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+        exit(1);
+    }
+    
+    //aumenta o valor da variavel global
+    GLOBAL_tam_pont_dados_fornecedores++;
+    
+    return GLOBAL_dados_fornecedores;
+}
+
+void le_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
     FILE *arquivo;
     float codigo;
     fornecedor dados;
-    int encontrado = 0;
+    int encontrado = 0, tam_point = 0;
     char linha[(sizeof (fornecedor))], *token;
 
     arquivo = fopen("fornecedores.bin", "rb");
@@ -228,15 +260,37 @@ void le_fonecedor() {
 
         fclose(arquivo);
     }
+    
+    //memoria
+    if (encontrado == 0) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_fornecedores; tam_point++) {
+            if (GLOBAL_dados_fornecedores->delet == 0) {
+                if (GLOBAL_dados_fornecedores->codigo == codigo) {
+                    printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
+                        GLOBAL_dados_fornecedores->codigo, GLOBAL_dados_fornecedores->nome, GLOBAL_dados_fornecedores->raz_soci, GLOBAL_dados_fornecedores->inscri_estad, GLOBAL_dados_fornecedores->cnpj, GLOBAL_dados_fornecedores->email, 
+                        GLOBAL_dados_fornecedores->telefone, GLOBAL_dados_fornecedores->local.estado, GLOBAL_dados_fornecedores->local.cep, GLOBAL_dados_fornecedores->local.cidade, GLOBAL_dados_fornecedores->local.bairro, GLOBAL_dados_fornecedores->local.rua, GLOBAL_dados_fornecedores->local.numero);
+                    encontrado = 1;
+                    break;
+                }
+            }
+
+            //avança o ponteiro uma posição
+            GLOBAL_dados_fornecedores++;
+        }
+
+        //retorna o ponteiro para a primeira posição
+        GLOBAL_dados_fornecedores -= (tam_point - 1);
+    }
 
     if (encontrado == 0) {
         printf("Nenhum fornecedor encontrado com esse código");
     }
 }
 
-void le_todos_fonecedores() {
+void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
     FILE *arquivo;
     fornecedor dados;
+    int tam_point = 0;
     char linha[(sizeof (fornecedor))], *token;
 
     arquivo = fopen("fornecedores.bin", "rb");
@@ -296,9 +350,24 @@ void le_todos_fonecedores() {
     }
 
     fclose(arquivo);
+    
+    //memoria
+    for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_fornecedores; tam_point++) {
+        if (GLOBAL_dados_fornecedores->delet == 0) {
+            printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
+                    GLOBAL_dados_fornecedores->codigo, GLOBAL_dados_fornecedores->nome, GLOBAL_dados_fornecedores->raz_soci, GLOBAL_dados_fornecedores->inscri_estad, GLOBAL_dados_fornecedores->cnpj, GLOBAL_dados_fornecedores->email, 
+                    GLOBAL_dados_fornecedores->telefone, GLOBAL_dados_fornecedores->local.estado, GLOBAL_dados_fornecedores->local.cep, GLOBAL_dados_fornecedores->local.cidade, GLOBAL_dados_fornecedores->local.bairro, GLOBAL_dados_fornecedores->local.rua, GLOBAL_dados_fornecedores->local.numero);
+        }
+        
+        //avança o ponteiro uma posição
+        GLOBAL_dados_fornecedores++;
+    }
+    
+    //retorna o ponteiro para a primeira posição
+    GLOBAL_dados_fornecedores -= (tam_point - 1);
 }
 
-void altera_fonecedor() {
+void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
     FILE *arquivo, *altera;
     float codigo;
     fornecedor dados;
@@ -386,6 +455,28 @@ void altera_fonecedor() {
         remove("fornecedores.txt");
         rename("temp.txt", "fornecedores.txt");
     }
+    
+    //memoria
+    if (encontrado == 0) {
+        for (i = 1; i < GLOBAL_tam_pont_dados_fornecedores; i++) {
+            if (GLOBAL_dados_fornecedores->delet == 0) {
+                if (GLOBAL_dados_fornecedores->codigo == codigo) {
+                    dados = le_dados_fornecedor();
+                    dados.codigo = codigo;
+                    *(GLOBAL_dados_fornecedores) = dados;
+
+                    encontrado = 1;
+                    break;
+                }
+            }
+
+            //avança o ponteiro uma posição
+            GLOBAL_dados_fornecedores++;
+        }
+
+        //retorna o ponteiro para a primeira posição
+        GLOBAL_dados_fornecedores -= (i - 1);
+    }
 
     if (encontrado == 0) {
         printf("Fornecedor não encontrado!\n");
@@ -395,7 +486,7 @@ void altera_fonecedor() {
 
 }
 
-void exclui_fonecedor() {
+void exclui_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
     FILE *arquivo, *exclui;
     float codigo;
     fornecedor dados;
@@ -480,6 +571,25 @@ void exclui_fonecedor() {
 
         remove("fornecedores.txt");
         rename("temp.txt", "fornecedores.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        for (i = 1; i < GLOBAL_tam_pont_dados_fornecedores; i++) {
+            if (GLOBAL_dados_fornecedores->delet == 0) {
+                if (GLOBAL_dados_fornecedores->codigo == codigo) {
+                    GLOBAL_dados_fornecedores->delet = 1;
+                    encontrado = 1;
+                    break;
+                }
+            }
+
+            //avança o ponteiro uma posição
+            GLOBAL_dados_fornecedores++;
+        }
+
+        //retorna o ponteiro para a primeira posição
+        GLOBAL_dados_fornecedores -= (i - 1);
     }
 
     if (encontrado == 0) {

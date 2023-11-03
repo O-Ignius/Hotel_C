@@ -6,6 +6,9 @@
 
 #include <string.h>
 
+// -------------- Var Globais --------------
+int GLOBAL_tam_pont_dados_cliente = 1; //ja usado!
+
 /////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\
 
 int tam_clientes() {
@@ -24,7 +27,7 @@ cad_clie le_dados_cad() {
 
     dados.delet = 0;
 
-    dados.codigo = retorna_id(txt, bin, tam);
+    dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_cliente);
 
     setbuf(stdin, NULL);
 
@@ -114,7 +117,7 @@ cad_clie le_dados_cad() {
     return dados;
 }
 
-void menuCliente(int tipoArquivo) {
+void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente) {
     int opcao = 0;
     cad_clie dados;
     while (opcao != 6) {
@@ -136,21 +139,26 @@ void menuCliente(int tipoArquivo) {
                 dados = le_dados_cad();
                 if (tipoArquivo == 0) {
                     salva_cadastro_pessoa_bin(dados);
-                } else {
+                } else if (tipoArquivo == 1) {
                     salva_cadastro_pessoa_txt(dados);
+                }
+                else {
+                    GLOBAL_dados_cliente = salva_cadastro_pessoa_mem(dados, GLOBAL_dados_cliente);
                 }
                 break;
             case 2:
-                le_todos_cadastro_pessoa();
+                le_todos_cadastro_pessoa(GLOBAL_dados_cliente);
                 break;
             case 3:
-                le_cadastro_pessoa();
+                le_cadastro_pessoa(GLOBAL_dados_cliente);
                 break;
             case 4:
-                alteraCliente();
+                alteraCliente(GLOBAL_dados_cliente);
                 break;
             case 5:
-                removeCliente();
+                removeCliente(GLOBAL_dados_cliente);
+                break;
+            case 6:
                 break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
@@ -228,10 +236,36 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
     fclose(salva);
 }
 
-void le_cadastro_pessoa() {
+cad_clie *salva_cadastro_pessoa_mem(cad_clie saves, cad_clie *GLOBAL_dados_cliente) {
+    //caso a variavel global GLOBAL_tam_pont_dados_cliente não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+    if (GLOBAL_tam_pont_dados_cliente == 1) {
+        GLOBAL_dados_cliente = malloc(sizeof(cad_clie));
+        *GLOBAL_dados_cliente = saves;
+    }
+    //caso a variavel GLOBAL_tam_pont_dados_cliente tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+    //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+    else {
+        GLOBAL_dados_cliente = realloc(GLOBAL_dados_cliente, (GLOBAL_tam_pont_dados_cliente)*sizeof(cad_clie));
+        *(GLOBAL_dados_cliente + (GLOBAL_tam_pont_dados_cliente - 1)) = saves;
+    }
+    
+    //encerra o processo caso não haja memória o suficiente
+    if (GLOBAL_dados_cliente == NULL) {
+        printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+        exit(1);
+    }
+    
+    //aumenta o valor da variavel global
+    GLOBAL_tam_pont_dados_cliente++;
+    
+    return GLOBAL_dados_cliente;
+}
+
+void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     //      Variáveis
     FILE *arquivoBin, *arquivoTxt;
     cad_clie cliente;
+    int tam_point = 0;
 
     float codigo;
     int encontrado = 0;
@@ -306,7 +340,27 @@ void le_cadastro_pessoa() {
             }
         }
     }
+    
+    if (encontrado == 0) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_cliente; tam_point++) {
+            if (GLOBAL_dados_cliente->delet == 0) {
+                if (GLOBAL_dados_cliente->codigo == codigo) {
+                    printf("Código: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstad civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f",
+                            GLOBAL_dados_cliente->codigo, GLOBAL_dados_cliente->nome, GLOBAL_dados_cliente->cpf, GLOBAL_dados_cliente->telefone, GLOBAL_dados_cliente->email, GLOBAL_dados_cliente->sexo, GLOBAL_dados_cliente->estado_civil, GLOBAL_dados_cliente->nascimento, 
+                            GLOBAL_dados_cliente->local.estado, GLOBAL_dados_cliente->local.cidade, GLOBAL_dados_cliente->local.bairro, GLOBAL_dados_cliente->local.rua,GLOBAL_dados_cliente->local.numero, GLOBAL_dados_cliente->local.cep);
 
+                    //caso seja achado, quebra o loop finito
+                    encontrado = 1;
+                    break;
+                }
+            }
+            //pula o ponteiro para a próxima posição;
+            GLOBAL_dados_cliente += 1;
+        }
+        //retorna o ponteiro para a posição inicial do bloco que foi alocado
+        GLOBAL_dados_cliente -= (tam_point - 1);
+    }
+    
     if (encontrado == 0) {
         printf("Cliente não encontrado!");
     }
@@ -314,13 +368,17 @@ void le_cadastro_pessoa() {
     fclose(arquivoTxt);
 }
 
-void le_todos_cadastro_pessoa() {
+void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     FILE *arquivoBin, *arquivoTxt;
     cad_clie cliente;
+    int i = 0;
+    char linha[(sizeof (cad_clie))], *token;
 
     arquivoBin = fopen("cliente.bin", "rb");
     arquivoTxt = fopen("cliente.txt", "r");
-
+    
+    //bin
+    printf("\tDados salvos em .bin: \n");
     while (fread(&cliente, sizeof (cad_clie), 1, arquivoBin)) {
         if (cliente.delet == 0) {
             printf("\nCódigo: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstad civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f",
@@ -330,7 +388,8 @@ void le_todos_cadastro_pessoa() {
         }
     }
 
-    char linha[(sizeof (cad_clie))], *token;
+    //txt
+    printf("\tDados salvos em .txt: \n");
     while (fgets(linha, sizeof (cad_clie), arquivoTxt) != NULL) {
         // pega o primeiro dado (se o arquivo foi ou não excluido logicamente)
         token = strtok(linha, ";");
@@ -370,13 +429,33 @@ void le_todos_cadastro_pessoa() {
     }
     fclose(arquivoBin);
     fclose(arquivoTxt);
+    
+    //memoria
+    if (GLOBAL_dados_cliente != NULL) {
+        printf("\tDados salvos em memória: \n");
+        
+        for (i = 1; i < GLOBAL_tam_pont_dados_cliente; i++) {
+            if (GLOBAL_dados_cliente->delet == 0) {
+                printf("\nCódigo: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstad civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f\n",
+                    GLOBAL_dados_cliente->codigo, GLOBAL_dados_cliente->nome, GLOBAL_dados_cliente->cpf, GLOBAL_dados_cliente->telefone, GLOBAL_dados_cliente->email, GLOBAL_dados_cliente->sexo, GLOBAL_dados_cliente->estado_civil, GLOBAL_dados_cliente->nascimento, 
+                    GLOBAL_dados_cliente->local.estado, GLOBAL_dados_cliente->local.cidade, GLOBAL_dados_cliente->local.bairro, GLOBAL_dados_cliente->local.rua,GLOBAL_dados_cliente->local.numero, GLOBAL_dados_cliente->local.cep);
+            }
+
+            //pula o ponteiro para a próxima posição;
+            GLOBAL_dados_cliente += 1;
+        }
+    
+        //retorna o ponteiro para a posição inicial do bloco que foi alocado
+        GLOBAL_dados_cliente -= (i - 1);
+    }
+    
     getchar();
 }
 
-void alteraCliente() {
+void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
     FILE *arquivoBin, *le, *altera;
     cad_clie cliente, novo;
-    int encontrado = 0;
+    int encontrado = 0, tam_point = 0;
     float codigo;
     char linha[(sizeof(cad_clie))], *token;
 
@@ -512,7 +591,27 @@ void alteraCliente() {
         remove("cliente.txt");
         rename("temp.txt", "cliente.txt");
     }
-
+    
+    if (encontrado == 0) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_cliente; tam_point++) {
+            if (GLOBAL_dados_cliente->delet == 0) {
+                if (GLOBAL_dados_cliente->codigo == codigo) {
+                    cliente = le_dados_cad();
+                    cliente.codigo = codigo;
+                    *(GLOBAL_dados_cliente) = cliente;
+                    
+                    encontrado = 1;
+                }
+            }
+            
+            //avança o ponteiro uma posição
+            GLOBAL_dados_cliente += 1;
+        }
+        
+        //retorna o ponteiro para a posição inicial do bloco que foi alocado
+        GLOBAL_dados_cliente -= (tam_point - 1);
+    }
+    
     if (encontrado == 1) {
         printf("Dados alterados com sucesso!");
     } else {
@@ -521,13 +620,12 @@ void alteraCliente() {
 
 }
 
-void removeCliente() {
+void removeCliente(cad_clie *GLOBAL_dados_cliente) {
     //      Variáveis
     FILE *arquivoBin;
     cad_clie cliente;
-
     float codigo;
-    int encontrado = 0;
+    int encontrado = 0, tam_point = 0;
 
     printf("Digite o codigo do cliente que deseja excluir: ");
     scanf("%f", &codigo);
@@ -554,6 +652,7 @@ void removeCliente() {
     }
     fclose(arquivoBin);
 
+    //txt
     if (encontrado == 0) {
         FILE *remover, *le;
         char linha[(sizeof (cad_clie))], *token;
@@ -617,6 +716,25 @@ void removeCliente() {
 
         remove("cliente.txt");
         rename("temp.txt", "cliente.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_cliente; tam_point++) {
+            if (GLOBAL_dados_cliente->delet == 0) {
+                if (GLOBAL_dados_cliente->codigo == codigo) {
+                    GLOBAL_dados_cliente->delet = 1;
+                    
+                    encontrado = 1;
+                }
+            }
+            
+            //avança o ponteiro uma posição
+            GLOBAL_dados_cliente += 1;
+        }
+        
+        //retorna o ponteiro para a posição inicial do bloco que foi alocado
+        GLOBAL_dados_cliente -= (tam_point - 1);
     }
     
     if (encontrado == 0) {

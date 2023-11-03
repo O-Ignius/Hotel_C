@@ -13,22 +13,27 @@
 int selecionarTipoArquivo() {
     int tipoArquivo = 0;
 
-    printf("\nDigite 0 para salvar as informações em arquivos binários e 1 para arquivos txt: ");
+    printf("\nDigite 0 para salvar as informações em arquivos binários, 1 para arquivos txt e 2 para salvar dados em memória: ");
     scanf("%d", &tipoArquivo);
 
-    while (tipoArquivo != 0 && tipoArquivo != 1) {
+    while (tipoArquivo != 0 && tipoArquivo != 1 && tipoArquivo != 2) {
         printf("Número inválido, digite novamente: ");
         scanf("%d", &tipoArquivo);
     }
     if (tipoArquivo == 0) {
         printf("Tipo de arquivo alterado para BINARIO!");
-    } else
+    } else if (tipoArquivo == 1) {
         printf("Tipo de arquivo alterado para TXT!");
+    }
+    else {
+        printf("Salvando dados na memória, Cuidado!");
+    }
+    
     getchar();
     return tipoArquivo;
 }
 
-float retorna_id(char *nome_txt, char *nome_bin, int tam) {
+float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont) {
     FILE *txt, *bin;
     int tamanho = 0;
     char linha[300];
@@ -63,10 +68,14 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam) {
     //libera alocação dinamica
     free(aux);
     
+    //aumenta com relação ao tamanho que está na memória
+    tamanho += (tam_pont - 1);
+    
     return tamanho;
 }
 
-void menuPrincipal() {
+void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, produto *GLOBAL_dados_produtos,
+                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas) {
     int opcao = 99, binOUtxt = 0;
 
     setbuf(stdin, NULL);
@@ -88,25 +97,25 @@ void menuPrincipal() {
 
         switch (opcao) {
             case 1:
-                menuHotel(binOUtxt);
+                menuHotel(binOUtxt, GLOBAL_dados_hotel);
                 break;
             case 2:
-                menuCliente(binOUtxt);
+                menuCliente(binOUtxt, GLOBAL_dados_cliente);
                 break;
             case 3:
-                menuReserva(binOUtxt);
+                menuReserva(binOUtxt, GLOBAL_dados_reservas);
                 break;
             case 4:
-                menuAcomodacoes(binOUtxt);
+                menuAcomodacoes(binOUtxt, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_acomodacao);
                 break;
             case 5:
-                menuProdutos(binOUtxt);
+                menuProdutos(binOUtxt, GLOBAL_dados_produtos);
                 break;
             case 6:
-                menuFornecedores(binOUtxt);
+                menuFornecedores(binOUtxt, GLOBAL_dados_fornecedores);
                 break;
             case 7:
-                menuOperadores(binOUtxt);
+                menuOperadores(binOUtxt, GLOBAL_dados_operadores);
                 break;
             case 9:
                 binOUtxt = selecionarTipoArquivo();
@@ -119,6 +128,15 @@ void menuPrincipal() {
                 break;
         }
     }
+    
+    //liberando os ponteiros alocados:
+    free(GLOBAL_dados_cliente);
+    free(GLOBAL_dados_acomodacao);
+    free(GLOBAL_dados_categ_acomodacao);
+    free(GLOBAL_dados_produtos);
+    free(GLOBAL_dados_fornecedores);
+    free(GLOBAL_dados_operadores);
+    free(GLOBAL_dados_reservas);
+    
     printf("Fechando programa...");
-    exit(1);
 }
