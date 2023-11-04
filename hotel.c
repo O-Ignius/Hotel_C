@@ -78,7 +78,7 @@ hotel le_dados_hotel() {
     return dados;
 }
 
-void menuHotel() {
+void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
     int opcao = 0;
     hotel dados;
     while (opcao != 5) {

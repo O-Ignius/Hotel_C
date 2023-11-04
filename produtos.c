@@ -8,6 +8,9 @@
 
 #include <string.h>
 
+// -------------- Var Globais --------------
+int GLOBAL_tam_pont_dados_produtos = 1; //ja usado!
+
 int tam_produto() {
     int tamanho = 0;
     
@@ -23,7 +26,7 @@ produto le_dados_produto() {
     int tam = sizeof(produto);
 
     //coleta dados
-    dados.codigo = retorna_id(txt, bin, tam);
+    dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_produtos);
     setbuf(stdin, NULL);
     printf("Digite a descrição do produto: \n");
     scanf("%[a-z A-Z][^\n]s", dados.descricao);
@@ -43,7 +46,7 @@ produto le_dados_produto() {
     return dados;
 }
 
-void menuProdutos(int tipoAquivo) {
+void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos) {
     int opcao = 0;
     produto dados;
     while (opcao != 6) {
@@ -67,21 +70,26 @@ void menuProdutos(int tipoAquivo) {
                 dados = le_dados_produto();
                 if (tipoAquivo == 0) {
                     salva_cadastro_produtos_bin(dados);
-                } else {
+                } else if (tipoAquivo == 1) {
                     salva_cadastro_produtos_txt(dados);
+                }
+                else {
+                    GLOBAL_dados_produtos = salva_cadastro_produtos_mem(dados, GLOBAL_dados_produtos);
                 }
                 break;
             case 2:
-                le_todos_produtos();
+                le_todos_produtos(GLOBAL_dados_produtos);
                 break;
             case 3:
-                le_produtos();
+                le_produtos(GLOBAL_dados_produtos);
                 break;
             case 4:
-                altera_produto();
+                altera_produto(GLOBAL_dados_produtos);
                 break;
             case 5:
-                exclui_produto();
+                exclui_produto(GLOBAL_dados_produtos);
+                break;
+            case 6:
                 break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
@@ -126,7 +134,31 @@ void salva_cadastro_produtos_txt(produto dados) {
     fclose(salva);
 }
 
-void le_produtos() {
+produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produtos) {
+    //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+    if (GLOBAL_tam_pont_dados_produtos == 1) {
+        GLOBAL_dados_produtos = malloc(sizeof(acomodacao));
+        *GLOBAL_dados_produtos = dados;
+    }
+    //caso a variavel GLOBAL_tam_pont_dados_produtos tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+    //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+    else {
+        GLOBAL_dados_produtos = realloc(GLOBAL_dados_produtos, (GLOBAL_tam_pont_dados_produtos)*sizeof(acomodacao));
+        *(GLOBAL_dados_produtos + (GLOBAL_tam_pont_dados_produtos - 1)) = dados;
+    }
+    
+    if (GLOBAL_dados_produtos == NULL) {
+        printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+        exit(1);
+    }
+    
+    //aumenta o valor da variavel global
+    GLOBAL_tam_pont_dados_produtos++;
+    
+    return GLOBAL_dados_produtos;
+}
+
+void le_produtos(produto *GLOBAL_dados_produtos) {
     FILE *arquivo;
     float codigo;
     int encontrado = 0;
@@ -184,9 +216,10 @@ void le_produtos() {
     }
 }
 
-void le_todos_produtos() {
+void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     FILE *arquivo;
     produto dados;
+    int tam_point = 0;
     char linha[(sizeof (produto))], *token;
 
     arquivo = fopen("produtos.bin", "rb");
@@ -196,6 +229,7 @@ void le_todos_produtos() {
         exit(1);
     }
 
+    //bin
     while (fread(&dados, sizeof (produto), 1, arquivo)) {
         if (dados.delet == 0) {
             printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
@@ -209,6 +243,7 @@ void le_todos_produtos() {
         exit(1);
     }
 
+    //txt
     while (fgets(linha, sizeof (produto), arquivo)) {
         token = strtok(linha, ";");
         if (strcmp(token, "0") == 0) {
@@ -228,9 +263,25 @@ void le_todos_produtos() {
     }
 
     fclose(arquivo);
+
+    //memoria
+    if (GLOBAL_dados_produtos != NULL) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_produtos; tam_point++) {
+            if (GLOBAL_dados_produtos->delet == 0) {
+                printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+                    GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
+            }
+            
+            // avança o ponteiro uma posição
+            GLOBAL_dados_produtos++;
+        }
+        
+        //retorna ponteiro para a primeira posição
+        GLOBAL_dados_produtos -= (tam_point - 1);
+    }
 }
 
-void altera_produto() {
+void altera_produto(produto *GLOBAL_dados_produtos) {
     FILE *altera, *le;
     float codigo;
     produto dados;
@@ -304,6 +355,29 @@ void altera_produto() {
         remove("produtos.txt");
         rename("temp.txt", "produtos.txt");
     }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_produtos != NULL) {
+            for (i = 1; i < GLOBAL_tam_pont_dados_produtos; i++) {
+                if (GLOBAL_dados_produtos->delet == 0) {
+                    if (GLOBAL_dados_produtos->codigo == codigo) {
+                        encontrado = 1;
+                        dados = le_dados_produto();
+                        dados.codigo = codigo;
+                        *(GLOBAL_dados_produtos) = dados;
+                        break;
+                    }
+                }
+
+                // avança o ponteiro uma posição
+                GLOBAL_dados_produtos++;
+            }
+
+            //retorna ponteiro para a primeira posição
+            GLOBAL_dados_produtos -= (i - 1);
+        }
+    }
 
     if (encontrado == 0) {
         printf("Produto não encontrado!\n");
@@ -312,7 +386,7 @@ void altera_produto() {
     }
 }
 
-void exclui_produto() {
+void exclui_produto(produto *GLOBAL_dados_produtos) {
 
     FILE *arquivo, *exclui;
     float codigo;
@@ -385,6 +459,27 @@ void exclui_produto() {
 
         remove("produtos.txt");
         rename("temp.txt", "produtos.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_produtos != NULL) {
+            for (i = 1; i < GLOBAL_tam_pont_dados_produtos; i++) {
+                if (GLOBAL_dados_produtos->delet == 0) {
+                    if (GLOBAL_dados_produtos->codigo == codigo) {
+                        encontrado = 1;
+                        GLOBAL_dados_produtos->delet = 1;
+                        break;
+                    }
+                }
+
+                // avança o ponteiro uma posição
+                GLOBAL_dados_produtos++;
+            }
+
+            //retorna ponteiro para a primeira posição
+            GLOBAL_dados_produtos -= (i - 1);
+        }
     }
 
     if (encontrado == 0) {
