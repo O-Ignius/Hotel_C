@@ -298,7 +298,7 @@ void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
         //Passa o cod de float para string
         sprintf(cod, "%.0f", codigo);
 
-        while (fgets(linha, sizeof (cad_clie), arquivoTxt) != NULL) {
+        while (fgets(linha, sizeof (cad_clie), arquivoTxt)) {
             // pega o primeiro dado (se o arquivo foi ou não excluido logicamente)
             token = strtok(linha, ";");
 
@@ -390,7 +390,7 @@ void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
 
     //txt
     printf("\tDados salvos em .txt: \n");
-    while (fgets(linha, sizeof (cad_clie), arquivoTxt) != NULL) {
+    while (fgets(linha, sizeof (cad_clie), arquivoTxt)) {
         // pega o primeiro dado (se o arquivo foi ou não excluido logicamente)
         token = strtok(linha, ";");
 
@@ -505,7 +505,7 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
         }
 
         //lê linha a linha do arquivo
-        while (fgets(linha, sizeof (cad_clie), le) != NULL) {
+        while (fgets(linha, sizeof (cad_clie), le)) {
             //pega o primeiro dado guardado (se o arquivo foi ou não excluido) e o separa dos demais
             token = strtok(linha, ";");
             //compara o primeiro dado, caso ele seja 0, o arquivo não foi excluido
@@ -668,7 +668,7 @@ void removeCliente(cad_clie *GLOBAL_dados_cliente) {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (cad_clie), le) != NULL) {
+        while (fgets(linha, sizeof (cad_clie), le)) {
             token = strtok(linha, ";");
             cliente.delet = atoi(token);
             token = strtok(NULL, ";");

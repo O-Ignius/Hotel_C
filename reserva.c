@@ -99,6 +99,7 @@ void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas) {
                 le_todas_reservas(GLOBAL_dados_reservas);
                 break;
             case 3:
+                altera_reserva(GLOBAL_dados_reservas);
                 break;
             case 4:
                 exclui_reservas(GLOBAL_dados_reservas);
@@ -401,7 +402,7 @@ int valida_id_acomodacao(float id, reserva *GLOBAL_dados_reservas) {
             exit(1);
         }
 
-        while(fgets(linha, sizeof(acomodacao), txt) != NULL) {
+        while(fgets(linha, sizeof(acomodacao), txt)) {
             token = strtok(linha, ";");
             dados.delet = atoi(token);
             token = strtok(NULL, ";");
@@ -461,7 +462,7 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
         exit(1);
     }
     
-    while(fgets(linha, sizeof(reserva), txt) != NULL) {
+    while(fgets(linha, sizeof(reserva), txt)) {
         token = strtok(linha, ";");
         
         if (strcmp(token, "0") == 0) {
@@ -499,6 +500,126 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
         GLOBAL_dados_reservas -= (tam_point - 1);
     }
     getchar();
+}
+
+void altera_reserva(reserva *GLOBAL_dados_reservas) {
+    FILE *txt, *bin, *alt;
+    float codigo = 0;
+    int encontrado = 0, tam_point = 0;
+    char linha[(sizeof(reserva))], *token;
+    reserva dados;
+    
+    printf("Digite o código da reserva que deseja alterar: \n");
+    scanf("%f", &codigo);
+    
+    //bin
+    bin = fopen("reservas.bin", "rb+wb");
+    if (bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+    
+    while(fread(&dados, sizeof(reserva), 1, bin)) {
+        if (dados.delet == 0 && dados.codigo == codigo) {
+            dados = le_dados_reserva();
+            dados.codigo = codigo;
+            if (valida_data(dados.inicio, dados.fim, dados.codQuarto, GLOBAL_dados_reservas) == 1) {
+                fseek(bin, -sizeof(reserva), SEEK_CUR);
+                fwrite(&dados, sizeof (reserva), 1, bin);
+                encontrado = 1;
+                break;
+            }
+            else {
+                printf("Data digitada é inválida!!\n");
+            }
+        }
+    }
+    
+    fclose(bin);
+    
+    //txt
+    if (encontrado == 0) {
+        txt = fopen("reservas.txt", "r");
+        if (txt == NULL) {
+            printf("Erro de abertura de arquivo reservas.txt!\n");
+            exit(1);
+        }
+        alt = fopen("temp.txt", "a");
+        if (alt == NULL) {
+            printf("Erro ao criar arquivo temporário!\n");
+            exit(1);
+        }
+
+        while(fgets(linha, sizeof(reserva), txt)) {
+            token = strtok(linha, ";");
+            dados.delet = atoi(token);
+            token = strtok(NULL, ";");
+            dados.codigo = atoff(token);
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                dados = le_dados_reserva();
+                dados.codigo = codigo;
+                
+                if (valida_data(dados.inicio, dados.fim, dados.codQuarto, GLOBAL_dados_reservas) == 1) {
+                    encontrado = 1;
+                }
+                else{
+                    printf("data invalida!\n");
+                }
+            }
+            else {
+                token = strtok(NULL, ";");
+                dados.codQuarto = atoff(token);
+                token = strtok(NULL, ";");
+                dados.inicio.dia = atoi(token);
+                token = strtok(NULL, ";");
+                dados.inicio.mes = atoi(token);
+                token = strtok(NULL, ";");
+                dados.inicio.ano = atoi(token);
+                token = strtok(NULL, ";");
+                dados.fim.dia = atoi(token);
+                token = strtok(NULL, ";");
+                dados.fim.mes = atoi(token);
+                token = strtok(NULL, ";");
+                dados.fim.ano = atoi(token);
+            }
+            
+            fprintf(alt, "%d;%0.0f;%0.0f;%d;%d;%d;%d;%d;%d;\n", dados.delet, dados.codigo, dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);
+        }
+
+
+        fclose(alt);
+        fclose(txt);
+        
+        remove("reservas.txt");
+        rename("temp.txt", "reservas.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_reservas != NULL) {
+            for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_reservas; tam_point++) {
+                if (GLOBAL_dados_reservas->delet == 0 && GLOBAL_dados_reservas->codigo == codigo) {
+                    dados = le_dados_reserva();
+                    if (valida_data(dados.inicio, dados.fim, dados.codQuarto, GLOBAL_dados_reservas) == 1) {
+                        *(GLOBAL_dados_reservas) = dados;
+                        encontrado = 1;
+                        break;
+                    }
+                }
+                
+                GLOBAL_dados_reservas++;
+            }
+            
+            GLOBAL_dados_reservas -= (tam_point - 1);
+        }
+    }
+    
+    if (encontrado == 0) {
+        printf("Reseva não consta na base de dados! \n");
+    }
+    else {
+        printf("Reserva alterada com sucesso! \n");
+    }
 }
 
 void exclui_reservas(reserva *GLOBAL_dados_reservas) {
@@ -541,7 +662,7 @@ void exclui_reservas(reserva *GLOBAL_dados_reservas) {
             exit(1);
         }
 
-        while(fgets(linha, sizeof(reserva), txt) != NULL) {
+        while(fgets(linha, sizeof(reserva), txt)) {
             token = strtok(linha, ";");
             dados.delet = atoi(token);
             token = strtok(NULL, ";");
