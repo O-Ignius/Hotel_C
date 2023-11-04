@@ -166,6 +166,8 @@ void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente);
 
 void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas);
 
+void menuTipoAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao);
+
 void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, acomodacao *GLOBAL_dados_acomodacao);
 
 void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos);

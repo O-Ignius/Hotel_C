@@ -90,8 +90,6 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores) {
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        printf("\nPRESSIONE ENTER PARA CONTINUAR...");
-        getchar();
     }
 }
 
@@ -231,12 +229,15 @@ void le_operador(operador *GLOBAL_dados_operadores) {
             GLOBAL_dados_operadores -= (tam_point -1);
         }
     }
+    if(encontrado == 0){
+        printf("Nenhum operador com esse código encontrado!");
+    }
 }
 
 void le_todos_operadores(operador *GLOBAL_dados_operadores) {
     FILE *arquivo;
     operador dados;
-    int tam_point = 0;
+    int tam_point = 0, encontrado = 0;
     char linha[(sizeof (operador))], *token;
 
     arquivo = fopen("operadores.bin", "rb");
@@ -248,6 +249,7 @@ void le_todos_operadores(operador *GLOBAL_dados_operadores) {
 
     while (fread(&dados, sizeof (operador), 1, arquivo)) {
         if (dados.delet == 0) {
+            encontrado = 1;
             printf("\nCódigo: %0.0f\n\tAcesso: %d\n\tNome: %s\n\tUser: %s\n\tSenha: %s",
                     dados.codigo, dados.acesso, dados.nome, dados.user, dados.senha);
         }
@@ -266,13 +268,14 @@ void le_todos_operadores(operador *GLOBAL_dados_operadores) {
         dados.delet = atoi(token);
         token = strtok(NULL, ";");
         if (dados.delet == 0) {
-            printf("\nCódigo: %s \n", token);
+            encontrado = 1;
+            printf("\nCódigo: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Nivel de acesso: %s \n", token);
+            printf("Nivel de acesso: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Nome do operador: %s \n", token);
+            printf("Nome do operador: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Username: %s \n", token);
+            printf("Username: %s \n\t", token);
             token = strtok(NULL, ";");
             printf("Senha: %s \n", token);
             token = strtok(NULL, ";");
@@ -285,6 +288,7 @@ void le_todos_operadores(operador *GLOBAL_dados_operadores) {
     if (GLOBAL_dados_operadores != NULL) {
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_operadores; tam_point++) {
             if (GLOBAL_dados_operadores->delet == 0) {
+                encontrado = 1;
                 printf("\nCódigo: %0.0f\n\tAcesso: %d\n\tNome: %s\n\tUser: %s\n\tSenha: %s \n",
                     GLOBAL_dados_operadores->codigo, GLOBAL_dados_operadores->acesso, GLOBAL_dados_operadores->nome, GLOBAL_dados_operadores->user, GLOBAL_dados_operadores->senha);
             }
@@ -295,6 +299,9 @@ void le_todos_operadores(operador *GLOBAL_dados_operadores) {
         
         //retorna o ponteiro para a primeira posição
         GLOBAL_dados_operadores -= (tam_point -1);
+    }
+    if(encontrado == 0){
+        printf("\nNenhum operador cadastrado!");
     }
 }
 

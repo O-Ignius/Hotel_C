@@ -197,6 +197,7 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
             token = strtok(NULL, ";");
             dados.codigo = atoff(token);
             if (dados.delet == 0 && dados.codigo == codigo) {
+                encontrado = 1;
                 printf("\nCódigo: %s \n", token);
                 token = strtok(NULL, ";");
                 printf("Descrição: %s \n", token);
@@ -218,6 +219,7 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
             for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_produtos; tam_point++) {
                 if (GLOBAL_dados_produtos->delet == 0) {
                     if (GLOBAL_dados_produtos->codigo == codigo) {
+                        encontrado = 1;
                         printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
                         GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
                     }
@@ -230,6 +232,9 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
             //retorna ponteiro para a primeira posição
             GLOBAL_dados_produtos -= (tam_point - 1);
         }
+    }
+    if(encontrado == 0){
+        printf("Produto não encontrado!");
     }
 }
 
@@ -267,15 +272,15 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
         if (strcmp(token, "0") == 0) {
             encontrado = 1;
             token = strtok(NULL, ";");
-            printf("\nCódigo: %s \n", token);
+            printf("\nCódigo: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Descrição: %s \n", token);
+            printf("Descrição: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Estoque mínimo: %s \n", token);
+            printf("Estoque mínimo: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Estoque atual: %s \n", token);
+            printf("Estoque atual: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Custo do produto: R$%s \n", token);
+            printf("Custo do produto: R$%s \n\t", token);
             token = strtok(NULL, ";");
             printf("Preço de venda: R$%s \n", token);
         }

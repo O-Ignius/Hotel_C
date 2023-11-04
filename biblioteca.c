@@ -85,10 +85,11 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
         printf("\tHotel - 1\n");
         printf("\tClientes - 2\n");
         printf("\tReservas - 3\n");
-        printf("\tAcomodações - 4\n");
-        printf("\tProdutos - 5\n");
-        printf("\tFornecedores - 6\n");
-        printf("\tOperadores - 7\n");
+        printf("\tTipo de Acomodações - 4\n");
+        printf("\tAcomodações - 5\n");
+        printf("\tProdutos - 6\n");
+        printf("\tFornecedores - 7\n");
+        printf("\tOperadores - 8\n");
         printf("\tConfigurações de salvamento - 9\n");
         printf("\tEncerrar - 0\n");
 
@@ -106,15 +107,18 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
                 menuReserva(binOUtxt, GLOBAL_dados_reservas);
                 break;
             case 4:
-                menuAcomodacoes(binOUtxt, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_acomodacao);
+                menuTipoAcomodacoes(binOUtxt, GLOBAL_dados_categ_acomodacao);
                 break;
             case 5:
-                menuProdutos(binOUtxt, GLOBAL_dados_produtos);
+                menuAcomodacoes(binOUtxt, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_acomodacao);
                 break;
             case 6:
-                menuFornecedores(binOUtxt, GLOBAL_dados_fornecedores);
+                menuProdutos(binOUtxt, GLOBAL_dados_produtos);
                 break;
             case 7:
+                menuFornecedores(binOUtxt, GLOBAL_dados_fornecedores);
+                break;
+            case 8:
                 menuOperadores(binOUtxt, GLOBAL_dados_operadores);
                 break;
             case 9:

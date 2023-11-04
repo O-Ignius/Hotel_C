@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "locale.h": "c",
-        "biblioteca.h": "c"
+        "biblioteca.h": "c",
+        "stdio.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

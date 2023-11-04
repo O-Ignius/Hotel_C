@@ -42,6 +42,54 @@ cate_aco le_dados_categ_acomod() {
     return dados;
 }
 
+void menuTipoAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao) {
+    int opcao = 0;
+    cate_aco categ;
+    while (opcao != 5) {
+
+        setbuf(stdin, NULL);
+
+        printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
+        printf("Digite a opcao desejada:\n\n");
+        printf("\tCadastro de um tipo de acomodação - 1\n");
+        printf("\tListar tipos de acomodação - 2\n");
+        printf("\tAlterar um tipo de acomodação - 3\n");
+        printf("\tExcluir um tipo de acomodação - 4\n");
+        printf("\tVoltar ao menu principal - 5\n");
+
+        printf("Opcão: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                categ = le_dados_categ_acomod();
+                if (tipoArquivo == 0) {
+                    salva_cadastro_tipo_acomodacao_bin(categ);
+                } else if (tipoArquivo == 1) {
+                    salva_cadastro_tipo_acomodacao_txt(categ);
+                }
+                else {
+                    GLOBAL_dados_categ_acomodacao = salva_cadastro_tipo_acomodacao_mem(categ, GLOBAL_dados_categ_acomodacao);
+                }
+                break;
+            case 2:
+                le_todos_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
+                break;
+            case 3:
+                altera_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
+                break;
+            case 4:
+                remover_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
+                break;
+            case 5:
+                break;
+            default:
+                printf("\nNúmero inválido, digite novamente!\n");
+                break;
+        }
+    }
+}
+
 void salva_cadastro_tipo_acomodacao_txt(cate_aco dados) {
     FILE *salva;
     int salvar;

@@ -39,11 +39,13 @@ acomodacao le_dados_acomod() {
 }
 
 
-void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, acomodacao *GLOBAL_dados_acomodacao) {
+
+
+
+void menuAcomodacoes(int tipoArquivo,cate_aco *GLOBAL_dados_categ_acomodacao,acomodacao *GLOBAL_dados_acomodacao) {
     int opcao = 0;
-    cate_aco categ;
     acomodacao dados;
-    while (opcao != 9) {
+    while (opcao != 5) {
 
         setbuf(stdin, NULL);
 
@@ -53,11 +55,7 @@ void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, a
         printf("\tListar todas acomodações - 2\n");
         printf("\tAlterar acomodação - 3\n");
         printf("\tExcluir acomodação - 4\n");
-        printf("\tCadastro de um tipo de acomodação - 5\n");
-        printf("\tListar tipos de acomodação - 6\n");
-        printf("\tAlterar um tipo de acomodação - 7\n");
-        printf("\tExcluir um tipo de acomodação - 8\n");
-        printf("\tVoltar ao menu principal - 9\n");
+        printf("\tVoltar ao menu principal - 5\n");
 
         printf("Opcão: ");
         scanf("%d", &opcao);
@@ -84,26 +82,6 @@ void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, a
                 exclui_acomodacoes(GLOBAL_dados_acomodacao);
                 break;
             case 5:
-                categ = le_dados_categ_acomod();
-                if (tipoArquivo == 0) {
-                    salva_cadastro_tipo_acomodacao_bin(categ);
-                } else if (tipoArquivo == 1) {
-                    salva_cadastro_tipo_acomodacao_txt(categ);
-                }
-                else {
-                    GLOBAL_dados_categ_acomodacao = salva_cadastro_tipo_acomodacao_mem(categ, GLOBAL_dados_categ_acomodacao);
-                }
-                break;
-            case 6:
-                le_todos_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
-                break;
-            case 7:
-                altera_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
-                break;
-            case 8:
-                remover_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
-                break;
-            case 9:
                 break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");

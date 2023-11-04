@@ -304,7 +304,8 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
     while (fread(&dados, sizeof (fornecedor), 1, arquivo)) {
         if (dados.delet == 0) {
             printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
-                    dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone, dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
+                    dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone, 
+                    dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
         }
     }
 
@@ -322,29 +323,29 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
 
         if (dados.delet == 0) {
             token = strtok(NULL, ";");
-            printf("\nCódigo: %s \n", token);
+            printf("\nCódigo: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Nome: %s \n", token);
+            printf("Nome: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Razão social: %s \n", token);
+            printf("Razão social: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Inscrição estadual: %s \n", token);
+            printf("Inscrição estadual: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("CNPJ: %s \n", token);
+            printf("CNPJ: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Email: %s \n", token);
+            printf("Email: %s \n\t", token);
             token = strtok(NULL, ";");
             printf("Telefone: %s \n", token);
             token = strtok(NULL, ";");
-            printf("Estado: %s \n", token);
+            printf("Dados do local:\n\tEstado: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("CEP: %s \n", token);
+            printf("CEP: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Cidade: %s \n", token);
+            printf("Cidade: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Bairro: %s \n", token);
+            printf("Bairro: %s \n\t", token);
             token = strtok(NULL, ";");
-            printf("Rua: %s \n", token);
+            printf("Rua: %s \n\t", token);
             token = strtok(NULL, ";");
             printf("Número: %s \n", token);
         }
