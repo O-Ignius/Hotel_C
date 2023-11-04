@@ -291,7 +291,7 @@ void altera_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (cate_aco), le) != NULL) {
+        while (fgets(linha, sizeof (cate_aco), le)) {
             token = strtok(linha, ";");
 
             if (strcmp(token, "0") == 0) {
@@ -403,7 +403,7 @@ void remover_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
             exit(1);
         }
 
-        while (fgets(linha, sizeof (cate_aco), le) != NULL) {
+        while (fgets(linha, sizeof (cate_aco), le)) {
             token = strtok(linha, ";");
             acomodacao.delet = atoi(token);
 

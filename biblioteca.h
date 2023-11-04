@@ -293,6 +293,8 @@ int valida_data(data inicio, data fim, float id, reserva *GLOBAL_dados_reservas)
 
 void le_todas_reservas(reserva *GLOBAL_dados_reservas);
 
+void altera_reserva(reserva *GLOBAL_dados_reservas);
+
 void exclui_reservas(reserva *GLOBAL_dados_reservas);
 
 void pesquisa_reserva_Categoria();

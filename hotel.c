@@ -258,7 +258,7 @@ void exclui_hotel() {
     }
 
     // lê linha a linha do arquivo, armazenando os dados antigos, fazendo exclusão lógica
-    while (fgets(linha, sizeof (hotel), deletar) != NULL) {
+    while (fgets(linha, sizeof (hotel), deletar)) {
         // exclui logicamente os dados
         dados.delet = 1;
         //pega cada dado e adiciona a um campo da struct o transformando para o tipo do dado
