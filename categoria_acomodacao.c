@@ -48,11 +48,12 @@ void salva_cadastro_tipo_acomodacao_txt(cate_aco dados) {
 
     salva = fopen("categoria_acomo.txt", "a");
     if (salva == NULL) {
-        printf("Erro de criação de arquivo !\n");
+        printf("Erro na abertura do arquivo categoria de acomodacoes!\n");
         exit(1);
     }
 
     salvar = fprintf(salva, "%d;%0.0f;%s;%0.2f;%d;\n", dados.delet, dados.codigo, dados.descri, dados.diaria, dados.qnt_pessoas);
+
     if (salvar < 0) {
         printf("Erro no salvamento do tipo de acomodação !\n");
     } else {
@@ -106,7 +107,7 @@ cate_aco *salva_cadastro_tipo_acomodacao_mem(cate_aco dados, cate_aco *GLOBAL_da
 void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     FILE *ler;
     cate_aco acomodacao;
-    int tam_point = 0;
+    int tam_point = 0, encontrado = 0;
     char linha[(sizeof (cate_aco))], *token;
 
     ler = fopen("categoria_acomo.bin", "rb");
@@ -121,6 +122,7 @@ void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
         if (acomodacao.delet == 0) {
             printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d",
                     acomodacao.codigo, acomodacao.descri, acomodacao.diaria, acomodacao.qnt_pessoas);
+            encontrado =1;
         }
     }
 
@@ -137,6 +139,7 @@ void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
         token = strtok(linha, ";");
 
         if (strcmp(token, "0") == 0) {
+            encontrado =1;
             token = strtok(NULL, ";");
             printf("\nCódigo: %s\n\t", token);
             token = strtok(NULL, ";");
@@ -153,6 +156,7 @@ void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     //memoria
     for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_categ_acomodacao; tam_point++) {
         if (GLOBAL_dados_categ_acomodacao->delet == 0) {
+            encontrado =1;
             printf("\nCódigo: %.0f\n\tDescrição: %s\n\tValor diária: %.2f\n\tNúmero de pessoas: %d \n",
                     GLOBAL_dados_categ_acomodacao->codigo, GLOBAL_dados_categ_acomodacao->descri, GLOBAL_dados_categ_acomodacao->diaria, GLOBAL_dados_categ_acomodacao->qnt_pessoas);
         }
@@ -161,6 +165,9 @@ void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     }
     
     GLOBAL_dados_categ_acomodacao -= (tam_point - 1);
+    if(encontrado == 0){
+        printf("\nNenhuma categoria de acomodação cadastrada!");
+    }
 }
 
 void le_tipo_acomodacao(float codigo, cate_aco *GLOBAL_dados_categ_acomodacao) {

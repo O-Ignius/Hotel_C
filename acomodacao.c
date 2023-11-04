@@ -38,6 +38,7 @@ acomodacao le_dados_acomod() {
     return dados;
 }
 
+
 void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, acomodacao *GLOBAL_dados_acomodacao) {
     int opcao = 0;
     cate_aco categ;
@@ -86,7 +87,7 @@ void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, a
                 categ = le_dados_categ_acomod();
                 if (tipoArquivo == 0) {
                     salva_cadastro_tipo_acomodacao_bin(categ);
-                } else if (tipoArquivo == 0) {
+                } else if (tipoArquivo == 1) {
                     salva_cadastro_tipo_acomodacao_txt(categ);
                 }
                 else {
@@ -108,10 +109,11 @@ void menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, a
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        printf("\nPressione qualquer tecla para continuar... ");
+        printf("\nPressione ENTER para continuar... ");
         getchar();
     }
 }
+
 
 cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     FILE *tipo;
@@ -123,7 +125,7 @@ cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
     while(valido == 0) {
         le_todos_tipo_acomodacao(GLOBAL_dados_categ_acomodacao);
         setbuf(stdin, NULL);
-        printf("Digite o código do tipo de acomodação:\n");
+        printf("\nDigite o código do tipo de acomodação:\n");
         scanf("%f", &codigo);
         setbuf(stdin, NULL);
         
@@ -195,7 +197,7 @@ cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao) {
             return dados_tipo;
         }
         else {
-            printf("Tipo digitado inválido, Tente Novamente!!\n");
+            printf("\nTipo digitado inválido, Tente Novamente!!\n");
         }
     }
 }
@@ -267,7 +269,7 @@ void le_todas_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_
     FILE *arquivo;
     char linha[(sizeof (acomodacao))], *token;
     float codigo;
-    int tam_poin = 0;
+    int tam_poin = 0, encontrado = 0;
     acomodacao acomod;
 
     arquivo = fopen("acomodacoes.bin", "rb");
@@ -286,6 +288,7 @@ void le_todas_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_
             codigo = acomod.tipo.codigo;
             le_tipo_acomodacao(codigo, GLOBAL_dados_categ_acomodacao);
             printf("\n");
+            encontrado =1;
         }
     }
     fclose(arquivo);
@@ -301,6 +304,7 @@ void le_todas_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_
             token = strtok(linha, ";");
             //caso não tenha sido excluido
             if (strcmp(token, "0") == 0) {
+                encontrado =1;
                 token = strtok(NULL, ";");
                 printf("\nCódigo do quarto: %s\n\t", token);
                 token = strtok(NULL, ";");
@@ -322,6 +326,7 @@ void le_todas_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_
     //memoria
     for (tam_poin = 1; tam_poin < GLOBAL_tam_pont_dados_acomodacao; tam_poin++) {
         if (GLOBAL_dados_acomodacao->delet == 0) {
+            encontrado =1;
             printf("\nCódigo quarto: %.0f\n\tDescrição: %s\n\tFacilidades: %s",
                     GLOBAL_dados_acomodacao->codigo, GLOBAL_dados_acomodacao->descri, GLOBAL_dados_acomodacao->facilidades);
             printf("\nTipo da acomodação:");
@@ -335,6 +340,10 @@ void le_todas_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_
     
     //retorna o ponteiro para a posição inicial do bloco que foi alocado
     GLOBAL_dados_acomodacao -= (tam_poin - 1);
+
+    if(encontrado == 0){
+        printf("\nNenhuma acomodação cadastrada!");
+    }
 }
 
 void altera_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao) {

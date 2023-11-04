@@ -70,7 +70,6 @@ void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas) {
     int opcao = 99;
 
     while (opcao != 6) {
-        system("clear");
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
         printf("Digite a opcao desejada:\n\n");
         printf("\tCadastro de reserva - 1\n");
@@ -112,7 +111,7 @@ void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas) {
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        printf("\nPRESSIONE QUALQUER TECLA PARA CONTINUAR...");
+        printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
 }
@@ -149,6 +148,7 @@ void pesquisa_reserva(reserva *GLOBAL_dados_reservas) {
             printf("Opção inválida!\n");
             break;
     }
+    printf("\nPRESSIONE ENTER PARA CONTINUAR...");
     getchar();
 }
 
@@ -254,17 +254,13 @@ int valida_data(data inicio, data fim, float id, reserva *GLOBAL_dados_reservas)
                         //logo, caso seja o mesmo mes em ambos
                         if (dados.inicio.mes == inicio.mes) {
                             //caso o dia salvo não esteja no intervalo passado pelo usuário ou seja igual a esse intervalo:
-                            if (((dados.inicio.dia >= inicio.dia) && (dados.inicio.dia <= fim.dia)) || ((dados.fim.dia >= inicio.dia) && (dados.fim.dia <= fim.dia)) || (dados.inicio.dia == inicio.dia && dados.fim.dia == fim.dia)) {
-                                valido = 0;
-                            }
+                            if (((dados.inicio.dia >= inicio.dia) && (dados.inicio.dia <= fim.dia)) || ((dados.fim.dia >= inicio.dia) && (dados.fim.dia <= fim.dia)) || (inicio.dia >= dados.inicio.dia) && (inicio.dia <= dados.fim.dia) || ((fim.dia >= dados.inicio.dia) && (fim.dia <= dados.fim.dia))){valido = 0;}
                         }
                     }
                     //caso o mes se altere ex: 29/07 - 01/08
                     else if (((dados.inicio.mes >= inicio.mes) && (dados.inicio.mes <= fim.mes)) || ((dados.fim.mes >= inicio.mes) && (dados.fim.mes <= fim.mes))) {
                         //caso o dia salvo não esteja no intervalo passado pelo usuário ou seja igual a esse intervalo:
-                        if (((dados.inicio.dia >= inicio.dia) && (dados.inicio.dia <= fim.dia)) || ((dados.fim.dia >= inicio.dia) && (dados.fim.dia <= fim.dia)) || (dados.inicio.dia == inicio.dia && dados.fim.dia == fim.dia)) {
-                            valido = 0;
-                        }
+                        if (((dados.inicio.dia >= inicio.dia) && (dados.inicio.dia <= fim.dia)) || ((dados.fim.dia >= inicio.dia) && (dados.fim.dia <= fim.dia)) || (inicio.dia >= dados.inicio.dia) && (inicio.dia <= dados.fim.dia) || ((fim.dia >= dados.inicio.dia) && (fim.dia <= dados.fim.dia))){valido = 0;}
                     }
                 }
             }
@@ -439,7 +435,7 @@ int valida_id_acomodacao(float id, reserva *GLOBAL_dados_reservas) {
 void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
     FILE *txt, *bin;
     reserva dados;
-    int tam_point = 0;
+    int tam_point = 0, encontrado = 0;
     char linha[(sizeof(reserva))], *token;
     
     bin = fopen("reservas.bin", "rb");
@@ -450,6 +446,7 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
     
     while(fread(&dados, sizeof(reserva), 1, bin)) {
         if (dados.delet == 0) {
+            encontrado = 1;
             printf("Código da reserva: %0.0f \nCódigo do quarto: %0.0f \nData Inicial: %d/%d/%d \nData Final: %d/%d/%d\n\n", dados.codigo, dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);
         }
     }
@@ -466,6 +463,7 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
         token = strtok(linha, ";");
         
         if (strcmp(token, "0") == 0) {
+            encontrado = 1;
             token = strtok(NULL, ";");
             printf("Código da reserva: %s\n", token);
             token = strtok(NULL, ";");
@@ -491,6 +489,7 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
     if (GLOBAL_dados_reservas != NULL) {
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_reservas; tam_point++) {
             if (GLOBAL_dados_reservas->delet == 0) {
+                encontrado = 1;
                 printf("Código da reserva: %0.0f \nCódigo do quarto: %0.0f \nData Inicial: %d/%d/%d \nData Final: %d/%d/%d\n", GLOBAL_dados_reservas->codigo, GLOBAL_dados_reservas->codQuarto, GLOBAL_dados_reservas->inicio.dia, GLOBAL_dados_reservas->inicio.mes, GLOBAL_dados_reservas->inicio.ano, GLOBAL_dados_reservas->fim.dia, GLOBAL_dados_reservas->fim.mes, GLOBAL_dados_reservas->fim.ano);
             }
             
@@ -498,6 +497,10 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
         }
         
         GLOBAL_dados_reservas -= (tam_point - 1);
+    }
+
+    if(encontrado == 0){
+        printf("\nNenhuma reserva cadastrada!");
     }
     getchar();
 }
@@ -938,7 +941,8 @@ void pesquisa_reserva_Categoria() {
                 if(reser.delet == 0 && acomod.codigo == reser.codQuarto){
                     encontrado1 = 1;
                     encontrado++;
-                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", acomod.codigo, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", 
+                    acomod.codigo, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
                 }
             }
             if(encontrado1 == 0){
@@ -979,7 +983,8 @@ void pesquisa_reserva_Categoria() {
                 if(reser.delet == 0 && acomod.codigo == reser.codQuarto){
                     encontrado2 = 1;
                     encontrado++;
-                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", acomod.codigo, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", 
+                    acomod.codigo, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
                 }
             }
             if(encontrado2 == 0){
@@ -1021,7 +1026,8 @@ void pesquisa_reserva_Categoria() {
                 if(reser.delet == 0 && acomod.codigo == reser.codQuarto){
                     encontrado3 = 1;
                     encontrado++;
-                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", acomod.codigo, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
+                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", 
+                    acomod.codigo, reser.inicio.dia, reser.inicio.mes, reser.inicio.ano, reser.fim.dia, reser.fim.mes, reser.fim.ano);
                 }
             }
             if(encontrado3 == 0){

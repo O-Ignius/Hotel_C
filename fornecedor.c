@@ -116,6 +116,7 @@ void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores) {
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
+        printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
 }

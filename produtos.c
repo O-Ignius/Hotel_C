@@ -95,7 +95,6 @@ void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos) {
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        getchar();
     }
 }
 
@@ -237,7 +236,7 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
 void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     FILE *arquivo;
     produto dados;
-    int tam_point = 0;
+    int tam_point = 0, encontrado = 0;
     char linha[(sizeof (produto))], *token;
 
     arquivo = fopen("produtos.bin", "rb");
@@ -250,6 +249,7 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     //bin
     while (fread(&dados, sizeof (produto), 1, arquivo)) {
         if (dados.delet == 0) {
+            encontrado = 1;
             printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
                     dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
         }
@@ -265,6 +265,7 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     while (fgets(linha, sizeof (produto), arquivo)) {
         token = strtok(linha, ";");
         if (strcmp(token, "0") == 0) {
+            encontrado = 1;
             token = strtok(NULL, ";");
             printf("\nCódigo: %s \n", token);
             token = strtok(NULL, ";");
@@ -286,6 +287,7 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     if (GLOBAL_dados_produtos != NULL) {
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_produtos; tam_point++) {
             if (GLOBAL_dados_produtos->delet == 0) {
+                encontrado = 1;
                 printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
                     GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
             }
@@ -296,6 +298,9 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
         
         //retorna ponteiro para a primeira posição
         GLOBAL_dados_produtos -= (tam_point - 1);
+    }
+    if(encontrado == 0){
+        printf("\nNenhum produto cadastrado!");
     }
 }
 

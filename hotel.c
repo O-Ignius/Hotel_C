@@ -7,13 +7,14 @@
 #include <locale.h>
 
 #include <string.h>
+//HOTEL OK
 
 hotel le_dados_hotel() {
     // variaveis
     hotel dados;
 
     //coleta de dados
-    printf("////////// Cadastre seu HOTEL \\\\\\\\\\");
+    printf("\n////////// Cadastre seu HOTEL \\\\\\\\\\");
     
     setbuf(stdin, NULL);
     printf("\n\nDigite o nome do hotel: \n");
@@ -116,12 +117,12 @@ void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
                     printf("Hotel já cadastrado! Exclua o atual ou faça alteração.");
                 }
                 break;
+                case 5:
+                    break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        printf("\nPressione qualquer tecla para continuar... ");
-        getchar();
     }
 }
 

@@ -90,6 +90,7 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores) {
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
+        printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
 }

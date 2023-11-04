@@ -37,7 +37,7 @@ cad_clie le_dados_cad() {
 
     setbuf(stdin, NULL);
 
-    /*
+    
 
     printf("Digite o seu cpf: \n");
 
@@ -76,11 +76,9 @@ cad_clie le_dados_cad() {
 
     setbuf(stdin, NULL);
 
+    printf("Digite o CEP: \n");
 
-
-    printf("Digite seu cpf: \n");
-
-    scanf("%f", &dados.cpf);
+    scanf("%f", &dados.local.cep);
 
     setbuf(stdin, NULL);
 
@@ -113,7 +111,7 @@ cad_clie le_dados_cad() {
     scanf("%[0-9/-][^\n]s", &dados.nascimento);
 
     setbuf(stdin, NULL);
-     */
+    
     return dados;
 }
 
@@ -164,7 +162,7 @@ void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente) {
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
-        printf("\nPRESSIONE QUALQUER TECLA PARA CONTINUAR...");
+        printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
 }
@@ -371,31 +369,38 @@ void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
 void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     FILE *arquivoBin, *arquivoTxt;
     cad_clie cliente;
-    int i = 0;
+    int i = 0, encontrado = 0;
     char linha[(sizeof (cad_clie))], *token;
 
     arquivoBin = fopen("cliente.bin", "rb");
     arquivoTxt = fopen("cliente.txt", "r");
     
     //bin
-    printf("\tDados salvos em .bin: \n");
+    printf("\nDados salvos em .bin: \n");
     while (fread(&cliente, sizeof (cad_clie), 1, arquivoBin)) {
         if (cliente.delet == 0) {
-            printf("\nCódigo: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstad civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f",
+            encontrado = 1;
+            printf("\nCódigo: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstado civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f",
                     cliente.codigo, cliente.nome, cliente.cpf, cliente.telefone, cliente.email, cliente.sexo, cliente.estado_civil,
                     cliente.nascimento, cliente.local.estado, cliente.local.cidade, cliente.local.bairro, cliente.local.rua,
                     cliente.local.numero, cliente.local.cep);
         }
     }
 
+    if(encontrado == 0)
+        printf("\tNenhum cliente cadastrado!");
+    else
+        encontrado ==0;
+
     //txt
-    printf("\tDados salvos em .txt: \n");
+    printf("\nDados salvos em .txt: \n");
     while (fgets(linha, sizeof (cad_clie), arquivoTxt)) {
         // pega o primeiro dado (se o arquivo foi ou não excluido logicamente)
         token = strtok(linha, ";");
 
         // compara e caso o arquivo não tenha sido excluido ele mostra
         if (strcmp(token, "0") == 0) {
+            encontrado = 1;
             token = strtok(NULL, ";");
             printf("\nCódigo: %s\n\t", token);
             token = strtok(NULL, ";");
@@ -430,12 +435,18 @@ void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     fclose(arquivoBin);
     fclose(arquivoTxt);
     
+    if(encontrado == 0)
+        printf("\tNenhum cliente cadastrado!");
+    else
+        encontrado ==0;
+
     //memoria
     if (GLOBAL_dados_cliente != NULL) {
-        printf("\tDados salvos em memória: \n");
+        printf("\nDados salvos em memória: \n");
         
         for (i = 1; i < GLOBAL_tam_pont_dados_cliente; i++) {
             if (GLOBAL_dados_cliente->delet == 0) {
+                encontrado = 1;
                 printf("\nCódigo: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstad civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f\n",
                     GLOBAL_dados_cliente->codigo, GLOBAL_dados_cliente->nome, GLOBAL_dados_cliente->cpf, GLOBAL_dados_cliente->telefone, GLOBAL_dados_cliente->email, GLOBAL_dados_cliente->sexo, GLOBAL_dados_cliente->estado_civil, GLOBAL_dados_cliente->nascimento, 
                     GLOBAL_dados_cliente->local.estado, GLOBAL_dados_cliente->local.cidade, GLOBAL_dados_cliente->local.bairro, GLOBAL_dados_cliente->local.rua,GLOBAL_dados_cliente->local.numero, GLOBAL_dados_cliente->local.cep);
@@ -447,8 +458,12 @@ void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     
         //retorna o ponteiro para a posição inicial do bloco que foi alocado
         GLOBAL_dados_cliente -= (i - 1);
+        if(encontrado == 0)
+            printf("\tNenhum cliente cadastrado!");
+        else
+            encontrado ==0;
     }
-    
+
     getchar();
 }
 
@@ -473,7 +488,11 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
     while (fread(&cliente, sizeof (cad_clie), 1, arquivoBin)) {
         if (cliente.codigo == codigo && cliente.delet == 0) {
             encontrado = 1;
-            printf("\nAntigos dados:\nCod: %.0f\nNome: %s\n", cliente.codigo, cliente.nome);
+            printf("\nAntigos dados:\n");
+            printf("\nCódigo: %.0f\n\tNome: %s\n\tCPF: %.0f\n\tTelefone: %.0f\n\tEmail: %s\n\tSexo: %s\n\tEstad civil: %s\n\tNascimento: %s\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNumero: %.0f\n\tCEP: %.0f",
+                    cliente.codigo, cliente.nome, cliente.cpf, cliente.telefone, cliente.email, cliente.sexo, cliente.estado_civil,
+                    cliente.nascimento, cliente.local.estado, cliente.local.cidade, cliente.local.bairro, cliente.local.rua,
+                    cliente.local.numero, cliente.local.cep);
 
             printf("\nNovos dados:");
 
@@ -646,7 +665,6 @@ void removeCliente(cad_clie *GLOBAL_dados_cliente) {
             fseek(arquivoBin, -sizeof (cad_clie), SEEK_CUR);
             //Com o ponteiro no local correto, 
             fwrite(&cliente, sizeof (cad_clie), 1, arquivoBin);
-            printf("\n\ta");
             break;
         }
     }
