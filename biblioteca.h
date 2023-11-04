@@ -215,7 +215,7 @@ void altera_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao);
 
 void remover_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao);
 
-int valida_id_acomodacao(float id);
+int valida_id_acomodacao(float id, reserva *GLOBAL_dados_reservas);
 
 // geral
 
@@ -271,6 +271,8 @@ void salva_cadastro_operadores_bin(operador dados);
 
 void salva_cadastro_operadores_txt(operador dados);
 
+operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_operadores);
+
 void le_operador();
 
 void le_todos_operadores();
@@ -281,15 +283,17 @@ void exclui_operador();
 
 //Reserva
 
-void salva_cadastro_reserva_bin(reserva dados);
+void salva_cadastro_reserva_bin(reserva dados, reserva *GLOBAL_dados_reservas);
 
-void salva_cadastro_reserva_txt(reserva dados);
+void salva_cadastro_reserva_txt(reserva dados, reserva *GLOBAL_dados_reservas);
 
-int valida_data(data inicio, data fim, float id);
+reserva *salva_cadastro_reserva_mem(reserva dados, reserva *GLOBAL_dados_reservas);
 
-void le_todas_reservas();
+int valida_data(data inicio, data fim, float id, reserva *GLOBAL_dados_reservas);
 
-void exclui_reservas();
+void le_todas_reservas(reserva *GLOBAL_dados_reservas);
+
+void exclui_reservas(reserva *GLOBAL_dados_reservas);
 
 void pesquisa_reserva_Categoria();
 
@@ -297,7 +301,7 @@ void pesquisa_reserva_quantPessoas();
 
 void pesquisa_reserva_facilidade();
 
-void pesquisa_reserva_data();
+void pesquisa_reserva_data(reserva *GLOBAL_dados_reservas);
 
 void pesquisa_reserva();
 

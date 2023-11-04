@@ -69,7 +69,7 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores) {
                     salva_cadastro_operadores_txt(dados);
                 }
                 else {
-                    
+                    GLOBAL_dados_operadores = salva_cadastro_operadores_mem(dados, GLOBAL_dados_operadores);
                 }
                 break;
             case 2:
@@ -128,11 +128,35 @@ void salva_cadastro_operadores_txt(operador dados) {
     fclose(salva);
 }
 
+operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_operadores) {
+    //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+    if (GLOBAL_tam_pont_dados_operadores == 1) {
+        GLOBAL_dados_operadores = malloc(sizeof(acomodacao));
+        *GLOBAL_dados_operadores = dados;
+    }
+    //caso a variavel GLOBAL_tam_pont_dados_operadores tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+    //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+    else {
+        GLOBAL_dados_operadores = realloc(GLOBAL_dados_operadores, (GLOBAL_tam_pont_dados_operadores)*sizeof(acomodacao));
+        *(GLOBAL_dados_operadores + (GLOBAL_tam_pont_dados_operadores - 1)) = dados;
+    }
+    
+    if (GLOBAL_dados_operadores == NULL) {
+        printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+        exit(1);
+    }
+    
+    //aumenta o valor da variavel global
+    GLOBAL_tam_pont_dados_operadores++;
+    
+    return GLOBAL_dados_operadores;
+}
+
 void le_operador(operador *GLOBAL_dados_operadores) {
     FILE *arquivo;
     float codigo;
     operador dados;
-    int encontrado = 0;
+    int encontrado = 0, tam_point = 0;
     char linha[(sizeof (operador))], *token;
 
     arquivo = fopen("operadores.bin", "rb");
@@ -184,11 +208,34 @@ void le_operador(operador *GLOBAL_dados_operadores) {
 
         fclose(arquivo);
     }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_operadores != NULL) {
+            for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_operadores; tam_point++) {
+                if (GLOBAL_dados_operadores->delet == 0) {
+                    if (GLOBAL_dados_operadores->codigo == codigo) {
+                        printf("\nCódigo: %0.0f\n\tAcesso: %d\n\tNome: %s\n\tUser: %s\n\tSenha: %s \n",
+                                GLOBAL_dados_operadores->codigo, GLOBAL_dados_operadores->acesso, GLOBAL_dados_operadores->nome, GLOBAL_dados_operadores->user, GLOBAL_dados_operadores->senha);
+                        encontrado = 1;
+                        break;
+                    }
+                }
+
+                //avança 1 posição
+                GLOBAL_dados_operadores++;
+            }
+
+            //retorna o ponteiro para a primeira posição
+            GLOBAL_dados_operadores -= (tam_point -1);
+        }
+    }
 }
 
 void le_todos_operadores(operador *GLOBAL_dados_operadores) {
     FILE *arquivo;
     operador dados;
+    int tam_point = 0;
     char linha[(sizeof (operador))], *token;
 
     arquivo = fopen("operadores.bin", "rb");
@@ -232,6 +279,22 @@ void le_todos_operadores(operador *GLOBAL_dados_operadores) {
     }
 
     fclose(arquivo);
+    
+    //memoria
+    if (GLOBAL_dados_operadores != NULL) {
+        for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_operadores; tam_point++) {
+            if (GLOBAL_dados_operadores->delet == 0) {
+                printf("\nCódigo: %0.0f\n\tAcesso: %d\n\tNome: %s\n\tUser: %s\n\tSenha: %s \n",
+                    GLOBAL_dados_operadores->codigo, GLOBAL_dados_operadores->acesso, GLOBAL_dados_operadores->nome, GLOBAL_dados_operadores->user, GLOBAL_dados_operadores->senha);
+            }
+            
+            //avança 1 posição
+            GLOBAL_dados_operadores++;
+        }
+        
+        //retorna o ponteiro para a primeira posição
+        GLOBAL_dados_operadores -= (tam_point -1);
+    }
 }
 
 void alterar_operador(operador *GLOBAL_dados_operadores) {
@@ -322,6 +385,29 @@ void alterar_operador(operador *GLOBAL_dados_operadores) {
 
         remove("operadores.txt");
         rename("temp.txt", "operadores.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_operadores != NULL) {
+            for (i = 1; i < GLOBAL_tam_pont_dados_operadores; i++) {
+                if (GLOBAL_dados_operadores->delet == 0) {
+                    if (GLOBAL_dados_operadores->codigo == codigo) {
+                        dados = le_dados_operador();
+                        dados.codigo = codigo;
+                        *(GLOBAL_dados_operadores) = dados;
+                        encontrado = 1;
+                        break;
+                    }
+                }
+
+                //avança 1 posição
+                GLOBAL_dados_operadores++;
+            }
+
+            //retorna o ponteiro para a primeira posição
+            GLOBAL_dados_operadores -= (i - 1);
+        }
     }
 
     if (encontrado == 0) {
@@ -417,6 +503,27 @@ void exclui_operador(operador *GLOBAL_dados_operadores) {
 
         remove("operadores.txt");
         rename("temp.txt", "operadores.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_operadores != NULL) {
+            for (i = 1; i < GLOBAL_tam_pont_dados_operadores; i++) {
+                if (GLOBAL_dados_operadores->delet == 0) {
+                    if (GLOBAL_dados_operadores->codigo == codigo) {
+                        GLOBAL_dados_operadores->delet = 1;
+                        encontrado = 1;
+                        break;
+                    }
+                }
+
+                //avança 1 posição
+                GLOBAL_dados_operadores++;
+            }
+
+            //retorna o ponteiro para a primeira posição
+            GLOBAL_dados_operadores -= (i - 1);
+        }
     }
 
     if (encontrado == 0) {
