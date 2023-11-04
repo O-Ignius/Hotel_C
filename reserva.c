@@ -600,6 +600,7 @@ void altera_reserva(reserva *GLOBAL_dados_reservas) {
             for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_reservas; tam_point++) {
                 if (GLOBAL_dados_reservas->delet == 0 && GLOBAL_dados_reservas->codigo == codigo) {
                     dados = le_dados_reserva();
+                    dados.codigo = codigo;
                     if (valida_data(dados.inicio, dados.fim, dados.codQuarto, GLOBAL_dados_reservas) == 1) {
                         *(GLOBAL_dados_reservas) = dados;
                         encontrado = 1;

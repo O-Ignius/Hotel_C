@@ -161,7 +161,7 @@ produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produt
 void le_produtos(produto *GLOBAL_dados_produtos) {
     FILE *arquivo;
     float codigo;
-    int encontrado = 0;
+    int encontrado = 0, tam_point = 0;
     produto dados;
     char linha[(sizeof (produto))], *token;
 
@@ -213,6 +213,24 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
         }
 
         fclose(arquivo);
+        
+        //memoria
+        if (GLOBAL_dados_produtos != NULL) {
+            for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_produtos; tam_point++) {
+                if (GLOBAL_dados_produtos->delet == 0) {
+                    if (GLOBAL_dados_produtos->codigo == codigo) {
+                        printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+                        GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
+                    }
+                }
+
+                // avança o ponteiro uma posição
+                GLOBAL_dados_produtos++;
+            }
+
+            //retorna ponteiro para a primeira posição
+            GLOBAL_dados_produtos -= (tam_point - 1);
+        }
     }
 }
 

@@ -101,17 +101,17 @@ void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
                 le_cadastro_hotel();
                 break;
             case 2:
-                exclui_hotel();
+                exclui_hotel(GLOBAL_dados_hotel);
                 dados = le_dados_hotel();
-                salva_cadastro_hotel(dados);
+                salva_cadastro_hotel(dados, GLOBAL_dados_hotel);
                 break;
             case 3:
-                exclui_hotel();
+                exclui_hotel(GLOBAL_dados_hotel);
                 break;
             case 4:
                 if (verifica_Hotel() == 0) {
                     dados = le_dados_hotel();
-                    salva_cadastro_hotel(dados);
+                    salva_cadastro_hotel(dados, GLOBAL_dados_hotel);
                 } else {
                     printf("Hotel já cadastrado! Exclua o atual ou faça alteração.");
                 }
@@ -147,7 +147,7 @@ int verifica_Hotel() {
     return tam;
 }
 
-void salva_cadastro_hotel(hotel dados) {
+void salva_cadastro_hotel(hotel dados, hotel *GLOBAL_dados_hotel) {
     FILE *salva;
 
     salva = fopen("hotel.bin", "ab");
@@ -205,6 +205,10 @@ void salva_cadastro_hotel(hotel dados) {
 
     //      Fechar arquivo
     fclose(salva);
+    
+    //salvando na memoria
+    GLOBAL_dados_hotel = malloc(sizeof(hotel));
+    *GLOBAL_dados_hotel = dados;
 }
 
 void le_cadastro_hotel() {
@@ -223,7 +227,7 @@ void le_cadastro_hotel() {
     }
 }
 
-void exclui_hotel() {
+void exclui_hotel(hotel *GLOBAL_dados_hotel) {
     FILE *deletar, *altera;
     hotel dados;
     int hot, end, chek;
@@ -338,4 +342,6 @@ void exclui_hotel() {
     //renomeia o arquivo temporário
     rename("temp.txt", "hotel.txt");
     
+    //remove na memoria
+    free(GLOBAL_dados_hotel);
 }

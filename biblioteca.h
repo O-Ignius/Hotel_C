@@ -177,11 +177,11 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores);
 //  Hotel
 int verifica_Hotel();
 
-void salva_cadastro_hotel(hotel dados);
+void salva_cadastro_hotel(hotel dados, hotel *GLOBAL_dados_hotel);
 
 void le_cadastro_hotel();
 
-void exclui_hotel();
+void exclui_hotel(hotel *GLOBAL_dados_hotel);
 
 //  Clientes
 

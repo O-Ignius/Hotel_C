@@ -62,7 +62,7 @@ int main() {
     if(verifica_Hotel() == 0){
         hotel dados;
         dados = le_dados_hotel();
-        salva_cadastro_hotel(dados);
+        salva_cadastro_hotel(dados, GLOBAL_dados_hotel);
     }
 
     menuPrincipal(GLOBAL_dados_hotel, GLOBAL_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_produtos, GLOBAL_dados_fornecedores, GLOBAL_dados_operadores, GLOBAL_dados_reservas);

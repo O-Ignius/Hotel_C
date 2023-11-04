@@ -137,6 +137,7 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
     free(GLOBAL_dados_fornecedores);
     free(GLOBAL_dados_operadores);
     free(GLOBAL_dados_reservas);
+    free(GLOBAL_dados_hotel);
     
     printf("Fechando programa...");
 }
