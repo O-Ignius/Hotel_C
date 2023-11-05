@@ -68,7 +68,7 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont) {
     //libera alocação dinamica
     free(aux);
     
-    //aumenta com relação ao tamanho que está na memória
+    //aumenta com relação ao tamanho que está salvo em memória
     tamanho += (tam_pont - 1);
     
     return tamanho;

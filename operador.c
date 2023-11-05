@@ -35,7 +35,7 @@ operador le_dados_operador() {
     printf("Digite a senha do operador: \n");
     scanf("%[^\n]s", dados.senha);
     setbuf(stdin, NULL);
-    printf("Digite qual a permissão de acesso do fornecedor: \n");
+    printf("Digite qual a permissão de acesso do operador: \n");
     scanf("%d", &dados.acesso);
     dados.delet = 0;
     return dados;

@@ -104,7 +104,7 @@ void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas) {
                 exclui_reservas(GLOBAL_dados_reservas);
                 break;
             case 5:
-                pesquisa_reserva();
+                pesquisa_reserva(GLOBAL_dados_reservas);
             case 6:
                 break;
             default:

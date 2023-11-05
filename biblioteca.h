@@ -31,7 +31,7 @@ extern "C" {
 
 //struct moradia
 typedef struct {
-    char estado[2], cidade[100], bairro[100], rua[150];
+    char estado[4], cidade[100], bairro[100], rua[150];
     float numero, cep;
 
 } endereco;
@@ -259,13 +259,13 @@ void salva_cadastro_fornecedores_txt(fornecedor dados);
 
 fornecedor *salva_cadastro_fornecedores_mem(fornecedor dados, fornecedor *GLOBAL_dados_fornecedores);
 
-void le_fonecedor();
+void le_fonecedor(fornecedor *GLOBAL_dados_fornecedores);
 
-void le_todos_fonecedores();
+void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores);
 
-void altera_fonecedor();
+void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores);
 
-void exclui_fonecedor();
+void exclui_fonecedor(fornecedor *GLOBAL_dados_fornecedores);
 
 //Operador
 
@@ -275,13 +275,13 @@ void salva_cadastro_operadores_txt(operador dados);
 
 operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_operadores);
 
-void le_operador();
+void le_operador(operador *GLOBAL_dados_operadores);
 
-void le_todos_operadores();
+void le_todos_operadores(operador *GLOBAL_dados_operadores);
 
-void alterar_operador();
+void alterar_operador(operador *GLOBAL_dados_operadores);
 
-void exclui_operador();
+void exclui_operador(operador *GLOBAL_dados_operadores);
 
 //Reserva
 
@@ -307,5 +307,5 @@ void pesquisa_reserva_facilidade();
 
 void pesquisa_reserva_data(reserva *GLOBAL_dados_reservas);
 
-void pesquisa_reserva();
+void pesquisa_reserva(reserva *GLOBAL_dados_reservas);
 

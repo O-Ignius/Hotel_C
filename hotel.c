@@ -220,9 +220,9 @@ void le_cadastro_hotel() {
 
     while (fread(&dados, sizeof (hotel), 1, le)) {
         if (dados.delet == 0) {
-            printf("\nNome: %s\n\tRazão Social: %s\n\tInscrição Estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone do Hotel: %.0f\n\tGerente: %s\n\tTelefone do Gerente: %.0f\n\tPorcentagem de lucro do hotel: %.2f%%\n\tCep: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero do hotel: %.0f\n\tCheck-in: %d:%d\n\tCheck-out: %d:%d",
+            printf("\nNome: %s\n\tRazão Social: %s\n\tInscrição Estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone do Hotel: %.0f\n\tGerente: %s\n\tTelefone do Gerente: %.0f\n\tPorcentagem de lucro do hotel: %.2f%%\n\tCep: %.0f\n\tEstado: %s\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero do hotel: %.0f\n\tCheck-in: %d:%d\n\tCheck-out: %d:%d",
                     dados.nome_hot, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone_hot,
-                    dados.nome_respo, dados.telefone_respo, dados.lucro, dados.local.cep, dados.local.cidade,
+                    dados.nome_respo, dados.telefone_respo, dados.lucro, dados.local.cep, dados.local.estado, dados.local.cidade,
                     dados.local.bairro, dados.local.rua, dados.local.numero, dados.in.hora, dados.in.min, dados.out.hora, dados.out.min);
         }
     }

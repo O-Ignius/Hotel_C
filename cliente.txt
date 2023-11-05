@@ -1,3 +1,1 @@
-1;2;Cliente ;1234523648;999776640;cliente2@gmail.com;feminino;Solteira;2;spsao paulo;0;sao paulo;Centro;Rua ;400;
-1;3;C;123;123;ds;f;df;123456;asasd;0;asd;a;asd;12;
-0;4;Cliente ;12345612288;9991231488;cliente2@gmail.com;feminino;Solteira;10/02/2002;SPSao paulo;30001234;Sao paulo;centro;Rua;123;
+0;1;Cliente ;12365456384;999776640;cliente2@gmail.com;Feminino;Solteira;01/02/2002;MG;35501000;Divinopolis;Centro;Goias;600;

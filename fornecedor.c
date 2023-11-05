@@ -291,7 +291,7 @@ void le_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
 void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
     FILE *arquivo;
     fornecedor dados;
-    int tam_point = 0;
+    int tam_point = 0, encontrado = 0;
     char linha[(sizeof (fornecedor))], *token;
 
     arquivo = fopen("fornecedores.bin", "rb");
@@ -303,6 +303,7 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
 
     while (fread(&dados, sizeof (fornecedor), 1, arquivo)) {
         if (dados.delet == 0) {
+            encontrado = 1;
             printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
                     dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone, 
                     dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
@@ -322,6 +323,7 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
         dados.delet = atoi(token);
 
         if (dados.delet == 0) {
+            encontrado = 1;
             token = strtok(NULL, ";");
             printf("\nCódigo: %s \n\t", token);
             token = strtok(NULL, ";");
@@ -356,6 +358,7 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
     //memoria
     for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_fornecedores; tam_point++) {
         if (GLOBAL_dados_fornecedores->delet == 0) {
+            encontrado = 1;
             printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
                     GLOBAL_dados_fornecedores->codigo, GLOBAL_dados_fornecedores->nome, GLOBAL_dados_fornecedores->raz_soci, GLOBAL_dados_fornecedores->inscri_estad, GLOBAL_dados_fornecedores->cnpj, GLOBAL_dados_fornecedores->email, 
                     GLOBAL_dados_fornecedores->telefone, GLOBAL_dados_fornecedores->local.estado, GLOBAL_dados_fornecedores->local.cep, GLOBAL_dados_fornecedores->local.cidade, GLOBAL_dados_fornecedores->local.bairro, GLOBAL_dados_fornecedores->local.rua, GLOBAL_dados_fornecedores->local.numero);
@@ -367,6 +370,8 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
     
     //retorna o ponteiro para a primeira posição
     GLOBAL_dados_fornecedores -= (tam_point - 1);
+    if(encontrado == 0)
+        printf("\nNenhum fornecedor cadastrado!");
 }
 
 void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {

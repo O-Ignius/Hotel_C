@@ -176,7 +176,7 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
 
     while (fread(&dados, sizeof (produto), 1, arquivo)) {
         if (dados.delet == 0 && dados.codigo == codigo) {
-            printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+            printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
                     dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
             encontrado = 1;
         }
@@ -220,7 +220,7 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
                 if (GLOBAL_dados_produtos->delet == 0) {
                     if (GLOBAL_dados_produtos->codigo == codigo) {
                         encontrado = 1;
-                        printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+                        printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
                         GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
                     }
                 }
@@ -255,7 +255,7 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     while (fread(&dados, sizeof (produto), 1, arquivo)) {
         if (dados.delet == 0) {
             encontrado = 1;
-            printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+            printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
                     dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
         }
     }
@@ -293,7 +293,7 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_produtos; tam_point++) {
             if (GLOBAL_dados_produtos->delet == 0) {
                 encontrado = 1;
-                printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: %.2f\n\tVenda: %.2f",
+                printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
                     GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
             }
             
