@@ -478,7 +478,7 @@ void exclui_produto(produto *GLOBAL_dados_produtos) {
 
             salvar = fprintf(exclui, "%d;%0.0f;%s;%d;%d;%0.2f;%0.2f;\n", dados.delet, dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
             if (salvar < 0) {
-                printf("Erro de salvamento de arquivo texto!\n");
+                printf("Erro na exclusão!\n");
             }
         }
 

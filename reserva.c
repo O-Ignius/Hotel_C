@@ -54,7 +54,7 @@ reserva le_dados_reserva() {
 
     dados.delet = 0;
     dados.codigo = retorna_id(txt, bin, tam, GLOBAL_tam_pont_dados_reservas);
-    
+
     printf("Digite o código do quarto: ");
     scanf("%f", &dados.codQuarto);
     printf("\nDigite a data de entrada:\n");
@@ -148,8 +148,6 @@ void pesquisa_reserva(reserva *GLOBAL_dados_reservas) {
             printf("Opção inválida!\n");
             break;
     }
-    printf("\nPRESSIONE ENTER PARA CONTINUAR...");
-    getchar();
 }
 
 //Reserva
@@ -165,8 +163,11 @@ void salva_cadastro_reserva_bin(reserva dados, reserva *GLOBAL_dados_reservas) {
     }
 
     if (valida_data(dados.inicio, dados.fim, dados.codQuarto, GLOBAL_dados_reservas) == 1) {
-        fwrite(&dados, sizeof (reserva), 1, arquivo);
-        printf("\nReserva cadastrada com sucesso!");
+        if(valida_id_acomodacao(dados.codQuarto, GLOBAL_dados_reservas)){
+            fwrite(&dados, sizeof (reserva), 1, arquivo);
+            printf("\nReserva cadastrada com sucesso!");
+        } else
+            printf("Código do quarto inválido!");
     } else {
         printf("\nData inválida!");
     }
@@ -211,6 +212,7 @@ reserva *salva_cadastro_reserva_mem(reserva dados, reserva *GLOBAL_dados_reserva
     if (GLOBAL_tam_pont_dados_reservas == 1) {
         GLOBAL_dados_reservas = malloc(sizeof(acomodacao));
         *GLOBAL_dados_reservas = dados;
+        
     }
     //caso a variavel GLOBAL_tam_pont_dados_reservas tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
@@ -222,7 +224,8 @@ reserva *salva_cadastro_reserva_mem(reserva dados, reserva *GLOBAL_dados_reserva
     if (GLOBAL_dados_reservas == NULL) {
         printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
         exit(1);
-    }
+    } else 
+        printf("Reserva cadastrada com sucesso!");
     
     //aumenta o valor da variavel global
     GLOBAL_tam_pont_dados_reservas++;
@@ -447,7 +450,7 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
     while(fread(&dados, sizeof(reserva), 1, bin)) {
         if (dados.delet == 0) {
             encontrado = 1;
-            printf("Código da reserva: %0.0f \nCódigo do quarto: %0.0f \nData Inicial: %d/%d/%d \nData Final: %d/%d/%d\n\n", dados.codigo, dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);
+            printf("Código da reserva: %0.0f \n\tCódigo do quarto: %0.0f \n\tData Inicial: %d/%d/%d \n\tData Final: %d/%d/%d\n\n", dados.codigo, dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);
         }
     }
     
@@ -465,15 +468,15 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
         if (strcmp(token, "0") == 0) {
             encontrado = 1;
             token = strtok(NULL, ";");
-            printf("Código da reserva: %s\n", token);
+            printf("Código da reserva: %s\n\t", token);
             token = strtok(NULL, ";");
-            printf("Código do quarto: %s\n", token);
+            printf("Código do quarto: %s\n\t", token);
             token = strtok(NULL, ";");
             printf("Data inicial: %s/", token);
             token = strtok(NULL, ";");
             printf("%s/", token);
             token = strtok(NULL, ";");
-            printf("%s\n", token);
+            printf("%s\n\t", token);
             token = strtok(NULL, ";");
             printf("Data final: %s/", token);
             token = strtok(NULL, ";");
@@ -490,7 +493,7 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas) {
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_reservas; tam_point++) {
             if (GLOBAL_dados_reservas->delet == 0) {
                 encontrado = 1;
-                printf("Código da reserva: %0.0f \nCódigo do quarto: %0.0f \nData Inicial: %d/%d/%d \nData Final: %d/%d/%d\n", GLOBAL_dados_reservas->codigo, GLOBAL_dados_reservas->codQuarto, GLOBAL_dados_reservas->inicio.dia, GLOBAL_dados_reservas->inicio.mes, GLOBAL_dados_reservas->inicio.ano, GLOBAL_dados_reservas->fim.dia, GLOBAL_dados_reservas->fim.mes, GLOBAL_dados_reservas->fim.ano);
+                printf("Código da reserva: %0.0f \n\tCódigo do quarto: %0.0f \n\tData Inicial: %d/%d/%d \n\tData Final: %d/%d/%d\n\n", GLOBAL_dados_reservas->codigo, GLOBAL_dados_reservas->codQuarto, GLOBAL_dados_reservas->inicio.dia, GLOBAL_dados_reservas->inicio.mes, GLOBAL_dados_reservas->inicio.ano, GLOBAL_dados_reservas->fim.dia, GLOBAL_dados_reservas->fim.mes, GLOBAL_dados_reservas->fim.ano);
             }
             
             GLOBAL_dados_reservas++;
@@ -619,7 +622,7 @@ void altera_reserva(reserva *GLOBAL_dados_reservas) {
     }
     
     if (encontrado == 0) {
-        printf("Reseva não consta na base de dados! \n");
+        printf("Reserva não consta na base de dados! \n");
     }
     else {
         printf("Reserva alterada com sucesso! \n");
@@ -630,7 +633,7 @@ void exclui_reservas(reserva *GLOBAL_dados_reservas) {
     FILE *txt, *bin, *altera;
     reserva dados;
     float codigo;
-    int encontrado = 0, tam_point = 0;
+    int encontrado = 0, tam_point = 0, salvar;
     char linha[(sizeof(reserva))], *token;
     
     printf("Digite o código da reserva que deseja excluir: \n");
@@ -691,6 +694,11 @@ void exclui_reservas(reserva *GLOBAL_dados_reservas) {
                 dados.delet = 1;
                 encontrado = 1;
             }
+
+            salvar = fprintf(altera, "%d;%0.0f;%0.0f;%d;%d;%d;%d;%d;%d;\n", dados.delet, dados.codigo, dados.codQuarto, dados.inicio.dia, dados.inicio.mes, dados.inicio.ano, dados.fim.dia, dados.fim.mes, dados.fim.ano);
+            if (salvar < 0) {
+                printf("Erro na exclusão!\n");
+            }
         }
 
         fclose(txt);
@@ -722,7 +730,7 @@ void exclui_reservas(reserva *GLOBAL_dados_reservas) {
     if (encontrado == 0) {
         printf("Reserva não encontrada!\n");
     } else {
-        printf("Dados Alterados com sucesso!\n");
+        printf("Dados excluídos com sucesso!\n");
     }
 }
 
