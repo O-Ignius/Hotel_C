@@ -309,3 +309,4 @@ void pesquisa_reserva_data(reserva *GLOBAL_dados_reservas);
 
 void pesquisa_reserva(reserva *GLOBAL_dados_reservas);
 
+void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas);
