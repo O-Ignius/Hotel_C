@@ -8,8 +8,6 @@
 
 #include <string.h>
 
-// -------------- Var Globais --------------
-int GLOBAL_tam_pont_dados_fornecedores = 1; //ja usado!
 
 int tam_fornecedor() {
     int tamanho = 0;
@@ -19,7 +17,7 @@ int tam_fornecedor() {
     return tamanho;
 }
 
-fornecedor le_dados_fornecedor() {
+fornecedor le_dados_fornecedor(int GLOBAL_tam_pont_dados_fornecedores) {
     //variaveis
     fornecedor dados;
     char txt[30] = "fornecedores.txt", bin[30] = "fornecedores.bin";
@@ -67,7 +65,7 @@ fornecedor le_dados_fornecedor() {
     return dados;
 }
 
-void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores) {
+void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores, int *GLOBAL_tam_pont_dados_fornecedores) {
     int opcao = 0;
     fornecedor dados;
     while (opcao != 6) {
@@ -88,27 +86,27 @@ void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores) {
 
         switch (opcao) {
             case 1:
-                dados = le_dados_fornecedor();
+                dados = le_dados_fornecedor(*GLOBAL_tam_pont_dados_fornecedores);
                 if (tipoAquivo == 0) {
                     salva_cadastro_fornecedores_bin(dados);
                 } else if (tipoAquivo == 1) {
                     salva_cadastro_fornecedores_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_fornecedores = salva_cadastro_fornecedores_mem(dados, GLOBAL_dados_fornecedores);
+                    GLOBAL_dados_fornecedores = salva_cadastro_fornecedores_mem(dados, GLOBAL_dados_fornecedores, &(*GLOBAL_tam_pont_dados_fornecedores));
                 }
                 break;
             case 2:
-                le_todos_fonecedores(GLOBAL_dados_fornecedores);
+                le_todos_fonecedores(GLOBAL_dados_fornecedores, *GLOBAL_tam_pont_dados_fornecedores);
                 break;
             case 3:
-                le_fonecedor(GLOBAL_dados_fornecedores);
+                le_fonecedor(GLOBAL_dados_fornecedores, *GLOBAL_tam_pont_dados_fornecedores);
                 break;
             case 4:
-                altera_fonecedor(GLOBAL_dados_fornecedores);
+                altera_fonecedor(GLOBAL_dados_fornecedores, *GLOBAL_tam_pont_dados_fornecedores);
                 break;
             case 5:
-                exclui_fonecedor(GLOBAL_dados_fornecedores);
+                exclui_fonecedor(GLOBAL_dados_fornecedores, *GLOBAL_tam_pont_dados_fornecedores);
                 break;
             case 6:
                 break;
@@ -166,17 +164,17 @@ void salva_cadastro_fornecedores_txt(fornecedor dados) {
     fclose(salva);
 }
 
-fornecedor *salva_cadastro_fornecedores_mem(fornecedor dados, fornecedor *GLOBAL_dados_fornecedores) {
+fornecedor *salva_cadastro_fornecedores_mem(fornecedor dados, fornecedor *GLOBAL_dados_fornecedores, int *GLOBAL_tam_pont_dados_fornecedores) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
-    if (GLOBAL_tam_pont_dados_fornecedores == 1) {
+    if (*GLOBAL_tam_pont_dados_fornecedores == 1) {
         GLOBAL_dados_fornecedores = malloc(sizeof(acomodacao));
         *GLOBAL_dados_fornecedores = dados;
     }
     //caso a variavel GLOBAL_tam_pont_dados_fornecedores tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_fornecedores = realloc(GLOBAL_dados_fornecedores, (GLOBAL_tam_pont_dados_fornecedores)*sizeof(acomodacao));
-        *(GLOBAL_dados_fornecedores + (GLOBAL_tam_pont_dados_fornecedores - 1)) = dados;
+        GLOBAL_dados_fornecedores = realloc(GLOBAL_dados_fornecedores, (*GLOBAL_tam_pont_dados_fornecedores)*sizeof(acomodacao));
+        *(GLOBAL_dados_fornecedores + (*GLOBAL_tam_pont_dados_fornecedores - 1)) = dados;
     }
     
     if (GLOBAL_dados_fornecedores == NULL) {
@@ -185,12 +183,12 @@ fornecedor *salva_cadastro_fornecedores_mem(fornecedor dados, fornecedor *GLOBAL
     }
     
     //aumenta o valor da variavel global
-    GLOBAL_tam_pont_dados_fornecedores++;
+    (*GLOBAL_tam_pont_dados_fornecedores)++;
     
     return GLOBAL_dados_fornecedores;
 }
 
-void le_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
+void le_fonecedor(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores) {
     FILE *arquivo;
     float codigo;
     fornecedor dados;
@@ -288,7 +286,7 @@ void le_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
     }
 }
 
-void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
+void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores) {
     FILE *arquivo;
     fornecedor dados;
     int tam_point = 0, encontrado = 0;
@@ -374,7 +372,7 @@ void le_todos_fonecedores(fornecedor *GLOBAL_dados_fornecedores) {
         printf("\nNenhum fornecedor cadastrado!");
 }
 
-void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
+void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores) {
     FILE *arquivo, *altera;
     float codigo;
     fornecedor dados;
@@ -393,7 +391,7 @@ void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
 
     while (fread(&dados, sizeof (fornecedor), 1, arquivo)) {
         if (dados.delet == 0 && dados.codigo == codigo) {
-            dados = le_dados_fornecedor();
+            dados = le_dados_fornecedor(GLOBAL_tam_pont_dados_fornecedores);
             fseek(arquivo, -sizeof (fornecedor), 1);
             fwrite(&dados, sizeof (fornecedor), 1, arquivo);
             encontrado = 1;
@@ -421,7 +419,7 @@ void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
             token = strtok(NULL, ";");
             dados.codigo = atoff(token);
             if (dados.delet == 0 && dados.codigo == codigo) {
-                dados = le_dados_fornecedor();
+                dados = le_dados_fornecedor(GLOBAL_tam_pont_dados_fornecedores);
                 dados.codigo = codigo;
 
                 encontrado = 1;
@@ -468,7 +466,7 @@ void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
         for (i = 1; i < GLOBAL_tam_pont_dados_fornecedores; i++) {
             if (GLOBAL_dados_fornecedores->delet == 0) {
                 if (GLOBAL_dados_fornecedores->codigo == codigo) {
-                    dados = le_dados_fornecedor();
+                    dados = le_dados_fornecedor(GLOBAL_tam_pont_dados_fornecedores);
                     dados.codigo = codigo;
                     *(GLOBAL_dados_fornecedores) = dados;
 
@@ -493,7 +491,7 @@ void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
 
 }
 
-void exclui_fonecedor(fornecedor *GLOBAL_dados_fornecedores) {
+void exclui_fonecedor(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores) {
     FILE *arquivo, *exclui;
     float codigo;
     fornecedor dados;

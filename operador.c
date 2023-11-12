@@ -6,8 +6,6 @@
 
 #include <string.h>
 
-// -------------- Var Globais --------------
-int GLOBAL_tam_pont_dados_operadores = 1; //ja usado!
 
 int tam_operador() {
     int tamanho = 0;
@@ -17,7 +15,7 @@ int tam_operador() {
     return tamanho;
 }
 
-operador le_dados_operador() {
+operador le_dados_operador(int GLOBAL_tam_pont_dados_operadores) {
     //variaveis
     operador dados;
     char txt[30] = "operadores.txt", bin[30] = "operadores.bin";
@@ -41,7 +39,7 @@ operador le_dados_operador() {
     return dados;
 }
 
-void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores) {
+void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
     int opcao = 0;
     operador dados;
     while (opcao != 6) {
@@ -62,27 +60,27 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores) {
 
         switch (opcao) {
             case 1:
-                dados = le_dados_operador();
+                dados = le_dados_operador(*GLOBAL_tam_pont_dados_operadores);
                 if (tipoAquivo == 0) {
                     salva_cadastro_operadores_bin(dados);
                 } else if (tipoAquivo == 1) {
                     salva_cadastro_operadores_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_operadores = salva_cadastro_operadores_mem(dados, GLOBAL_dados_operadores);
+                    GLOBAL_dados_operadores = salva_cadastro_operadores_mem(dados, GLOBAL_dados_operadores, &(*GLOBAL_tam_pont_dados_operadores));
                 }
                 break;
             case 2:
-                le_todos_operadores(GLOBAL_dados_operadores);
+                le_todos_operadores(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 3:
-                le_operador(GLOBAL_dados_operadores);
+                le_operador(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 4:
-                alterar_operador(GLOBAL_dados_operadores);
+                alterar_operador(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 5:
-                exclui_operador(GLOBAL_dados_operadores);
+                exclui_operador(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 6:
                 break;
@@ -127,17 +125,17 @@ void salva_cadastro_operadores_txt(operador dados) {
     fclose(salva);
 }
 
-operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_operadores) {
+operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
-    if (GLOBAL_tam_pont_dados_operadores == 1) {
+    if (*GLOBAL_tam_pont_dados_operadores == 1) {
         GLOBAL_dados_operadores = malloc(sizeof(acomodacao));
         *GLOBAL_dados_operadores = dados;
     }
     //caso a variavel GLOBAL_tam_pont_dados_operadores tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_operadores = realloc(GLOBAL_dados_operadores, (GLOBAL_tam_pont_dados_operadores)*sizeof(acomodacao));
-        *(GLOBAL_dados_operadores + (GLOBAL_tam_pont_dados_operadores - 1)) = dados;
+        GLOBAL_dados_operadores = realloc(GLOBAL_dados_operadores, (*GLOBAL_tam_pont_dados_operadores)*sizeof(acomodacao));
+        *(GLOBAL_dados_operadores + (*GLOBAL_tam_pont_dados_operadores - 1)) = dados;
     }
     
     if (GLOBAL_dados_operadores == NULL) {
@@ -146,12 +144,12 @@ operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_o
     }
     
     //aumenta o valor da variavel global
-    GLOBAL_tam_pont_dados_operadores++;
+    (*GLOBAL_tam_pont_dados_operadores)++;
     
     return GLOBAL_dados_operadores;
 }
 
-void le_operador(operador *GLOBAL_dados_operadores) {
+void le_operador(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dados_operadores) {
     FILE *arquivo;
     float codigo;
     operador dados;
@@ -234,7 +232,7 @@ void le_operador(operador *GLOBAL_dados_operadores) {
     }
 }
 
-void le_todos_operadores(operador *GLOBAL_dados_operadores) {
+void le_todos_operadores(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dados_operadores) {
     FILE *arquivo;
     operador dados;
     int tam_point = 0, encontrado = 0;
@@ -305,7 +303,7 @@ void le_todos_operadores(operador *GLOBAL_dados_operadores) {
     }
 }
 
-void alterar_operador(operador *GLOBAL_dados_operadores) {
+void alterar_operador(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dados_operadores) {
     FILE *arquivo, *altera;
     float codigo;
     operador dados;
@@ -324,7 +322,7 @@ void alterar_operador(operador *GLOBAL_dados_operadores) {
 
     while (fread(&dados, sizeof (operador), 1, arquivo)) {
         if (dados.delet == 0 && dados.codigo == codigo) {
-            dados = le_dados_operador();
+            dados = le_dados_operador(GLOBAL_tam_pont_dados_operadores);
             fseek(arquivo, -sizeof (operador), 1);
             fwrite(&dados, sizeof (operador), 1, arquivo);
             encontrado = 1;
@@ -366,7 +364,7 @@ void alterar_operador(operador *GLOBAL_dados_operadores) {
             token = strtok(NULL, ";");
             dados.codigo = atoff(token);
             if (dados.delet == 0 && dados.codigo == codigo) {
-                dados = le_dados_operador();
+                dados = le_dados_operador(GLOBAL_tam_pont_dados_operadores);
                 dados.codigo = codigo;
                 encontrado = 1;
             } else {
@@ -401,7 +399,7 @@ void alterar_operador(operador *GLOBAL_dados_operadores) {
             for (i = 1; i < GLOBAL_tam_pont_dados_operadores; i++) {
                 if (GLOBAL_dados_operadores->delet == 0) {
                     if (GLOBAL_dados_operadores->codigo == codigo) {
-                        dados = le_dados_operador();
+                        dados = le_dados_operador(GLOBAL_tam_pont_dados_operadores);
                         dados.codigo = codigo;
                         *(GLOBAL_dados_operadores) = dados;
                         encontrado = 1;
@@ -425,7 +423,7 @@ void alterar_operador(operador *GLOBAL_dados_operadores) {
     }
 }
 
-void exclui_operador(operador *GLOBAL_dados_operadores) {
+void exclui_operador(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dados_operadores) {
     FILE *arquivo, *altera;
     float codigo;
     operador dados;

@@ -36,7 +36,7 @@
 
     //reservas
     reserva *GLOBAL_dados_reservas = NULL; //já usado!
-
+    
 int main() {
     // setar linguagem pt-br
     setlocale(LC_ALL, "Portuguese");
@@ -65,6 +65,7 @@ int main() {
         salva_cadastro_hotel(dados, GLOBAL_dados_hotel);
     }
 
-    menuPrincipal(GLOBAL_dados_hotel, GLOBAL_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_produtos, GLOBAL_dados_fornecedores, GLOBAL_dados_operadores, GLOBAL_dados_reservas);
+    menuPrincipal(GLOBAL_dados_hotel, GLOBAL_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_produtos, GLOBAL_dados_fornecedores,
+                  GLOBAL_dados_operadores, GLOBAL_dados_reservas);
     return 0;
 }

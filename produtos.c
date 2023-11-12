@@ -8,8 +8,6 @@
 
 #include <string.h>
 
-// -------------- Var Globais --------------
-int GLOBAL_tam_pont_dados_produtos = 1; //ja usado!
 
 int tam_produto() {
     int tamanho = 0;
@@ -19,7 +17,7 @@ int tam_produto() {
     return tamanho;
 }
 
-produto le_dados_produto() {
+produto le_dados_produto(int GLOBAL_tam_pont_dados_produtos) {
     // variaveis
     produto dados;
     char txt[30] = "produtos.txt", bin[30] = "produtos.bin";
@@ -46,7 +44,7 @@ produto le_dados_produto() {
     return dados;
 }
 
-void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos) {
+void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
     int opcao = 0;
     produto dados;
     while (opcao != 6) {
@@ -67,27 +65,27 @@ void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos) {
 
         switch (opcao) {
             case 1:
-                dados = le_dados_produto();
+                dados = le_dados_produto(*GLOBAL_tam_pont_dados_produtos);
                 if (tipoAquivo == 0) {
                     salva_cadastro_produtos_bin(dados);
                 } else if (tipoAquivo == 1) {
                     salva_cadastro_produtos_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_produtos = salva_cadastro_produtos_mem(dados, GLOBAL_dados_produtos);
+                    GLOBAL_dados_produtos = salva_cadastro_produtos_mem(dados, GLOBAL_dados_produtos, &(*GLOBAL_tam_pont_dados_produtos));
                 }
                 break;
             case 2:
-                le_todos_produtos(GLOBAL_dados_produtos);
+                le_todos_produtos(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 3:
-                le_produtos(GLOBAL_dados_produtos);
+                le_produtos(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 4:
-                altera_produto(GLOBAL_dados_produtos);
+                altera_produto(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 5:
-                exclui_produto(GLOBAL_dados_produtos);
+                exclui_produto(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 6:
                 break;
@@ -133,17 +131,17 @@ void salva_cadastro_produtos_txt(produto dados) {
     fclose(salva);
 }
 
-produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produtos) {
+produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
-    if (GLOBAL_tam_pont_dados_produtos == 1) {
+    if (*GLOBAL_tam_pont_dados_produtos == 1) {
         GLOBAL_dados_produtos = malloc(sizeof(acomodacao));
         *GLOBAL_dados_produtos = dados;
     }
     //caso a variavel GLOBAL_tam_pont_dados_produtos tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_produtos = realloc(GLOBAL_dados_produtos, (GLOBAL_tam_pont_dados_produtos)*sizeof(acomodacao));
-        *(GLOBAL_dados_produtos + (GLOBAL_tam_pont_dados_produtos - 1)) = dados;
+        GLOBAL_dados_produtos = realloc(GLOBAL_dados_produtos, (*GLOBAL_tam_pont_dados_produtos)*sizeof(acomodacao));
+        *(GLOBAL_dados_produtos + (*GLOBAL_tam_pont_dados_produtos - 1)) = dados;
     }
     
     if (GLOBAL_dados_produtos == NULL) {
@@ -152,12 +150,12 @@ produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produt
     }
     
     //aumenta o valor da variavel global
-    GLOBAL_tam_pont_dados_produtos++;
+    (*GLOBAL_tam_pont_dados_produtos)++;
     
     return GLOBAL_dados_produtos;
 }
 
-void le_produtos(produto *GLOBAL_dados_produtos) {
+void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
     FILE *arquivo;
     float codigo;
     int encontrado = 0, tam_point = 0;
@@ -238,7 +236,7 @@ void le_produtos(produto *GLOBAL_dados_produtos) {
     }
 }
 
-void le_todos_produtos(produto *GLOBAL_dados_produtos) {
+void le_todos_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
     FILE *arquivo;
     produto dados;
     int tam_point = 0, encontrado = 0;
@@ -309,7 +307,7 @@ void le_todos_produtos(produto *GLOBAL_dados_produtos) {
     }
 }
 
-void altera_produto(produto *GLOBAL_dados_produtos) {
+void altera_produto(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
     FILE *altera, *le;
     float codigo;
     produto dados;
@@ -328,7 +326,7 @@ void altera_produto(produto *GLOBAL_dados_produtos) {
 
     while (fread(&dados, sizeof (produto), 1, altera)) {
         if (dados.delet == 0 && dados.codigo == codigo) {
-            dados = le_dados_produto();
+            dados = le_dados_produto(GLOBAL_tam_pont_dados_produtos);
             fseek(altera, -sizeof (produto), 1);
             fwrite(&dados, sizeof (produto), 1, altera);
             encontrado = 1;
@@ -356,7 +354,7 @@ void altera_produto(produto *GLOBAL_dados_produtos) {
             token = strtok(NULL, ";");
             dados.codigo = atoff(token);
             if (dados.delet == 0 && dados.codigo == codigo) {
-                dados = le_dados_produto();
+                dados = le_dados_produto(GLOBAL_tam_pont_dados_produtos);
                 dados.codigo = codigo;
             } else {
                 token = strtok(NULL, ";");
@@ -391,7 +389,7 @@ void altera_produto(produto *GLOBAL_dados_produtos) {
                 if (GLOBAL_dados_produtos->delet == 0) {
                     if (GLOBAL_dados_produtos->codigo == codigo) {
                         encontrado = 1;
-                        dados = le_dados_produto();
+                        dados = le_dados_produto(GLOBAL_tam_pont_dados_produtos);
                         dados.codigo = codigo;
                         *(GLOBAL_dados_produtos) = dados;
                         break;
@@ -414,7 +412,7 @@ void altera_produto(produto *GLOBAL_dados_produtos) {
     }
 }
 
-void exclui_produto(produto *GLOBAL_dados_produtos) {
+void exclui_produto(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
 
     FILE *arquivo, *exclui;
     float codigo;

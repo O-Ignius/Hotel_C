@@ -6,9 +6,6 @@
 
 #include <string.h>
 
-// -------------- Var Globais --------------
-int GLOBAL_tam_pont_dados_cliente = 1; //ja usado!
-
 /////////////////////////////   subrotinas  \\\\\\\\\\\\\\\\\\\
 
 int tam_clientes() {
@@ -19,7 +16,7 @@ int tam_clientes() {
     return tamanho;
 }
 
-cad_clie le_dados_cad() {
+cad_clie le_dados_cad(int GLOBAL_tam_pont_dados_cliente) {
     char bin[30] = "cliente.bin", txt[30] = "cliente.txt";
     int tam = sizeof(cad_clie);
 
@@ -115,7 +112,7 @@ cad_clie le_dados_cad() {
     return dados;
 }
 
-void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente) {
+void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente) {
     int opcao = 0;
     cad_clie dados;
     while (opcao != 6) {
@@ -134,27 +131,27 @@ void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente) {
 
         switch (opcao) {
             case 1:
-                dados = le_dados_cad();
+                dados = le_dados_cad(*GLOBAL_tam_pont_dados_cliente);
                 if (tipoArquivo == 0) {
                     salva_cadastro_pessoa_bin(dados);
                 } else if (tipoArquivo == 1) {
                     salva_cadastro_pessoa_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_cliente = salva_cadastro_pessoa_mem(dados, GLOBAL_dados_cliente);
+                    GLOBAL_dados_cliente = salva_cadastro_pessoa_mem(dados, GLOBAL_dados_cliente, &(*GLOBAL_tam_pont_dados_cliente));
                 }
                 break;
             case 2:
-                le_todos_cadastro_pessoa(GLOBAL_dados_cliente);
+                le_todos_cadastro_pessoa(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 3:
-                le_cadastro_pessoa(GLOBAL_dados_cliente);
+                le_cadastro_pessoa(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 4:
-                alteraCliente(GLOBAL_dados_cliente);
+                alteraCliente(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 5:
-                removeCliente(GLOBAL_dados_cliente);
+                removeCliente(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 6:
                 break;
@@ -234,17 +231,17 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
     fclose(salva);
 }
 
-cad_clie *salva_cadastro_pessoa_mem(cad_clie saves, cad_clie *GLOBAL_dados_cliente) {
+cad_clie *salva_cadastro_pessoa_mem(cad_clie saves, cad_clie *GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente) {
     //caso a variavel global GLOBAL_tam_pont_dados_cliente não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
-    if (GLOBAL_tam_pont_dados_cliente == 1) {
+    if (*GLOBAL_tam_pont_dados_cliente == 1) {
         GLOBAL_dados_cliente = malloc(sizeof(cad_clie));
         *GLOBAL_dados_cliente = saves;
     }
     //caso a variavel GLOBAL_tam_pont_dados_cliente tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_cliente = realloc(GLOBAL_dados_cliente, (GLOBAL_tam_pont_dados_cliente)*sizeof(cad_clie));
-        *(GLOBAL_dados_cliente + (GLOBAL_tam_pont_dados_cliente - 1)) = saves;
+        GLOBAL_dados_cliente = realloc(GLOBAL_dados_cliente, (*GLOBAL_tam_pont_dados_cliente)*sizeof(cad_clie));
+        *(GLOBAL_dados_cliente + (*GLOBAL_tam_pont_dados_cliente - 1)) = saves;
     }
     
     //encerra o processo caso não haja memória o suficiente
@@ -254,12 +251,12 @@ cad_clie *salva_cadastro_pessoa_mem(cad_clie saves, cad_clie *GLOBAL_dados_clien
     }
     
     //aumenta o valor da variavel global
-    GLOBAL_tam_pont_dados_cliente++;
+    (*GLOBAL_tam_pont_dados_cliente)++;
     
     return GLOBAL_dados_cliente;
 }
 
-void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
+void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cliente) {
     //      Variáveis
     FILE *arquivoBin, *arquivoTxt;
     cad_clie cliente;
@@ -366,7 +363,7 @@ void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     fclose(arquivoTxt);
 }
 
-void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
+void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cliente) {
     FILE *arquivoBin, *arquivoTxt;
     cad_clie cliente;
     int i = 0, encontrado = 0;
@@ -467,7 +464,7 @@ void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente) {
     getchar();
 }
 
-void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
+void alteraCliente(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cliente) {
     FILE *arquivoBin, *le, *altera;
     cad_clie cliente, novo;
     int encontrado = 0, tam_point = 0;
@@ -497,7 +494,7 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
             printf("\nNovos dados:");
 
             novo.codigo = cliente.codigo;
-            novo = le_dados_cad();
+            novo = le_dados_cad(GLOBAL_tam_pont_dados_cliente);
 
             //Volta para o inicio da linha de cadastro desse cliente, permitindo que se altere o cliente correto
             fseek(arquivoBin, -sizeof (cad_clie), SEEK_CUR);
@@ -535,7 +532,7 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
 
                 //se o código foi igual ao digitado ele altera
                 if (cliente.codigo == codigo) {
-                    cliente = le_dados_cad();
+                    cliente = le_dados_cad(GLOBAL_tam_pont_dados_cliente);
                     cliente.codigo = codigo;
                     encontrado = 1;
                 }//caso o código digitado seja diferente
@@ -615,7 +612,7 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_cliente; tam_point++) {
             if (GLOBAL_dados_cliente->delet == 0) {
                 if (GLOBAL_dados_cliente->codigo == codigo) {
-                    cliente = le_dados_cad();
+                    cliente = le_dados_cad(GLOBAL_tam_pont_dados_cliente);
                     cliente.codigo = codigo;
                     *(GLOBAL_dados_cliente) = cliente;
                     
@@ -639,7 +636,7 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente) {
 
 }
 
-void removeCliente(cad_clie *GLOBAL_dados_cliente) {
+void removeCliente(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cliente) {
     //      Variáveis
     FILE *arquivoBin;
     cad_clie cliente;
