@@ -175,7 +175,7 @@ cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao, int GL
             return dados_tipo;
         }
         else if (valido == 2) {
-            printf("\nO Tipo digitado está salvo em mémoria, sendo uma informação volátil, é impossível salvá-la em arquivos!!\n");
+            printf("\nO Tipo digitado está salvo em mémoria, sendo uma informação volátil, é impossível salvá-la em arquivos!! \nEscolha outro tipo ou troque o local de salvamento! \n");
         }
         else {
             printf("\nTipo digitado inválido, Tente Novamente!!\n");
