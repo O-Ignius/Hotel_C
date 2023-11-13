@@ -157,7 +157,7 @@ cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao, int GL
         //verifica na memória
         if (valido == 0) {
             if (GLOBAL_dados_categ_acomodacao != NULL) {
-                for (tam_poin = 1; GLOBAL_dados_categ_acomodacao != NULL; tam_poin++) {
+                for (tam_poin = 1; tam_poin < GLOBAL_tam_pont_dados_categ_acomodacao; tam_poin++) {
                     if (GLOBAL_dados_categ_acomodacao->codigo == codigo) {
                         valido = 2;
                         dados_tipo = *(GLOBAL_dados_categ_acomodacao);
@@ -247,7 +247,7 @@ cate_aco retorna_tipo_acomodacao_memoria(cate_aco *GLOBAL_dados_categ_acomodacao
         //verifica na memória
         if (valido == 0) {
             if (GLOBAL_dados_categ_acomodacao != NULL) {
-                for (tam_poin = 1; GLOBAL_dados_categ_acomodacao != NULL; tam_poin++) {
+                for (tam_poin = 1; tam_poin < GLOBAL_tam_pont_dados_categ_acomodacao; tam_poin++) {
                     if (GLOBAL_dados_categ_acomodacao->codigo == codigo) {
                         valido = 2;
                         dados_tipo = *(GLOBAL_dados_categ_acomodacao);
@@ -679,7 +679,11 @@ void exclui_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont
                         break;
                     }
                 }
+                
+                GLOBAL_dados_acomodacao++;
             }
+            
+            GLOBAL_dados_acomodacao -= (i - 1);
         }
     }
 

@@ -366,7 +366,7 @@ void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dado
 void le_todos_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cliente) {
     FILE *arquivoBin, *arquivoTxt;
     cad_clie cliente;
-    int i = 0, encontrado = 0;
+    int i = 0, encontrado = 0, aux = 0;
     char linha[(sizeof (cad_clie))], *token;
 
     arquivoBin = fopen("cliente.bin", "rb");
