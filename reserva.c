@@ -6,6 +6,7 @@
 
 #include <string.h>
 
+#include <ctype.h>
 
 int tam_reserva() {
     int tamanho = 0;
@@ -1349,11 +1350,15 @@ void pesquisa_reserva_facilidade(reserva *GLOBAL_dados_reservas, acomodacao *GLO
     reserva reser;
     acomodacao acomod;
     float salva_cod = -1;
-    int encontrado_bin = 0, encontrado_txt = 0;
+    int encontrado_bin = 0, encontrado_txt = 0, aux;
     char linha_rese[(sizeof(reserva))], linha_aco[(sizeof(acomodacao))], *token, facilidade[100];
     
     printf("Digite a facilidade a ser pesquisada: \n");
     scanf("%s", facilidade);
+    //Torna todos os caracteres da string minúsculos para facilitar busca posterior
+    for (aux = 0; aux < strlen(facilidade); aux++) {
+       facilidade[aux] = tolower((unsigned char) facilidade[aux]);
+    }
 
     //verifica no bin
     rese_bin = fopen("reservas.bin", "rb");

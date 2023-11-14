@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+#include <ctype.h>
 
 int tam_acomodacao() {
     int tamanho = 0;
@@ -20,7 +21,7 @@ int tam_acomodacao() {
 acomodacao le_dados_acomod(int GLOBAL_tam_pont_dados_acomodacao) {
     //variaveis
     char txt[30] = "acomodacoes.txt", bin[30] = "acomodacoes.bin";
-    int tam = sizeof(acomodacao);
+    int tam = sizeof(acomodacao), aux = 0;
     acomodacao dados;
 
     //coleta de dados
@@ -33,6 +34,12 @@ acomodacao le_dados_acomod(int GLOBAL_tam_pont_dados_acomodacao) {
     scanf("%[^\n]s", dados.facilidades);
     setbuf(stdin, NULL);
     dados.delet = 0;
+    
+    //Torna todos os caracteres da string minúsculos para facilitar busca posterior
+    for (aux = 0; aux < strlen(dados.facilidades); aux++) {
+       dados.facilidades[aux] = tolower((unsigned char) dados.facilidades[aux]);
+    }
+    
     return dados;
 }
 
@@ -314,13 +321,13 @@ acomodacao *salva_cadastro_acomodacao_mem(acomodacao dados, acomodacao *GLOBAL_d
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
     if (*GLOBAL_tam_pont_dados_acomodacao == 1) {
         GLOBAL_dados_acomodacao = malloc(sizeof(acomodacao));
-        *GLOBAL_dados_acomodacao = dados;
+        *GLOBAL_dados_acomodacao = dados_geral;
     }
     //caso a variavel GLOBAL_tam_pont_dados_acomodacao tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
         GLOBAL_dados_acomodacao = realloc(GLOBAL_dados_acomodacao, (*GLOBAL_tam_pont_dados_acomodacao+1)*sizeof(acomodacao));
-        *(GLOBAL_dados_acomodacao + (*GLOBAL_tam_pont_dados_acomodacao - 1)) = dados;
+        *(GLOBAL_dados_acomodacao + (*GLOBAL_tam_pont_dados_acomodacao - 1)) = dados_geral;
     }
     
     if (GLOBAL_dados_acomodacao == NULL) {
