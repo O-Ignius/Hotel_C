@@ -46,6 +46,23 @@ data le_dados_data() {
     return dados;
 }
 
+int Vdata(data inicio, data fim){
+    int valida = 0;
+    if(inicio.ano == fim.ano){
+        if(inicio.mes == fim.mes){
+            if(inicio.dia >= fim.dia){
+                valida = 1;
+            }
+        } else if(inicio.mes > fim.mes){
+            valida = 1;
+        }
+    } else if(inicio.ano > fim.ano){
+        valida = 1;
+    }
+
+    return valida;
+}
+
 reserva le_dados_reserva(int GLOBAL_tam_pont_dados_reservas) {
     reserva dados;
     char txt[30] = "reservas.txt", bin[30] = "reservas.bin";
@@ -61,6 +78,13 @@ reserva le_dados_reserva(int GLOBAL_tam_pont_dados_reservas) {
     printf("\nDigite a data de saída:\n");
     dados.fim = le_dados_data();
 
+    while(Vdata(dados.inicio, dados.fim) == 1){
+        printf("\nData inválida!!");
+        printf("\nDigite a data de entrada:\n");
+        dados.inicio = le_dados_data();
+        printf("\nDigite a data de saída:\n");
+        dados.fim = le_dados_data();
+    }
     return dados;
 }
 
@@ -1203,7 +1227,7 @@ void pesquisa_reserva_facilidade(reserva *GLOBAL_dados_reservas, acomodacao *GLO
     reserva reser;
     acomodacao acomod;
     float salva_cod = -1;
-    int encontrado_bin = 0, encontrado_txt = 0, aux;
+    int encontrado_bin = 0, encontrado_txt = 0, encontrado_mem = 0, aux;
     char linha_rese[(sizeof(reserva))], linha_aco[(sizeof(acomodacao))], *token, facilidade[100];
     
     printf("Digite a facilidade a ser pesquisada: \n");
@@ -1256,6 +1280,7 @@ void pesquisa_reserva_facilidade(reserva *GLOBAL_dados_reservas, acomodacao *GLO
                 }
             }
         }
+
     }
     fclose(rese_bin);
     
@@ -1484,6 +1509,116 @@ void pesquisa_reserva_facilidade(reserva *GLOBAL_dados_reservas, acomodacao *GLO
     fclose(acomo_txt);
 
     fclose(rese_txt);
+
+    acomo_bin = fopen("acomodacoes.bin", "rb");
+    if(acomo_bin == NULL){
+        printf("Erro ao abrir arquivo de acomodacoes BIN!");
+        exit(1);
+    }
+
+    encontrado_mem = 0;
+
+    //Ler acomodações BIN e verificar nas reservas memória
+    while(fread(&acomod, sizeof(acomodacao), 1, acomo_bin)) {
+        if(acomod.delet == 0){
+            if(strstr(acomod.facilidades, facilidade) != NULL){
+                int k;
+                for(k = 1; k < GLOBAL_tam_pont_dados_reservas; k++) {        
+                    if(GLOBAL_dados_reservas->codQuarto == acomod.codigo){
+                        encontrado_mem = 1;
+                        printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", 
+                            acomod.codigo, GLOBAL_dados_reservas->inicio.dia, GLOBAL_dados_reservas->inicio.mes, GLOBAL_dados_reservas->inicio.ano, GLOBAL_dados_reservas->fim.dia, GLOBAL_dados_reservas->fim.mes, GLOBAL_dados_reservas->fim.ano);  
+                    }
+                    //aumenta o valor do ponteiro
+                    GLOBAL_dados_reservas++;
+                }
+                GLOBAL_dados_reservas-= k - 1;
+                if(encontrado_mem == 0){
+                    printf("\nQuarto %.0f sem reservas cadastradas!", acomod.codigo);
+                }
+            }
+        }
+        
+    }
+
+    fclose(acomo_bin);
+    
+    acomo_txt = fopen("acomodacoes.txt", "rb");
+    if(acomo_txt == NULL){
+        printf("Erro ao abrir arquivo de acomodacoes TXT!");
+        exit(1);
+    }
+    
+    char linha[(sizeof(acomodacao))];
+    
+    encontrado_mem = 0;
+    //Ler acomodações TXT e verificar nas reservas memória
+    while(fgets(linha, sizeof(acomodacao), acomo_txt)) {
+        encontrado_mem = 0;
+        // passa os dados do txt pra variavel para facilitar comparação
+        token = strtok(linha, ";");
+        acomod.delet = atoi(token);
+        token = strtok(NULL, ";");
+        acomod.codigo = atoff(token);
+        token = strtok(NULL, ";");
+        strcpy(acomod.descri, token);
+        token = strtok(NULL, ";");
+        strcpy(acomod.facilidades, token);
+        token = strtok(NULL, ";");
+
+        if(acomod.delet == 0){
+            if(strstr(acomod.facilidades, facilidade) != NULL){
+                int i;
+                for(i = 1; i < GLOBAL_tam_pont_dados_reservas; i++) {        
+                    if(GLOBAL_dados_reservas->codQuarto == acomod.codigo){
+                        encontrado_mem = 1;
+                        printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", 
+                            acomod.codigo, GLOBAL_dados_reservas->inicio.dia, GLOBAL_dados_reservas->inicio.mes, GLOBAL_dados_reservas->inicio.ano, GLOBAL_dados_reservas->fim.dia, GLOBAL_dados_reservas->fim.mes, GLOBAL_dados_reservas->fim.ano);  
+                    }
+                    //aumenta o valor do ponteiro
+                    GLOBAL_dados_reservas++;
+                }
+                GLOBAL_dados_reservas-= i - 1;
+                if(encontrado_mem == 0){
+                    printf("\nQuarto %.0f sem reservas cadastradas!", acomod.codigo);
+                }
+            }
+        }
+    }
+
+    fclose(acomo_txt);
+
+    encontrado_mem = 0;
+    int i;
+    //verifica nas acomodações salvas na memória:
+    for(i = 1; i < GLOBAL_tam_pont_dados_acomodacao; i++) {        
+        if(GLOBAL_dados_acomodacao->delet == 0 && strstr(GLOBAL_dados_acomodacao->facilidades, facilidade) != NULL){
+
+            //Só é possível fazer uma reserva em mémoria quando a acomodação está salva em memória, logo não é necessário buscar nos arquivos bin e txt.
+            //reserva memoria
+            int j;
+            for(j = 1; j < GLOBAL_tam_pont_dados_reservas; j++) {
+                if(GLOBAL_dados_reservas->delet == 0 && GLOBAL_dados_acomodacao->codigo == GLOBAL_dados_reservas->codQuarto){
+                    encontrado_mem = 1;
+
+                    printf("\nQuarto %.0f ocupado de: %d/%d/%d a %d/%d/%d!", 
+                        GLOBAL_dados_acomodacao->codigo, GLOBAL_dados_reservas->inicio.dia, GLOBAL_dados_reservas->inicio.mes, GLOBAL_dados_reservas->inicio.ano, GLOBAL_dados_reservas->fim.dia, GLOBAL_dados_reservas->fim.mes, GLOBAL_dados_reservas->fim.ano);
+                }
+                //aumenta o valor do ponteiro
+                GLOBAL_dados_reservas++;
+            }
+            
+            GLOBAL_dados_reservas -= (j - 1);
+            
+            if(encontrado_mem == 0){
+                printf("\nQuarto %.0f sem reservas cadastradas!", GLOBAL_dados_acomodacao->codigo);
+            }
+        }
+        
+        //aumenta o valor do ponteiro
+        GLOBAL_dados_acomodacao++;
+    }
+    GLOBAL_dados_acomodacao-= i - 1;
 }
 
 void pesquisa_reserva_data(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao) {
@@ -1903,7 +2038,6 @@ void pesquisa_reserva_data(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_da
     }
 }
 
-
 void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao){
     FILE *arquivo1, *arquivo2;
     acomodacao acomod;
@@ -1912,7 +2046,7 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
     data inicio, fim;
     float codigoCategoria;
     char facilidade[100];
-    int quantidade, encontrado = 0, encontrado1 = 0, encontrado2 = 0;
+    int quantidade, encontrado = 0, encontrado1 = 0, encontrado2 = 0, encontrado3 = 0;
     
     char linhaReser[(sizeof(reserva))], *token;
     char linhaAcomod[(sizeof(acomodacao))];
@@ -1944,7 +2078,7 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
         exit(1);
     }
 
-    //Lendo acomodações(quartos) binários e comparando com as reservas binárias e txts respectivamente 
+    //Lendo acomodações(quartos) binários e comparando com as reservas binárias, txts e memória respectivamente 
     while (fread(&acomod, sizeof(acomodacao), 1 ,arquivo1)){
         encontrado1 = 0;
         if(acomod.delet == 0 && acomod.codigo == codigoCategoria && acomod.tipo.qnt_pessoas == quantidade){
@@ -1981,20 +2115,35 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
                         if(valida_data(inicio,fim,reser.codQuarto, GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas) == 1){
                             encontrado++;
                             encontrado1++;
-                            if(encontrado1 == 2){
-                                printf("\n\nCódigo do quarto: %0.0f \n\tDescrição: %s \n\tFacilidades: %s \n\tCódigo do tipo da acomodação: %0.0f \n\tDescrição do tipo de acomodação: %s \n\tQuantia de pessoas que comporta: %d \n\tValor da diária: R$%0.2f \n", 
-                                acomod.codigo, acomod.descri, acomod.facilidades, acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.qnt_pessoas, acomod.tipo.diaria);
-                            }
                         }
                     }
                 }
                 fclose(arquivo2);
+                
+                //Memória
+                int j;
+                    for(j = 0; j < GLOBAL_tam_pont_dados_reservas; j++) {
+                        if(GLOBAL_dados_reservas->delet == 0 ){
+                            if(valida_data(inicio,fim,GLOBAL_dados_reservas->codQuarto,GLOBAL_dados_reservas,GLOBAL_tam_pont_dados_reservas) == 1){
+                                encontrado++;
+                                encontrado1++;
+                                if(encontrado1 == 3){
+                                    printf("\n\nCódigo do quarto: %0.0f \n\tDescrição: %s \n\tFacilidades: %s \n\tCódigo do tipo da acomodação: %0.0f \n\tDescrição do tipo de acomodação: %s \n\tQuantia de pessoas que comporta: %d \n\tValor da diária: R$%0.2f \n", 
+                                        acomod.codigo, acomod.descri, acomod.facilidades, acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.qnt_pessoas, acomod.tipo.diaria);
+                                }
+                            }   
+                        }
+                        //aumenta o valor do ponteiro
+                        GLOBAL_dados_reservas++;
+                    }
+                    
+                    GLOBAL_dados_reservas -= (j - 1);
             }
         }
     }
     fclose(arquivo1);
 
-    //Lendo acomodações(quartos) TXTs e comparando com as reservas binárias e txts respectivamente 
+    //Lendo acomodações(quartos) TXTs e comparando com as reservas binárias, txts e memória respectivamente 
 
     arquivo1 = fopen("acomodacoes.txt", "r");
     arquivo2 = fopen("reservas.bin", "rb");
@@ -2031,8 +2180,13 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
         token = strtok(NULL, ";");
         acomod.tipo.qnt_pessoas = atoi(token);
 
+        //Verifica se o quarto entra nas exigências de pesquisa
        if(acomod.delet == 0 && acomod.codigo == codigoCategoria && acomod.tipo.qnt_pessoas == quantidade){
             if(strstr(acomod.facilidades, facilidade) != NULL){
+                
+                //Começa a comparar a data nas reservas
+                //Binária
+
                 fseek(arquivo2, 0, SEEK_SET);
                 while (fread(&reser, sizeof(reserva), 1, arquivo2)){
                     if(reser.delet == 0){
@@ -2050,6 +2204,7 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
                     exit(1);
                 }
                 
+                //TXT
                 while (fgets(linhaReser, sizeof(reserva), arquivo2)){
                     // passa os dados do txt pra variavel para facilitar comparação
                     token = strtok(linhaReser, ";");
@@ -2071,11 +2226,55 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
                     }
                 }
                 fclose(arquivo2);
+
+                //Memória
+                int i;
+                for (i = 0; i < GLOBAL_tam_pont_dados_reservas; i++){
+                    if(GLOBAL_dados_reservas->delet == 0){
+                        if(valida_data(inicio,fim,GLOBAL_dados_reservas->codQuarto,GLOBAL_dados_reservas,GLOBAL_tam_pont_dados_reservas) == 1){
+                            encontrado++;
+                            encontrado1++;
+                            //Verfica se o quarto não possui reserva em nenhum dos três tipos de salvamento, caso não tenha ele mostra o quarto
+                            if(encontrado1 == 3){
+                                printf("\n\nCódigo do quarto: %0.0f \n\tDescrição: %s \n\tFacilidades: %s \n\tCódigo do tipo da acomodação: %0.0f \n\tDescrição do tipo de acomodação: %s \n\tQuantia de pessoas que comporta: %d \n\tValor da diária: R$%0.2f \n", 
+                                acomod.codigo, acomod.descri, acomod.facilidades, acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.qnt_pessoas, acomod.tipo.diaria);
+                            }
+                        }
+                    }
+                GLOBAL_dados_reservas++;
+                }
+                GLOBAL_dados_reservas-= i - 1;
             }
         }
     }
     fclose(arquivo1);
 
-    if(encontrado < 2)
+    //Lendo acomodações(quartos) em memória e comparando com as em memória, já que não é possível criar reservas em bin ou txt para quartos em memória
+    for(int i = 0; i<GLOBAL_tam_pont_dados_acomodacao; i++){
+        if(GLOBAL_dados_acomodacao->delet == 0){
+            if(GLOBAL_dados_acomodacao->tipo.codigo == codigoCategoria && GLOBAL_dados_acomodacao->tipo.qnt_pessoas == quantidade){
+                if(strstr(GLOBAL_dados_acomodacao->facilidades, facilidade) != NULL){
+                    
+                    //Depois de validar a acomdação passa para a etapa da data pesquisando nas reservas em memória
+                    //reserva memoria
+                    int j;
+                    for(j = 0; j < GLOBAL_tam_pont_dados_reservas; j++) {
+                        if(GLOBAL_dados_reservas->delet == 0 ){
+                            if(valida_data(inicio,fim,GLOBAL_dados_reservas->codQuarto,GLOBAL_dados_reservas,GLOBAL_tam_pont_dados_reservas) == 1){
+                                encontrado++;
+                                printf("\n\nCódigo do quarto: %0.0f \n\tDescrição: %s \n\tFacilidades: %s \n\tCódigo do tipo da acomodação: %0.0f \n\tDescrição do tipo de acomodação: %s \n\tQuantia de pessoas que comporta: %d \n\tValor da diária: R$%0.2f \n", 
+                                acomod.codigo, acomod.descri, acomod.facilidades, acomod.tipo.codigo, acomod.tipo.descri, acomod.tipo.qnt_pessoas, acomod.tipo.diaria);
+                            }   
+                        }
+                        //aumenta o valor do ponteiro
+                        GLOBAL_dados_reservas++;
+                    }
+                    
+                    GLOBAL_dados_reservas -= (j - 1);
+                }
+            } 
+        }
+    }
+    if(encontrado < 3)
         printf("\nNenhum quarto encontrado com essas informações!");
 }
