@@ -100,7 +100,8 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
         printf("\tProdutos - 6\n");
         printf("\tFornecedores - 7\n");
         printf("\tOperadores - 8\n");
-        printf("\tConfigurações de salvamento - 9\n");
+        printf("\tTransações - 9\n");
+        printf("\tConfigurações de salvamento - 10\n");
         printf("\tEncerrar - 0\n");
 
         printf("Opcão: ");
@@ -132,6 +133,9 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
                 menuOperadores(binOUtxt, GLOBAL_dados_operadores, &GLOBAL_tam_pont_dados_reservas);
                 break;
             case 9:
+                menuTransacoes(binOUtxt, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
+                break;
+            case 10:
                 binOUtxt = selecionarTipoArquivo();
                 break;
             case 0:

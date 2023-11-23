@@ -19,6 +19,7 @@
       <itemPath>operador.c</itemPath>
       <itemPath>produtos.c</itemPath>
       <itemPath>reserva.c</itemPath>
+      <itemPath>C:/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/transacoes.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Arquivos de Recurso"
@@ -79,6 +80,11 @@
       </toolsSet>
       <compileType>
       </compileType>
+      <item path="C:/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/transacoes.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="acomodacao.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="biblioteca.c" ex="false" tool="0" flavor2="0">
@@ -122,6 +128,11 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="C:/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/transacoes.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="acomodacao.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="biblioteca.c" ex="false" tool="0" flavor2="0">

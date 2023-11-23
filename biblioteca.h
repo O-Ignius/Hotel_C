@@ -122,6 +122,16 @@ typedef struct {
     float codigo, codQuarto;
 } reserva;
 
+typedef struct {
+    float codigo, valor;
+    int quantia;
+}itens;
+
+typedef struct {
+    float frete, imposto;
+    char fornecedor[100];
+}entrega_produto;
+
 /////////////////////////////   Indicar subrotinas  \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 //Coleta dados
@@ -143,6 +153,10 @@ operador le_dados_operador(int GLOBAL_tam_pont_dados_reservas);
 data le_dados_data();
 /*Coleta os dados de reservas, retornando uma struct com cod do quarto, data de começo e fim*/
 reserva le_dados_reserva(int GLOBAL_tam_pont_dados_reservas);
+/*Coleta os dados do produto entregue, retornando uma struct com id do produto, quantia entregue e o valor da compra de cada produto*/
+itens le_valor_produto();
+/*Coleta os dados da entrega de produtos, retornando uma struct com nome do fornecedor, valor do frete e valor do imposto*/
+entrega_produto le_entrega_produto();
 
 //Variadas
 /* Retorna um inteiro com relação ao tamanho da struct cliente para usar com relação ao ID */
@@ -312,3 +326,11 @@ void pesquisa_reserva_data(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_da
 void pesquisa_reserva(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao);
 
 void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao);
+
+//Transações
+
+void menuTransacoes(int tipoAquivo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
+
+void entrada_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
+
+void atualiza_estoque_produto(float codigo, int quantia, float frete, float imposto, float custo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
