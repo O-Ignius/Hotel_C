@@ -35,17 +35,18 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/e43f2470/transacoes.o \
 	${OBJECTDIR}/acomodacao.o \
 	${OBJECTDIR}/biblioteca.o \
 	${OBJECTDIR}/categoria_acomodacao.o \
+	${OBJECTDIR}/check.o \
 	${OBJECTDIR}/clientes.o \
 	${OBJECTDIR}/fornecedor.o \
 	${OBJECTDIR}/hotel.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/operador.o \
 	${OBJECTDIR}/produtos.o \
-	${OBJECTDIR}/reserva.o
+	${OBJECTDIR}/reserva.o \
+	${OBJECTDIR}/transacoes.o
 
 
 # C Compiler Flags
@@ -66,16 +67,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/_ext/e43f2470/transacoes.o: /cygdrive/C/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/transacoes.c
-	${MKDIR} -p ${OBJECTDIR}/_ext/e43f2470
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e43f2470/transacoes.o /cygdrive/C/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/transacoes.c
+	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/acomodacao.o: acomodacao.c
 	${MKDIR} -p ${OBJECTDIR}
@@ -91,6 +87,11 @@ ${OBJECTDIR}/categoria_acomodacao.o: categoria_acomodacao.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/categoria_acomodacao.o categoria_acomodacao.c
+
+${OBJECTDIR}/check.o: check.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/check.o check.c
 
 ${OBJECTDIR}/clientes.o: clientes.c
 	${MKDIR} -p ${OBJECTDIR}
@@ -126,6 +127,11 @@ ${OBJECTDIR}/reserva.o: reserva.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/reserva.o reserva.c
+
+${OBJECTDIR}/transacoes.o: transacoes.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/transacoes.o transacoes.c
 
 # Subprojects
 .build-subprojects:

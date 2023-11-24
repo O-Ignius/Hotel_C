@@ -37,6 +37,9 @@
     //reservas
     reserva *GLOBAL_dados_reservas = NULL; //já usado!
     
+    //checkInOut
+    checkInOut *GLOBAL_dados_checkInOut = NULL; //já usado!
+    
 int main() {
     // setar linguagem pt-br
     setlocale(LC_ALL, "Portuguese");
@@ -66,6 +69,6 @@ int main() {
     }
 
     menuPrincipal(GLOBAL_dados_hotel, GLOBAL_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_produtos, GLOBAL_dados_fornecedores,
-                  GLOBAL_dados_operadores, GLOBAL_dados_reservas);
+                  GLOBAL_dados_operadores, GLOBAL_dados_reservas, GLOBAL_dados_checkInOut);
     return 0;
 }

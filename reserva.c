@@ -18,14 +18,7 @@ int tam_reserva() {
 
 data le_dados_data() {
     data dados;
-
-    printf("\nDigite o dia(1-30): ");
-    scanf("%d", &dados.dia);
-
-    while (dados.dia <= 0 || dados.dia >= 31) {
-        printf("\nDia inválido, digite outro no intervalo de 1 a 30: ");
-        scanf("%d", &dados.dia);
-    }
+    int diasNoMes[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     printf("Digite o mes(1-12): ");
     scanf("%d", &dados.mes);
@@ -34,6 +27,15 @@ data le_dados_data() {
         printf("\nMes inválido, digite outro no intervalo de 1 a 12: ");
         scanf("%d", &dados.mes);
     }
+
+    printf("\nDigite o dia(1-%d): ", diasNoMes[dados.mes]);
+    scanf("%d", &dados.dia);
+
+    while (dados.dia <= 0 || dados.dia > diasNoMes[dados.mes]) {
+        printf("\nDia inválido, digite outro no intervalo de 1 a %d: ", diasNoMes[dados.mes]);
+        scanf("%d", &dados.dia);
+    }
+
 
     printf("Digite o ano(2023 - 2024 - 2025...)");
     scanf("%d", &dados.ano);
@@ -530,6 +532,111 @@ void le_todas_reservas(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados
     getchar();
 }
 
+reserva le_uma_reserva(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas){
+    FILE *txt, *bin, *alt;
+    float codigo = 0;
+    int encontrado = 0, tam_point = 0;
+    char linha[(sizeof(reserva))], *token;
+    reserva dados, retorna;
+
+    retorna.delet = 1;
+    
+    printf("Digite o código da reserva que deseja buscar: \n");
+    scanf("%f", &codigo);
+    
+    //bin
+    bin = fopen("reservas.bin", "rb+wb");
+    if (bin == NULL) {
+        printf("Erro de abertura de arquivo reservas.bin!\n");
+        exit(1);
+    }
+    
+    while(fread(&dados, sizeof(reserva), 1, bin)) {
+        if (dados.delet == 0 && dados.codigo == codigo) {
+            encontrado++;
+            retorna = dados;
+            break;
+        }
+    }
+    
+    fclose(bin);
+    
+    //txt
+    if (encontrado == 0) {
+        txt = fopen("reservas.txt", "r");
+        if (txt == NULL) {
+            printf("Erro de abertura de arquivo reservas.txt!\n");
+            exit(1);
+        }
+        alt = fopen("temp.txt", "a");
+        if (alt == NULL) {
+            printf("Erro ao criar arquivo temporário!\n");
+            exit(1);
+        }
+
+        while(fgets(linha, sizeof(reserva), txt)) {
+            //Passa os dados para a varável dados
+
+            token = strtok(linha, ";");
+            dados.delet = atoi(token);
+            token = strtok(NULL, ";");
+            dados.codigo = atoff(token);
+            token = strtok(NULL, ";");
+            dados.codQuarto = atoff(token);
+            token = strtok(NULL, ";");
+            dados.inicio.dia = atoi(token);
+            token = strtok(NULL, ";");
+            dados.inicio.mes = atoi(token);
+            token = strtok(NULL, ";");
+            dados.inicio.ano = atoi(token);
+            token = strtok(NULL, ";");
+            dados.fim.dia = atoi(token);
+            token = strtok(NULL, ";");
+            dados.fim.mes = atoi(token);
+            token = strtok(NULL, ";");
+            dados.fim.ano = atoi(token);
+
+            if (dados.delet == 0 && dados.codigo == codigo) {
+                encontrado++;
+                retorna = dados;
+            }
+        }
+
+
+        fclose(alt);
+        fclose(txt);
+        
+        remove("reservas.txt");
+        rename("temp.txt", "reservas.txt");
+    }
+    
+    //memoria
+    if (encontrado == 0) {
+        if (GLOBAL_dados_reservas != NULL) {
+            for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_reservas; tam_point++) {
+                if (GLOBAL_dados_reservas->delet == 0 && GLOBAL_dados_reservas->codigo == codigo) {
+                    encontrado++;
+                    retorna.codigo = GLOBAL_dados_reservas->codigo;
+                    retorna.codQuarto = GLOBAL_dados_reservas->codQuarto;
+                    retorna.delet = GLOBAL_dados_reservas->delet;
+                    retorna.fim = GLOBAL_dados_reservas->fim;
+                    retorna.inicio = GLOBAL_dados_reservas->inicio;
+                    break;
+                }
+                
+                GLOBAL_dados_reservas++;
+            }
+            
+            GLOBAL_dados_reservas -= (tam_point - 1);
+        }
+    }
+    
+    if (encontrado == 0) {
+        printf("Reserva não consta na base de dados! \n");
+        return retorna;
+    }
+}
+
 void altera_reserva(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas) {
     FILE *txt, *bin, *alt;
     float codigo = 0;
@@ -754,6 +861,82 @@ void exclui_reservas(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_r
     } else {
         printf("Dados excluídos com sucesso!\n");
     }
+}
+
+int retornaDias(data inicio, data fim){
+        int dias = 0;
+    int diasNoMes[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if(inicio.ano == fim.ano){
+        if(inicio.mes == fim.mes){
+            //Caso seja mesmo ano e mês, dias recebe apenas o dia final - inicial + 1
+            dias += (fim.dia - inicio.dia + 1);
+        } else {
+            for(int i = inicio.mes; i <= fim.mes; i++){
+                if(i < fim.mes){
+                    //Caso sejam meses diferentes, subtrai-se do mes de inicio o dia de inicio e soma 1
+                    dias += (diasNoMes[i] - inicio.dia + 1);
+                    //Define o dia de início para 0 pois passa para o próximo mês
+                    inicio.dia = 1;
+                } else{
+                    //Caso chegue ao último mês, apenas soma-se o dia final
+                    dias+= fim.dia;
+                }
+            }
+        }
+    } else{
+        for(int i = inicio.ano; i <= fim.ano; i++){
+            if(i < fim.ano){
+                //Seta uma data auxiliar até o fim do ano
+                data aux;
+                aux.dia = 31;
+                aux.mes = 12;
+                aux.ano = i;
+
+                //Calcula os dias até o fim do ano de inicio
+                if(inicio.mes == aux.mes){
+                    //Caso seja mesmo ano e mês, dias recebe apenas o dia final - inicial + 1
+                    dias += (aux.dia - inicio.dia + 1);
+                } else{
+                    for(int j = inicio.mes; j <= aux.mes; j++){
+                        if(j < aux.mes){
+                            //Caso sejam meses diferentes, subtrai-se do mes de inicio o dia de inicio e soma 1
+                            dias += (diasNoMes[j] - inicio.dia + 1);
+                            //Define o dia de início para 0 pois passa para o próximo mês
+                            inicio.dia = 1;
+                        } else{
+                            //Caso chegue ao último mês, apenas soma-se o dia final
+                            dias+= aux.dia;
+                        }
+                    }
+                }
+                
+                inicio.dia = 1;
+                inicio.mes = 1;
+                inicio.ano = i + 1;
+            }
+            //Quando o ano de inicio se tornar igual é só calcular novamente; 
+            else {
+                if(inicio.mes == fim.mes){
+                    //Caso seja mesmo ano e mês, dias recebe apenas o dia final - inicial + 1
+                    dias += (fim.dia - inicio.dia + 1);
+                } else {
+                    for(int i = inicio.mes; i <= fim.mes; i++){
+                        if(i < fim.mes){
+                            //Caso sejam meses diferentes, subtrai-se do mes de inicio o dia de inicio e soma 1
+                            dias += (diasNoMes[i] - inicio.dia + 1);
+                            //Define o dia de início para 0 pois passa para o próximo mês
+                            inicio.dia = 1;
+                        } else{
+                            //Caso chegue ao último mês, apenas soma-se o dia final
+                            dias+= fim.dia;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return dias;
 }
 
 void pesquisa_reserva_quantPessoas(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao){

@@ -75,7 +75,7 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont) {
 }
 
 void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, produto *GLOBAL_dados_produtos,
-                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas) {
+                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas, checkInOut *GLOBAL_dados_checkInOut) {
     int opcao = 99, binOUtxt = 0;
     
     //parametros globais para ponteiros globais
@@ -86,6 +86,7 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
     int GLOBAL_tam_pont_dados_fornecedores = 1; //ja usado!
     int GLOBAL_tam_pont_dados_operadores = 1; //ja usado!
     int GLOBAL_tam_pont_dados_reservas = 1; //ja usado!
+    int GLOBAL_tam_pont_dados_checks = 1; //ja usado!
 
     
     setbuf(stdin, NULL);
@@ -101,7 +102,8 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
         printf("\tFornecedores - 7\n");
         printf("\tOperadores - 8\n");
         printf("\tTransações - 9\n");
-        printf("\tConfigurações de salvamento - 10\n");
+        printf("\tCheck-In e Check-Out - 10\n");
+        printf("\tConfigurações de salvamento - 15\n");
         printf("\tEncerrar - 0\n");
 
         printf("Opcão: ");
@@ -136,6 +138,9 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
                 menuTransacoes(binOUtxt, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
                 break;
             case 10:
+                menu_checkInOut(binOUtxt, GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, &GLOBAL_tam_pont_dados_reservas, &GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_checkInOut, &GLOBAL_tam_pont_dados_checks);
+                break;
+            case 15:
                 binOUtxt = selecionarTipoArquivo();
                 break;
             case 0:
