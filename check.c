@@ -53,7 +53,7 @@ checkInOut le_dados_checkIn(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_
     
 }
 
-void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_reservas, int *GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks){
+void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int GLOBAL_tam_pont_dados_checks){
     int opcao = 0;
 
     while (opcao != 3) {
@@ -80,7 +80,7 @@ void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao
                 }
                 break;
             case 2:
-                le_dados_checkIn(GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas, GLOBAL_dados_acomodacao, *GLOBAL_tam_pont_dados_acomodacao);
+                le_dados_checkIn(GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas, GLOBAL_dados_acomodacao, GLOBAL_tam_pont_dados_acomodacao);
                 break;
             case 3:
                 break;

@@ -211,7 +211,9 @@ void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produ
         }
 
         fclose(arquivo);
-        
+    }
+    
+    if (encontrado == 0) {
         //memoria
         if (GLOBAL_dados_produtos != NULL) {
             for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_produtos; tam_point++) {
@@ -231,6 +233,7 @@ void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produ
             GLOBAL_dados_produtos -= (tam_point - 1);
         }
     }
+    
     if(encontrado == 0){
         printf("Produto não encontrado!");
     }

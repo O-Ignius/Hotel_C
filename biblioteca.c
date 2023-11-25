@@ -135,10 +135,10 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
                 menuOperadores(binOUtxt, GLOBAL_dados_operadores, &GLOBAL_tam_pont_dados_reservas);
                 break;
             case 9:
-                menuTransacoes(binOUtxt, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
+                menuTransacoes(binOUtxt, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
                 break;
             case 10:
-                menu_checkInOut(binOUtxt, GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, &GLOBAL_tam_pont_dados_reservas, &GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_checkInOut, &GLOBAL_tam_pont_dados_checks);
+                menu_checkInOut(binOUtxt, GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, GLOBAL_tam_pont_dados_reservas, GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_checkInOut, GLOBAL_tam_pont_dados_checks);
                 break;
             case 15:
                 binOUtxt = selecionarTipoArquivo();
