@@ -132,6 +132,8 @@ typedef struct {
 }entrega_produto;
 
 typedef struct {
+    //Recebe 1 caso já tenha sido feito chech-out e os pagamentos
+    int delet;
     float codigoReserva;
     float valorDiarias, consumoHospede;
     //1 para pagas, 0 para não pagas
@@ -199,7 +201,7 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOB
 
 void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
-void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int GLOBAL_tam_pont_dados_checks);
+void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks);
 
 //  Hotel
 int verifica_Hotel();
@@ -356,5 +358,6 @@ void atualiza_estoque_produto(float codigo, int quantia, float frete, float impo
 
 
 //Check
+int verificaCheckIn(float codReserva, checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks);
 
-checkInOut le_dados_checkIn(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_acomodacao);
+checkInOut le_dados_checkIn(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks);
