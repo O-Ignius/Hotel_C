@@ -126,7 +126,7 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
                 GLOBAL_dados_acomodacao = menuAcomodacoes(binOUtxt, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_acomodacao, &GLOBAL_tam_pont_dados_categ_acomodacao, &GLOBAL_tam_pont_dados_acomodacao);
                 break;
             case 6:
-                menuProdutos(binOUtxt, GLOBAL_dados_produtos, &GLOBAL_tam_pont_dados_produtos);
+                GLOBAL_dados_produtos = menuProdutos(binOUtxt, GLOBAL_dados_produtos, &GLOBAL_tam_pont_dados_produtos);
                 break;
             case 7:
                 menuFornecedores(binOUtxt, GLOBAL_dados_fornecedores, &GLOBAL_tam_pont_dados_fornecedores);

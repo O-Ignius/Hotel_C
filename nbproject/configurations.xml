@@ -21,6 +21,7 @@
       <itemPath>produtos.c</itemPath>
       <itemPath>reserva.c</itemPath>
       <itemPath>transacoes.c</itemPath>
+      <itemPath>vendaProdutos.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Arquivos de Recurso"
@@ -107,6 +108,8 @@
       </item>
       <item path="transacoes.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="vendaProdutos.c" ex="false" tool="0" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -153,6 +156,8 @@
       <item path="reserva.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="transacoes.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="vendaProdutos.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>

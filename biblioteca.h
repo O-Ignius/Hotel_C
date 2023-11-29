@@ -193,7 +193,7 @@ cate_aco *menuTipoAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acom
 
 acomodacao *menuAcomodacoes(int tipoArquivo,cate_aco *GLOBAL_dados_categ_acomodacao,acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_categ_acomodacao, int *GLOBAL_tam_pont_dados_acomodacao);
 
-void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos);
+produto *menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos);
 
 void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores, int *GLOBAL_tam_pont_dados_fornecedores);
 
@@ -274,7 +274,7 @@ void salva_cadastro_produtos_txt(produto dados);
 
 produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos);
 
-void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
+produto le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
 void le_todos_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
@@ -360,4 +360,18 @@ void atualiza_estoque_produto(float codigo, int quantia, float frete, float impo
 //Check
 int verificaCheckIn(float codReserva, checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks);
 
+void checkOut(checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks);
+
 checkInOut le_dados_checkIn(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks);
+
+void salva_check_bin(checkInOut dados);
+
+void salva_check_txt(checkInOut dados);
+
+checkInOut *salva_check_memoria(checkInOut dados, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks);
+
+//Vendas
+
+produto *vendeProduto(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
+
+produto *removeDoEstoque(float codigoProduto, int quantidade, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);

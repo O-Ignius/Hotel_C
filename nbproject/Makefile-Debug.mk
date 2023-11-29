@@ -46,7 +46,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/operador.o \
 	${OBJECTDIR}/produtos.o \
 	${OBJECTDIR}/reserva.o \
-	${OBJECTDIR}/transacoes.o
+	${OBJECTDIR}/transacoes.o \
+	${OBJECTDIR}/vendaProdutos.o
 
 
 # C Compiler Flags
@@ -132,6 +133,11 @@ ${OBJECTDIR}/transacoes.o: transacoes.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/transacoes.o transacoes.c
+
+${OBJECTDIR}/vendaProdutos.o: vendaProdutos.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/vendaProdutos.o vendaProdutos.c
 
 # Subprojects
 .build-subprojects:

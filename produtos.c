@@ -44,7 +44,7 @@ produto le_dados_produto(int GLOBAL_tam_pont_dados_produtos) {
     return dados;
 }
 
-void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
+produto *menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
     int opcao = 0;
     produto dados;
     while (opcao != 6) {
@@ -94,6 +94,7 @@ void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_ta
                 break;
         }
     }
+    return GLOBAL_dados_produtos;
 }
 
 void salva_cadastro_produtos_bin(produto dados) {
@@ -155,11 +156,11 @@ produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produt
     return GLOBAL_dados_produtos;
 }
 
-void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
+produto le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
     FILE *arquivo;
     float codigo;
     int encontrado = 0, tam_point = 0;
-    produto dados;
+    produto dados, retorna;
     char linha[(sizeof (produto))], *token;
 
     arquivo = fopen("produtos.bin", "rb");
@@ -177,6 +178,8 @@ void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produ
             printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
                     dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
             encontrado = 1;
+            retorna = dados;
+            break;
         }
     }
 
@@ -198,15 +201,23 @@ void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produ
                 encontrado = 1;
                 printf("\nCódigo: %s \n", token);
                 token = strtok(NULL, ";");
+                strcpy(dados.descricao, token);
                 printf("Descrição: %s \n", token);
                 token = strtok(NULL, ";");
+                dados.estoque_min = atoi(token);
                 printf("Estoque mínimo: %s \n", token);
                 token = strtok(NULL, ";");
+                dados.estoque = atoi(token);
                 printf("Estoque atual: %s \n", token);
                 token = strtok(NULL, ";");
+                dados.custo = atoff(token);
                 printf("Custo do produto: R$%s \n", token);
                 token = strtok(NULL, ";");
+                dados.venda = atoff(token);
                 printf("Preço de venda: R$%s \n", token);
+
+                retorna = dados;
+                break;
             }
         }
 
@@ -222,6 +233,14 @@ void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produ
                         encontrado = 1;
                         printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
                         GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
+                        retorna.codigo = GLOBAL_dados_produtos->codigo;
+                        retorna.delet = GLOBAL_dados_produtos->delet;
+                        strcpy(retorna.descricao, GLOBAL_dados_produtos->descricao);
+                        retorna.estoque_min = GLOBAL_dados_produtos->estoque_min;
+                        retorna.estoque = GLOBAL_dados_produtos->estoque;
+                        retorna.custo = GLOBAL_dados_produtos->custo;
+                        retorna.venda = GLOBAL_dados_produtos->venda;
+                        break;
                     }
                 }
 
@@ -236,7 +255,9 @@ void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produ
     
     if(encontrado == 0){
         printf("Produto não encontrado!");
+        retorna.delet = 2;
     }
+    return retorna;
 }
 
 void le_todos_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
@@ -394,7 +415,7 @@ void altera_produto(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_pr
                         encontrado = 1;
                         dados = le_dados_produto(GLOBAL_tam_pont_dados_produtos);
                         dados.codigo = codigo;
-                        *(GLOBAL_dados_produtos) = dados;
+                        *GLOBAL_dados_produtos = dados;
                         break;
                     }
                 }
