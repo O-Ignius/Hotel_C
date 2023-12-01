@@ -564,6 +564,7 @@ void altera_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_da
             
             fseek(le, -sizeof (acomodacao), SEEK_CUR);
             fwrite(&acomod, sizeof (acomodacao), 1, le);
+            break;
         }
     }
 

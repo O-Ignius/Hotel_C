@@ -354,6 +354,7 @@ void altera_produto(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_pr
             fseek(altera, -sizeof (produto), 1);
             fwrite(&dados, sizeof (produto), 1, altera);
             encontrado = 1;
+            break;
         }
     }
 

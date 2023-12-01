@@ -90,7 +90,7 @@ reserva le_dados_reserva(int GLOBAL_tam_pont_dados_reservas) {
     return dados;
 }
 
-void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_reservas, int *GLOBAL_tam_pont_dados_acomodacao) {
+reserva* menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_reservas, int *GLOBAL_tam_pont_dados_acomodacao) {
     reserva dados;
     int opcao = 99, variavel = 0;
 
@@ -137,6 +137,7 @@ void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GL
                 break;
         }
     }
+    return GLOBAL_dados_reservas;
 }
 
 //Menu de pesquisa
@@ -632,6 +633,7 @@ reserva le_uma_reserva(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados
     }
     
     if (encontrado == 0) {
+        retorna.delet = 2;
         printf("Reserva não consta na base de dados! \n"); 
     }
     return retorna;

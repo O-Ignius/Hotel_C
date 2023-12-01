@@ -25,6 +25,7 @@ int verificaCheckIn(float codReserva, checkInOut *GLOBAL_dados_checkInOut,int GL
         if(dados.delet == 0){
             if(dados.codigoReserva == codReserva){
                 existe = 1;
+                break;
             }
         }
     }
@@ -40,7 +41,7 @@ int verificaCheckIn(float codReserva, checkInOut *GLOBAL_dados_checkInOut,int GL
         }
 
         char linha[(sizeof(checkInOut))], *token;
-        while (fgets(linha, 1, arquivo)){
+        while (fgets(linha, sizeof(checkInOut), arquivo)){
             token = strtok(linha, ";");
             //atoi passa string para int 
             dados.delet = atoi(token);
@@ -57,6 +58,7 @@ int verificaCheckIn(float codReserva, checkInOut *GLOBAL_dados_checkInOut,int GL
             if(dados.delet == 0){
                 if(dados.codigoReserva == codReserva){
                     existe = 1;
+                    break;
                 }
             }
         }
@@ -126,7 +128,7 @@ void checkOut(checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_chec
         }
 
         char linha[(sizeof(checkInOut))], *token;
-        while (fgets(linha, 1, arquivo)){
+        while (fgets(linha, sizeof(checkInOut), arquivo)){
             token = strtok(linha, ";");
             //atoi passa string para int 
             dados.delet = atoi(token);
@@ -185,7 +187,7 @@ void checkOut(checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_chec
     }
 }
 
-//Leitura
+//Leitura de dados
 checkInOut le_dados_checkIn(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks){
     checkInOut check;
     int erro = 0;
@@ -264,7 +266,7 @@ void salva_check_txt(checkInOut dados){
     FILE *arquivo;
     int teste;
 
-    arquivo = fopen("checkInOut.txt","ab");
+    arquivo = fopen("checkInOut.txt","a");
 
     if(arquivo == NULL){
         printf("Erro ao abrir arquivo de Check-in!");
@@ -304,19 +306,116 @@ checkInOut *salva_check_memoria(checkInOut dados, checkInOut *GLOBAL_dados_check
     return GLOBAL_dados_checkInOut;
 }
 
+void leCheckIn(checkInOut *GLOBAL_dados_checkInOut,int GLOBAL_tam_pont_dados_checks){
+    FILE *arquivo;
+    checkInOut dados;
+    int encontrado = 0;
+    float codReserva;
+
+    printf("Digite o código da reserva que deseja buscar: ");
+    scanf("%f", &codReserva);
+
+    arquivo = fopen("checkInOut.bin", "rb");
+
+    if(arquivo == NULL){
+        printf("Erro ao abrir arquivo de Check-in bin");
+        exit(1);
+    }
+
+    while (fread(&dados, sizeof(checkInOut), 1, arquivo)){
+        if(dados.delet == 0){
+            if(dados.codigoReserva == codReserva){
+                printf("Entrou?");
+                if(dados.DiariasPagas == 1){
+                    printf("\nCódigo da reserva: %.0f\n\tValor das diárias: %.2f\n\tDiárias pagas: SIM\n\tConsumo atual: %.2f", dados.codigoReserva, dados.valorDiarias, dados.consumoHospede);
+                } else
+                    printf("\nCódigo da reserva: %.0f\n\tValor das diárias: %.2f\n\tDiárias pagas: Não\n\tConsumo atual: %.2f", dados.codigoReserva, dados.valorDiarias, dados.consumoHospede);
+                encontrado = 1;
+                break;
+            }
+        }
+    }
+    
+    fclose(arquivo);
+
+    if(encontrado == 0){
+        arquivo = fopen("checkInOut.txt", "r");
+
+        if(arquivo == NULL){
+            printf("Erro ao abrir arquivo de Check-in txt");
+            exit(1);
+        }
+
+        char linha[(sizeof(checkInOut))], *token;
+        while (fgets(linha, sizeof(checkInOut), arquivo)){
+            token = strtok(linha, ";");
+            //atoi passa string para int 
+            dados.delet = atoi(token);
+            token = strtok(NULL, ";");
+            //atoff passa string para float
+            dados.codigoReserva = atoff(token);
+            token = strtok(NULL, ";");
+            dados.consumoHospede = atoff(token);
+            token = strtok(NULL, ";");
+            dados.DiariasPagas = atoi(token);
+            token = strtok(NULL, ";");
+            dados.valorDiarias = atoff(token);
+            if(dados.delet == 0){
+                if(dados.codigoReserva == codReserva){
+                    if(dados.DiariasPagas == 1){
+                        printf("\nCódigo da reserva: %.0f\n\tValor das diárias: %.2f\n\tDiárias pagas: SIM\n\tConsumo atual: %.2f", dados.codigoReserva, dados.valorDiarias, dados.consumoHospede);
+                    } else
+                        printf("\nCódigo da reserva: %.0f\n\tValor das diárias: %.2f\n\tDiárias pagas: Não\n\tConsumo atual: %.2f", dados.codigoReserva, dados.valorDiarias, dados.consumoHospede);
+                    encontrado = 1;
+                    break;
+                }
+            }
+        }
+        
+        fclose(arquivo);
+    }
+
+    if(encontrado == 0){
+        if(GLOBAL_dados_checkInOut != NULL){
+            int i;
+            for(i = 1; i < GLOBAL_tam_pont_dados_checks; i++){
+                if(GLOBAL_dados_checkInOut->delet == 0){
+                    if(GLOBAL_dados_checkInOut->codigoReserva == codReserva){
+                        if(dados.DiariasPagas == 1){
+                            printf("\nCódigo da reserva: %.0f\n\tValor das diárias: %.2f\n\tDiárias pagas: SIM\n\tConsumo atual: %.2f", GLOBAL_dados_checkInOut->codigoReserva, GLOBAL_dados_checkInOut->valorDiarias, GLOBAL_dados_checkInOut->consumoHospede);
+                        } else
+                            printf("\nCódigo da reserva: %.0f\n\tValor das diárias: %.2f\n\tDiárias pagas: Não\n\tConsumo atual: %.2f", GLOBAL_dados_checkInOut->codigoReserva, GLOBAL_dados_checkInOut->valorDiarias, GLOBAL_dados_checkInOut->consumoHospede);
+                        
+                        encontrado = 1;
+                        break;
+                    }
+                }
+                //Aritimetica para passar para a próxima posição do ponteiro
+                GLOBAL_dados_checkInOut++;
+            }
+            //Retorna o ponteiro para a posição inicial
+            GLOBAL_dados_checkInOut -= (i -1);
+        }
+    }
+    if(encontrado == 0){
+        printf("Nenhum Check-In encontrado para essa reserva!");
+    }
+}
+
 //Menu
-void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks){
+checkInOut* menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks){
     int opcao = 0;
     checkInOut dados;
 
-    while (opcao != 3) {
+    while (opcao != 4) {
         setbuf(stdin, NULL);
 
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
         printf("Digite a opcao desejada:\n\n");
         printf("\tRealizar Check-In - 1\n");
-        printf("\tRealizar Check-Out - 2\n");
-        printf("\tVoltar ao menu principal - 3\n");
+        printf("\tLer Check-In - 2\n");
+        printf("\tRealizar Check-Out - 3\n");
+        printf("\tVoltar ao menu principal - 4\n");
 
         printf("Opcão: ");
         scanf("%d", &opcao);
@@ -337,13 +436,16 @@ void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao
                 }
                 break;
             case 2:
-                checkOut(GLOBAL_dados_checkInOut, *GLOBAL_tam_pont_dados_checks);
+                leCheckIn(GLOBAL_dados_checkInOut, *GLOBAL_tam_pont_dados_checks);
                 break;
             case 3:
+                checkOut(GLOBAL_dados_checkInOut, *GLOBAL_tam_pont_dados_checks);
                 break;
             default:
                 printf("\nNúmero inválido, digite novamente!\n");
                 break;
         }
     }
+    return GLOBAL_dados_checkInOut;
 }
+

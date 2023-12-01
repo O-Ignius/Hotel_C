@@ -39,7 +39,7 @@ operador le_dados_operador(int GLOBAL_tam_pont_dados_operadores) {
     return dados;
 }
 
-void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
+operador* menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
     int opcao = 0;
     operador dados;
     while (opcao != 6) {
@@ -89,6 +89,7 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOB
                 break;
         }
     }
+    return GLOBAL_dados_operadores;
 }
 
 void salva_cadastro_operadores_bin(operador dados) {
@@ -326,6 +327,7 @@ void alterar_operador(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dad
             fseek(arquivo, -sizeof (operador), 1);
             fwrite(&dados, sizeof (operador), 1, arquivo);
             encontrado = 1;
+            break;
         }
     }
 

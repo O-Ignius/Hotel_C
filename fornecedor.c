@@ -65,7 +65,7 @@ fornecedor le_dados_fornecedor(int GLOBAL_tam_pont_dados_fornecedores) {
     return dados;
 }
 
-void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores, int *GLOBAL_tam_pont_dados_fornecedores) {
+fornecedor* menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores, int *GLOBAL_tam_pont_dados_fornecedores) {
     int opcao = 0;
     fornecedor dados;
     while (opcao != 6) {
@@ -117,6 +117,7 @@ void menuFornecedores(int tipoAquivo, fornecedor *GLOBAL_dados_fornecedores, int
         printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
+    return GLOBAL_dados_fornecedores;
 }
 
 void salva_cadastro_fornecedores_bin(fornecedor dados) {
@@ -395,6 +396,7 @@ void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont
             fseek(arquivo, -sizeof (fornecedor), 1);
             fwrite(&dados, sizeof (fornecedor), 1, arquivo);
             encontrado = 1;
+            break;
         }
     }
 
