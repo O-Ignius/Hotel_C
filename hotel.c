@@ -79,7 +79,7 @@ hotel le_dados_hotel() {
     return dados;
 }
 
-void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
+hotel* menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
     int opcao = 0;
     hotel dados;
     while (opcao != 5) {
@@ -110,7 +110,7 @@ void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
                 exclui_hotel(GLOBAL_dados_hotel);
                 break;
             case 4:
-                if (verifica_Hotel() == 0) {
+                if (verifica_Hotel(GLOBAL_dados_hotel) == 0) {
                     dados = le_dados_hotel();
                     salva_cadastro_hotel(dados, GLOBAL_dados_hotel);
                 } else {
@@ -124,9 +124,10 @@ void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel) {
                 break;
         }
     }
+    return GLOBAL_dados_hotel;
 }
 
-int verifica_Hotel() {
+int verifica_Hotel(hotel *GLOBAL_dados_hotel) {
     FILE *salva;
     hotel hotel1;
     int tam = 0;
@@ -140,6 +141,8 @@ int verifica_Hotel() {
     while (fread(&hotel1, sizeof (hotel), 1, salva)) {
         if (hotel1.delet == 0) {
             tam = 1;
+            GLOBAL_dados_hotel = malloc(sizeof(hotel));
+            *GLOBAL_dados_hotel = hotel1;
             break;
         }
     }

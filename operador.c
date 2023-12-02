@@ -89,6 +89,7 @@ void menuOperadores(int tipoAquivo, operador **GLOBAL_dados_operadores, int *GLO
                 break;
         }
     }
+    return GLOBAL_dados_operadores;
 }
 
 void salva_cadastro_operadores_bin(operador dados) {
@@ -324,6 +325,7 @@ void alterar_operador(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dad
             fseek(arquivo, -sizeof (operador), 1);
             fwrite(&dados, sizeof (operador), 1, arquivo);
             encontrado = 1;
+            break;
         }
     }
 

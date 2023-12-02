@@ -47,7 +47,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/operador.o \
 	${OBJECTDIR}/produtos.o \
 	${OBJECTDIR}/reserva.o \
-	${OBJECTDIR}/transacoes.o
+	${OBJECTDIR}/transacoes.o \
+	${OBJECTDIR}/vendaProdutos.o
 
 
 # C Compiler Flags
@@ -68,11 +69,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/e43f2470/vendaProdutos.o: /cygdrive/C/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/vendaProdutos.c
 	${MKDIR} -p ${OBJECTDIR}/_ext/e43f2470
@@ -138,6 +139,11 @@ ${OBJECTDIR}/transacoes.o: transacoes.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/transacoes.o transacoes.c
+
+${OBJECTDIR}/vendaProdutos.o: vendaProdutos.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/vendaProdutos.o vendaProdutos.c
 
 # Subprojects
 .build-subprojects:

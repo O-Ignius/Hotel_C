@@ -516,8 +516,8 @@ acomodacao le_uma_acomodacao(float codigo, acomodacao *GLOBAL_dados_acomodacao, 
 
     if (encontrado == 0) {
         printf("Acomodacao da reserva não encontrada na base de dados!\n");
-        return retorna;
     }
+    return retorna;
 }
 
 void altera_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, int GLOBAL_tam_pont_dados_categ_acomodacao, int GLOBAL_tam_pont_dados_acomodacao) {
@@ -559,6 +559,7 @@ void altera_acomodacoes(acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_da
             
             fseek(le, -sizeof (acomodacao), SEEK_CUR);
             fwrite(&acomod, sizeof (acomodacao), 1, le);
+            break;
         }
     }
 

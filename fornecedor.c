@@ -117,6 +117,7 @@ void menuFornecedores(int tipoAquivo, fornecedor **GLOBAL_dados_fornecedores, in
         printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
+    return GLOBAL_dados_fornecedores;
 }
 
 void salva_cadastro_fornecedores_bin(fornecedor dados) {
@@ -144,15 +145,15 @@ void salva_cadastro_fornecedores_txt(fornecedor dados) {
     }
 
     salvar = fprintf(salva, "%d;%0.0f;%s;%s;%s;%s;%s;%0.0f;", dados.delet, dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone);
-    if (salvar < 0) {
-        printf("Erro no salvamento do tipo de acomodação !\n");
+    if (salvar < 0) {   
+        printf("Erro no salvamento do fornecedor!\n");
     } else {
         salvou++;
     }
 
     local = fprintf(salva, "%s;%0.0f;%s;%s;%s;%0.0f;\n", dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
     if (local < 0) {
-        printf("Erro no salvamento do tipo de acomodação !\n");
+        printf("Erro no salvamento do fornecedor!\n");
     } else {
         salvou++;
     }
@@ -393,6 +394,7 @@ void altera_fonecedor(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont
             fseek(arquivo, -sizeof (fornecedor), 1);
             fwrite(&dados, sizeof (fornecedor), 1, arquivo);
             encontrado = 1;
+            break;
         }
     }
 

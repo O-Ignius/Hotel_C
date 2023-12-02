@@ -82,7 +82,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
                 
                 break;
             case 4:
-                
+                    GLOBAL_dados_produtos = vendeProduto(GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas, GLOBAL_dados_checkInOut, GLOBAL_tam_pont_dados_checks);
                 break;
             case 5:
                 entrada_produtos(tipoArquivo, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, &GLOBAL_dados_entrega_produto, &(*GLOBAL_tam_pont_dados_entrega_produto), &GLOBAL_dados_itens, &(*GLOBAL_tam_pont_dados_itens));

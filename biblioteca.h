@@ -184,7 +184,7 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont);
 void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, produto *GLOBAL_dados_produtos,
                    fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas, entrega_produto *GLOBAL_dados_entrega_produto, itens *GLOBAL_dados_itens, checkInOut *GLOBAL_dados_checkInOut);
 
-void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel);
+hotel *menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel);
 
 void menuCliente(int tipoArquivo, cad_clie **GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente);
 
@@ -205,7 +205,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
 void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut **GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks);
 
 //  Hotel
-int verifica_Hotel();
+int verifica_Hotel(hotel *GLOBAL_dados_hotel);
 
 void salva_cadastro_hotel(hotel dados, hotel *GLOBAL_dados_hotel);
 
@@ -275,7 +275,7 @@ void salva_cadastro_produtos_txt(produto dados);
 
 void salva_cadastro_produtos_mem(produto dados, produto ***GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos);
 
-void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
+produto le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
 void le_todos_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 

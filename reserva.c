@@ -137,6 +137,7 @@ void menuReserva(int tipoArquivo, reserva **GLOBAL_dados_reservas, acomodacao *G
                 break;
         }
     }
+    return GLOBAL_dados_reservas;
 }
 
 //Menu de pesquisa
@@ -630,9 +631,10 @@ reserva le_uma_reserva(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados
     }
     
     if (encontrado == 0) {
-        printf("Reserva não consta na base de dados! \n");
-        return retorna;
+        retorna.delet = 2;
+        printf("Reserva não consta na base de dados! \n"); 
     }
+    return retorna;
 }
 
 void altera_reserva(reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas) {

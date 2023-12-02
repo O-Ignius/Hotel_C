@@ -65,8 +65,10 @@ int main() {
     fopen("operadores.txt","a");
     fopen("reservas.bin","ab");
     fopen("reservas.txt","a");
+    fopen("checkInOut.bin","ab");
+    fopen("checkInOut.txt","a");
     
-    if(verifica_Hotel() == 0){
+    if(verifica_Hotel(GLOBAL_dados_hotel) == 0){
         hotel dados;
         dados = le_dados_hotel();
         salva_cadastro_hotel(dados, &(*GLOBAL_dados_hotel));

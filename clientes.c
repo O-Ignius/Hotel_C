@@ -162,6 +162,7 @@ void menuCliente(int tipoArquivo, cad_clie **GLOBAL_dados_cliente, int *GLOBAL_t
         printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
+    return GLOBAL_dados_cliente;
 }
 
 //  Clientes
@@ -615,6 +616,7 @@ void alteraCliente(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cli
                     *(GLOBAL_dados_cliente) = cliente;
                     
                     encontrado = 1;
+                    break;
                 }
             }
             
