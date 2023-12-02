@@ -124,11 +124,12 @@ typedef struct {
 
 typedef struct {
     float codigo, valor;
-    int quantia;
+    int quantidade;
 }itens;
 
 typedef struct {
     float frete, imposto, cod_forn;
+    int qnt;
 }entrega_produto;
 
 typedef struct {
@@ -179,7 +180,7 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont);
 
 //Menus
 void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, produto *GLOBAL_dados_produtos,
-                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas, checkInOut *GLOBAL_dados_checkInOut);
+                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas, entrega_produto *GLOBAL_dados_entrega_produto, itens *GLOBAL_dados_itens, checkInOut *GLOBAL_dados_checkInOut);
 
 void menuHotel(int tipoArquivo, hotel *GLOBAL_dados_hotel);
 
@@ -199,7 +200,7 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOB
 
 void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
-void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int GLOBAL_tam_pont_dados_checks);
+void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks);
 
 //  Hotel
 int verifica_Hotel();
@@ -346,7 +347,7 @@ void pesquisa_reserva_porTudo(reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL
 
 //Transações
 
-void entrada_produtos(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
+void entrada_produtos(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
 int check_fornecedor(float codigo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores);
 
@@ -354,6 +355,9 @@ int check_produto(float codigo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_p
 
 void atualiza_estoque_produto(float codigo, int quantia, float frete, float imposto, float custo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos);
 
+void salva_entrada_produto_bin(entrega_produto fornecimento, int quantia, itens *produtos);
+
+void le_todas_entradas_produto();
 
 //Check
 
