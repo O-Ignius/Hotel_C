@@ -112,7 +112,7 @@ cad_clie le_dados_cad(int GLOBAL_tam_pont_dados_cliente) {
     return dados;
 }
 
-void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente) {
+void menuCliente(int tipoArquivo, cad_clie **GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente) {
     int opcao = 0;
     cad_clie dados;
     while (opcao != 6) {
@@ -138,20 +138,20 @@ void menuCliente(int tipoArquivo, cad_clie *GLOBAL_dados_cliente, int *GLOBAL_ta
                     salva_cadastro_pessoa_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_cliente = salva_cadastro_pessoa_mem(dados, GLOBAL_dados_cliente, &(*GLOBAL_tam_pont_dados_cliente));
+                    salva_cadastro_pessoa_mem(dados, &GLOBAL_dados_cliente, &(*GLOBAL_tam_pont_dados_cliente));
                 }
                 break;
             case 2:
-                le_todos_cadastro_pessoa(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
+                le_todos_cadastro_pessoa(*GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 3:
-                le_cadastro_pessoa(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
+                le_cadastro_pessoa(*GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 4:
-                alteraCliente(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
+                alteraCliente(*GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 5:
-                removeCliente(GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
+                removeCliente(*GLOBAL_dados_cliente, *GLOBAL_tam_pont_dados_cliente);
                 break;
             case 6:
                 break;
@@ -231,29 +231,27 @@ void salva_cadastro_pessoa_txt(cad_clie saves) {
     fclose(salva);
 }
 
-cad_clie *salva_cadastro_pessoa_mem(cad_clie saves, cad_clie *GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente) {
+void salva_cadastro_pessoa_mem(cad_clie saves, cad_clie ***GLOBAL_dados_cliente, int *GLOBAL_tam_pont_dados_cliente) {
     //caso a variavel global GLOBAL_tam_pont_dados_cliente não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
     if (*GLOBAL_tam_pont_dados_cliente == 1) {
-        GLOBAL_dados_cliente = malloc(sizeof(cad_clie));
-        *GLOBAL_dados_cliente = saves;
+        **GLOBAL_dados_cliente = malloc(sizeof(cad_clie));
+        ***GLOBAL_dados_cliente = saves;
     }
     //caso a variavel GLOBAL_tam_pont_dados_cliente tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_cliente = realloc(GLOBAL_dados_cliente, (*GLOBAL_tam_pont_dados_cliente)*sizeof(cad_clie));
-        *(GLOBAL_dados_cliente + (*GLOBAL_tam_pont_dados_cliente - 1)) = saves;
+        **GLOBAL_dados_cliente = realloc(GLOBAL_dados_cliente, (*GLOBAL_tam_pont_dados_cliente)*sizeof(cad_clie));
+        ***(GLOBAL_dados_cliente + (*GLOBAL_tam_pont_dados_cliente - 1)) = saves;
     }
     
     //encerra o processo caso não haja memória o suficiente
-    if (GLOBAL_dados_cliente == NULL) {
+    if (**GLOBAL_dados_cliente == NULL) {
         printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
         exit(1);
     }
     
     //aumenta o valor da variavel global
     (*GLOBAL_tam_pont_dados_cliente)++;
-    
-    return GLOBAL_dados_cliente;
 }
 
 void le_cadastro_pessoa(cad_clie *GLOBAL_dados_cliente, int GLOBAL_tam_pont_dados_cliente) {

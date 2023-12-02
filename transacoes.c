@@ -45,7 +45,7 @@ entrega_produto le_entrega_produto() {
     return dados;
 }
 
-void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
+void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos, entrega_produto **GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto, itens **GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens) {
     int opcao = 0;
     produto dados;
     while (opcao != 6) {
@@ -85,7 +85,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
                 
                 break;
             case 5:
-                entrada_produtos(tipoArquivo, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
+                entrada_produtos(tipoArquivo, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, &GLOBAL_dados_entrega_produto, &(*GLOBAL_tam_pont_dados_entrega_produto), &GLOBAL_dados_itens, &(*GLOBAL_tam_pont_dados_itens));
                 break;
             case 6:
                 break;
@@ -96,7 +96,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
     }
 }
 
-void entrada_produtos(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
+void entrada_produtos(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos, entrega_produto ***GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto, itens ***GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens) {
     int quantia, i, aux = 0;
     int stop1 = 0;
     float val_imposto, val_frete;
@@ -137,8 +137,11 @@ void entrada_produtos(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, in
                     salva_entrada_produto_bin(fornecimento, quantia, produtos);
                     break;
                 case 1:
+                    salva_entrada_produto_txt(fornecimento, quantia, produtos);
                     break;
                 case 2:
+                    salva_entrada_produto_mem(fornecimento, &GLOBAL_dados_entrega_produto, &(*GLOBAL_tam_pont_dados_entrega_produto));
+                    salva_entrada_itens_mem(quantia, produtos, &GLOBAL_dados_itens, &(*GLOBAL_tam_pont_dados_itens));;
                     break;
             }
             
@@ -449,13 +452,62 @@ void salva_entrada_produto_txt(entrega_produto fornecimento, int quantia, itens 
     fclose(txt);
 }
 
-void salva_entrada_produto_mem(entrega_produto fornecimento, int quantia, itens *produtos) {
+void salva_entrada_produto_mem(entrega_produto fornecimento, entrega_produto ****GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto) {
+    //caso a variavel global GLOBAL_dados_entrega_produto não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+    if (*GLOBAL_tam_pont_dados_entrega_produto == 1) {
+        ***GLOBAL_dados_entrega_produto = malloc(sizeof(cad_clie));
+        ****GLOBAL_dados_entrega_produto = fornecimento;
+    }
+    //caso a variavel GLOBAL_tam_pont_dados_entrega_produto tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+    //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+    else {
+        ***GLOBAL_dados_entrega_produto = realloc(GLOBAL_dados_entrega_produto, (*GLOBAL_tam_pont_dados_entrega_produto)*sizeof(cad_clie));
+        ****(GLOBAL_dados_entrega_produto + (*GLOBAL_tam_pont_dados_entrega_produto - 1)) = fornecimento;
+    }
+    
+    //encerra o processo caso não haja memória o suficiente
+    if (***GLOBAL_dados_entrega_produto == NULL) {
+        printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+        exit(1);
+    }
+    
+    //aumenta o valor da variavel global
+    (*GLOBAL_tam_pont_dados_entrega_produto)++;
     
 }
 
-void le_todas_entradas_produto() {
+void salva_entrada_itens_mem(int quantia, itens *produtos, itens ****GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens) {
+    int aux = 0;
+    
+    while(aux != quantia) {
+        //caso a variavel global GLOBAL_dados_entrega_produto não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
+        if (*GLOBAL_tam_pont_dados_itens == 1) {
+            ***GLOBAL_dados_itens = malloc(sizeof(cad_clie));
+            ****GLOBAL_dados_itens = produtos[aux];
+        }
+        //caso a variavel GLOBAL_tam_pont_dados_itens tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
+        //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
+        else {
+            ***GLOBAL_dados_itens = realloc(GLOBAL_dados_itens, (*GLOBAL_tam_pont_dados_itens)*sizeof(cad_clie));
+            ****(GLOBAL_dados_itens + (*GLOBAL_tam_pont_dados_itens - 1)) = produtos[aux];
+        }
+
+        //encerra o processo caso não haja memória o suficiente
+        if (***GLOBAL_dados_itens == NULL) {
+            printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
+            exit(1);
+        }
+
+        //aumenta o valor da variavel global
+        (*GLOBAL_tam_pont_dados_itens)++;
+        
+        aux++;
+    }
+}
+
+void le_todas_entradas_produto(entrega_produto *GLOBAL_dados_entrega_produto, int GLOBAL_tam_pont_dados_entrega_produto, itens *GLOBAL_dados_itens, int GLOBAL_tam_pont_dados_itens) {
     FILE *arquivo;
-    int i = 0;
+    int i = 0, aux = 0;
     char forn[sizeof(entrega_produto)], prod[sizeof(itens)], *token1;
     itens *produtos = NULL;
     entrega_produto entrega;
@@ -526,5 +578,28 @@ void le_todas_entradas_produto() {
     fclose(arquivo); //fim txt
     
     //le memoria
-    
+    if (GLOBAL_dados_entrega_produto != NULL && GLOBAL_dados_itens != NULL) {
+        for (i = 1; i < GLOBAL_tam_pont_dados_entrega_produto; i++) {
+            printf("Código do fornecedor: %0.0f \nValor do frete: %0.2f \nValor do imposto: %0.2f \nQuantia de produtos diferentes entregues: %d\n", GLOBAL_dados_entrega_produto->cod_forn, GLOBAL_dados_entrega_produto->frete, GLOBAL_dados_entrega_produto->imposto, GLOBAL_dados_entrega_produto->qnt);
+        
+            aux = 0;
+            
+            //le os dados dos produtos entregues:
+            while (aux != GLOBAL_dados_entrega_produto->qnt) {
+                printf("Código do item: %0.0f \nValor do item: %0.2f \nQuantia de itens: %d\n", GLOBAL_dados_itens->codigo, GLOBAL_dados_itens->valor, GLOBAL_dados_itens->quantidade);
+
+                aux++;
+                //avança ponteiro uma posição
+                GLOBAL_dados_itens++;
+            }
+            
+            
+            //avança ponteiro uma posição
+            GLOBAL_dados_entrega_produto++;
+        }
+        
+        //retorna ponteiro para a primeira posição
+        GLOBAL_dados_entrega_produto -= (i - 1);
+        GLOBAL_dados_itens -= (aux);
+    }
 }

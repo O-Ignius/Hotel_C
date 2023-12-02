@@ -37,9 +37,11 @@
     //reservas
     reserva *GLOBAL_dados_reservas = NULL; //já usado!
     
-    //checkInOut
+    //entrada de produtos
     entrega_produto *GLOBAL_dados_entrega_produto = NULL; //já usado!
     itens *GLOBAL_dados_itens = NULL; //já usado!
+    
+    //checkInOut
     checkInOut *GLOBAL_dados_checkInOut = NULL; //já usado!
     
 int main() {
@@ -67,10 +69,10 @@ int main() {
     if(verifica_Hotel() == 0){
         hotel dados;
         dados = le_dados_hotel();
-        salva_cadastro_hotel(dados, GLOBAL_dados_hotel);
+        salva_cadastro_hotel(dados, &(*GLOBAL_dados_hotel));
     }
 
     menuPrincipal(GLOBAL_dados_hotel, GLOBAL_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_produtos, GLOBAL_dados_fornecedores,
-                  GLOBAL_dados_operadores, GLOBAL_dados_reservas, GLOBAL_dados_checkInOut);
+                  GLOBAL_dados_operadores, GLOBAL_dados_reservas, GLOBAL_dados_entrega_produto, GLOBAL_dados_itens, GLOBAL_dados_checkInOut);
     return 0;
 }

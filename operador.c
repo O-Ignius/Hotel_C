@@ -39,7 +39,7 @@ operador le_dados_operador(int GLOBAL_tam_pont_dados_operadores) {
     return dados;
 }
 
-void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
+void menuOperadores(int tipoAquivo, operador **GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
     int opcao = 0;
     operador dados;
     while (opcao != 6) {
@@ -67,20 +67,20 @@ void menuOperadores(int tipoAquivo, operador *GLOBAL_dados_operadores, int *GLOB
                     salva_cadastro_operadores_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_operadores = salva_cadastro_operadores_mem(dados, GLOBAL_dados_operadores, &(*GLOBAL_tam_pont_dados_operadores));
+                    salva_cadastro_operadores_mem(dados, &GLOBAL_dados_operadores, &(*GLOBAL_tam_pont_dados_operadores));
                 }
                 break;
             case 2:
-                le_todos_operadores(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
+                le_todos_operadores(*GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 3:
-                le_operador(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
+                le_operador(*GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 4:
-                alterar_operador(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
+                alterar_operador(*GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 5:
-                exclui_operador(GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
+                exclui_operador(*GLOBAL_dados_operadores, *GLOBAL_tam_pont_dados_operadores);
                 break;
             case 6:
                 break;
@@ -125,28 +125,26 @@ void salva_cadastro_operadores_txt(operador dados) {
     fclose(salva);
 }
 
-operador *salva_cadastro_operadores_mem(operador dados, operador *GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
+void salva_cadastro_operadores_mem(operador dados, operador ***GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_operadores) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
     if (*GLOBAL_tam_pont_dados_operadores == 1) {
-        GLOBAL_dados_operadores = malloc(sizeof(acomodacao));
-        *GLOBAL_dados_operadores = dados;
+        **GLOBAL_dados_operadores = malloc(sizeof(acomodacao));
+        ***GLOBAL_dados_operadores = dados;
     }
     //caso a variavel GLOBAL_tam_pont_dados_operadores tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_operadores = realloc(GLOBAL_dados_operadores, (*GLOBAL_tam_pont_dados_operadores)*sizeof(acomodacao));
-        *(GLOBAL_dados_operadores + (*GLOBAL_tam_pont_dados_operadores - 1)) = dados;
+        **GLOBAL_dados_operadores = realloc(GLOBAL_dados_operadores, (*GLOBAL_tam_pont_dados_operadores)*sizeof(acomodacao));
+        ***(GLOBAL_dados_operadores + (*GLOBAL_tam_pont_dados_operadores - 1)) = dados;
     }
     
-    if (GLOBAL_dados_operadores == NULL) {
+    if (**GLOBAL_dados_operadores == NULL) {
         printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
         exit(1);
     }
     
     //aumenta o valor da variavel global
     (*GLOBAL_tam_pont_dados_operadores)++;
-    
-    return GLOBAL_dados_operadores;
 }
 
 void le_operador(operador *GLOBAL_dados_operadores, int GLOBAL_tam_pont_dados_operadores) {

@@ -90,7 +90,7 @@ reserva le_dados_reserva(int GLOBAL_tam_pont_dados_reservas) {
     return dados;
 }
 
-void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_reservas, int *GLOBAL_tam_pont_dados_acomodacao) {
+void menuReserva(int tipoArquivo, reserva **GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao) {
     reserva dados;
     int opcao = 99, variavel = 0;
 
@@ -111,25 +111,25 @@ void menuReserva(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GL
             case 1:
                 dados = le_dados_reserva(*GLOBAL_tam_pont_dados_reservas);
                 if (tipoArquivo == 0) {
-                    salva_cadastro_reserva_bin(dados, GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
+                    salva_cadastro_reserva_bin(dados, *GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
                 } else if (tipoArquivo == 1) {
-                    salva_cadastro_reserva_txt(dados, GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
+                    salva_cadastro_reserva_txt(dados, *GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
                 }
                 else {
-                    GLOBAL_dados_reservas = salva_cadastro_reserva_mem(dados, GLOBAL_dados_reservas, &(*GLOBAL_tam_pont_dados_reservas));
+                    salva_cadastro_reserva_mem(dados, &GLOBAL_dados_reservas, &(*GLOBAL_tam_pont_dados_reservas));
                 }
                 break;
             case 2:
-                le_todas_reservas(GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
+                le_todas_reservas(*GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
                 break;
             case 3:
-                altera_reserva(GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
+                altera_reserva(*GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
                 break;
             case 4:
-                exclui_reservas(GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
+                exclui_reservas(*GLOBAL_dados_reservas, *GLOBAL_tam_pont_dados_reservas);
                 break;
             case 5:
-                pesquisa_reserva(GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, *GLOBAL_tam_pont_dados_reservas, *GLOBAL_tam_pont_dados_acomodacao);
+                pesquisa_reserva(*GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, *GLOBAL_tam_pont_dados_reservas, GLOBAL_tam_pont_dados_acomodacao);
             case 6:
                 break;
             default:
@@ -231,21 +231,21 @@ void salva_cadastro_reserva_txt(reserva dados, reserva *GLOBAL_dados_reservas, i
     getchar();
 }
 
-reserva *salva_cadastro_reserva_mem(reserva dados, reserva *GLOBAL_dados_reservas, int *GLOBAL_tam_pont_dados_reservas) {
+void salva_cadastro_reserva_mem(reserva dados, reserva ***GLOBAL_dados_reservas, int *GLOBAL_tam_pont_dados_reservas) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
     if (*GLOBAL_tam_pont_dados_reservas == 1) {
-        GLOBAL_dados_reservas = malloc(sizeof(acomodacao));
-        *GLOBAL_dados_reservas = dados;
+        **GLOBAL_dados_reservas = malloc(sizeof(acomodacao));
+        ***GLOBAL_dados_reservas = dados;
         
     }
     //caso a variavel GLOBAL_tam_pont_dados_reservas tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_reservas = realloc(GLOBAL_dados_reservas, (*GLOBAL_tam_pont_dados_reservas)*sizeof(acomodacao));
-        *(GLOBAL_dados_reservas + (*GLOBAL_tam_pont_dados_reservas - 1)) = dados;
+        **GLOBAL_dados_reservas = realloc(GLOBAL_dados_reservas, (*GLOBAL_tam_pont_dados_reservas)*sizeof(acomodacao));
+        ***(GLOBAL_dados_reservas + (*GLOBAL_tam_pont_dados_reservas - 1)) = dados;
     }
     
-    if (GLOBAL_dados_reservas == NULL) {
+    if (**GLOBAL_dados_reservas == NULL) {
         printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
         exit(1);
     } else 
@@ -253,8 +253,6 @@ reserva *salva_cadastro_reserva_mem(reserva dados, reserva *GLOBAL_dados_reserva
     
     //aumenta o valor da variavel global
     (*GLOBAL_tam_pont_dados_reservas)++;
-    
-    return GLOBAL_dados_reservas;
 }
 
 int valida_data(data inicio, data fim, float id, reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas) {

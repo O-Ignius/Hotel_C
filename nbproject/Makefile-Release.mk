@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/e43f2470/vendaProdutos.o \
 	${OBJECTDIR}/acomodacao.o \
 	${OBJECTDIR}/biblioteca.o \
 	${OBJECTDIR}/categoria_acomodacao.o \
@@ -72,6 +73,11 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/_ext/e43f2470/vendaProdutos.o: /cygdrive/C/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/vendaProdutos.c
+	${MKDIR} -p ${OBJECTDIR}/_ext/e43f2470
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/e43f2470/vendaProdutos.o /cygdrive/C/Users/ivan-/Desktop/Projetos/NetBeans/C/Hotel/vendaProdutos.c
 
 ${OBJECTDIR}/acomodacao.o: acomodacao.c
 	${MKDIR} -p ${OBJECTDIR}

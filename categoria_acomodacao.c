@@ -40,7 +40,7 @@ cate_aco le_dados_categ_acomod(int GLOBAL_tam_pont_dados_categ_acomodacao) {
     return dados;
 }
 
-cate_aco *menuTipoAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, int *GLOBAL_tam_pont_dados_categ_acomodacao) {
+void menuTipoAcomodacoes(int tipoArquivo, cate_aco **GLOBAL_dados_categ_acomodacao, int *GLOBAL_tam_pont_dados_categ_acomodacao) {
     int opcao = 0;
     cate_aco categ;
     while (opcao != 5) {
@@ -67,17 +67,17 @@ cate_aco *menuTipoAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acom
                     salva_cadastro_tipo_acomodacao_txt(categ);
                 }
                 else {
-                    GLOBAL_dados_categ_acomodacao = salva_cadastro_tipo_acomodacao_mem(categ, GLOBAL_dados_categ_acomodacao, &(*GLOBAL_tam_pont_dados_categ_acomodacao));
+                    salva_cadastro_tipo_acomodacao_mem(categ, &GLOBAL_dados_categ_acomodacao, &(*GLOBAL_tam_pont_dados_categ_acomodacao));
                 }
                 break;
             case 2:
-                le_todos_tipo_acomodacao(GLOBAL_dados_categ_acomodacao, *GLOBAL_tam_pont_dados_categ_acomodacao);
+                le_todos_tipo_acomodacao(*GLOBAL_dados_categ_acomodacao, *GLOBAL_tam_pont_dados_categ_acomodacao);
                 break;
             case 3:
-                altera_tipo_acomodacao(GLOBAL_dados_categ_acomodacao, *GLOBAL_tam_pont_dados_categ_acomodacao);
+                altera_tipo_acomodacao(*GLOBAL_dados_categ_acomodacao, *GLOBAL_tam_pont_dados_categ_acomodacao);
                 break;
             case 4:
-                remover_tipo_acomodacao(GLOBAL_dados_categ_acomodacao, *GLOBAL_tam_pont_dados_categ_acomodacao);
+                remover_tipo_acomodacao(*GLOBAL_dados_categ_acomodacao, *GLOBAL_tam_pont_dados_categ_acomodacao);
                 break;
             case 5:
                 break;
@@ -86,8 +86,6 @@ cate_aco *menuTipoAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acom
                 break;
         }
     }
-    
-    return GLOBAL_dados_categ_acomodacao;
 }
 
 void salva_cadastro_tipo_acomodacao_txt(cate_aco dados) {
@@ -128,28 +126,26 @@ void salva_cadastro_tipo_acomodacao_bin(cate_aco dados) {
     fclose(arquivo);
 }
 
-cate_aco *salva_cadastro_tipo_acomodacao_mem(cate_aco dados, cate_aco *GLOBAL_dados_categ_acomodacao, int *GLOBAL_tam_pont_dados_categ_acomodacao) {
+void salva_cadastro_tipo_acomodacao_mem(cate_aco dados, cate_aco ***GLOBAL_dados_categ_acomodacao, int *GLOBAL_tam_pont_dados_categ_acomodacao) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
     if (*GLOBAL_tam_pont_dados_categ_acomodacao == 1) {
-        GLOBAL_dados_categ_acomodacao = malloc(sizeof(acomodacao));
-        *GLOBAL_dados_categ_acomodacao = dados;
+        **GLOBAL_dados_categ_acomodacao = malloc(sizeof(acomodacao));
+        ***GLOBAL_dados_categ_acomodacao = dados;
     }
     //caso a variavel GLOBAL_tam_pont_dados_categ_acomodacao tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_categ_acomodacao = realloc(GLOBAL_dados_categ_acomodacao, (*GLOBAL_tam_pont_dados_categ_acomodacao)*sizeof(acomodacao));
-        *(GLOBAL_dados_categ_acomodacao + (*GLOBAL_tam_pont_dados_categ_acomodacao - 1)) = dados;
+        **GLOBAL_dados_categ_acomodacao = realloc(GLOBAL_dados_categ_acomodacao, (*GLOBAL_tam_pont_dados_categ_acomodacao)*sizeof(acomodacao));
+        ***(GLOBAL_dados_categ_acomodacao + (*GLOBAL_tam_pont_dados_categ_acomodacao - 1)) = dados;
     }
     
-    if (GLOBAL_dados_categ_acomodacao == NULL) {
+    if (**GLOBAL_dados_categ_acomodacao == NULL) {
         printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
         exit(1);
     }
     
     //aumenta o valor da variavel global
     (*GLOBAL_tam_pont_dados_categ_acomodacao)++;
-    
-    return GLOBAL_dados_categ_acomodacao;
 }
 
 void le_todos_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao, int GLOBAL_tam_pont_dados_categ_acomodacao) {

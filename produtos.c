@@ -44,7 +44,7 @@ produto le_dados_produto(int GLOBAL_tam_pont_dados_produtos) {
     return dados;
 }
 
-void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
+void menuProdutos(int tipoAquivo, produto **GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
     int opcao = 0;
     produto dados;
     while (opcao != 6) {
@@ -72,20 +72,20 @@ void menuProdutos(int tipoAquivo, produto *GLOBAL_dados_produtos, int *GLOBAL_ta
                     salva_cadastro_produtos_txt(dados);
                 }
                 else {
-                    GLOBAL_dados_produtos = salva_cadastro_produtos_mem(dados, GLOBAL_dados_produtos, &(*GLOBAL_tam_pont_dados_produtos));
+                    salva_cadastro_produtos_mem(dados, &GLOBAL_dados_produtos, &(*GLOBAL_tam_pont_dados_produtos));
                 }
                 break;
             case 2:
-                le_todos_produtos(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
+                le_todos_produtos(*GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 3:
-                le_produtos(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
+                le_produtos(*GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 4:
-                altera_produto(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
+                altera_produto(*GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 5:
-                exclui_produto(GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
+                exclui_produto(*GLOBAL_dados_produtos, *GLOBAL_tam_pont_dados_produtos);
                 break;
             case 6:
                 break;
@@ -131,28 +131,26 @@ void salva_cadastro_produtos_txt(produto dados) {
     fclose(salva);
 }
 
-produto *salva_cadastro_produtos_mem(produto dados, produto *GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
+void salva_cadastro_produtos_mem(produto dados, produto ***GLOBAL_dados_produtos, int *GLOBAL_tam_pont_dados_produtos) {
     //caso a variavel global GLOBAL_tam_pont_dados_acomodacao não tenha mudado, ele aloca memoria com malloc pro ponteiro global e guarda o valor dos dados na posição apontada pelo ponteiro 
     if (*GLOBAL_tam_pont_dados_produtos == 1) {
-        GLOBAL_dados_produtos = malloc(sizeof(acomodacao));
-        *GLOBAL_dados_produtos = dados;
+        **GLOBAL_dados_produtos = malloc(sizeof(acomodacao));
+        ***GLOBAL_dados_produtos = dados;
     }
     //caso a variavel GLOBAL_tam_pont_dados_produtos tenha mudado, ele irá realocar a alocação dinâmica como o que ja foi alocado +1
     //depois, ele vai guardar o valor dos dados na próxima porção de memoria apontada pelo ponteiro
     else {
-        GLOBAL_dados_produtos = realloc(GLOBAL_dados_produtos, (*GLOBAL_tam_pont_dados_produtos)*sizeof(acomodacao));
-        *(GLOBAL_dados_produtos + (*GLOBAL_tam_pont_dados_produtos - 1)) = dados;
+        **GLOBAL_dados_produtos = realloc(GLOBAL_dados_produtos, (*GLOBAL_tam_pont_dados_produtos)*sizeof(acomodacao));
+        ***(GLOBAL_dados_produtos + (*GLOBAL_tam_pont_dados_produtos - 1)) = dados;
     }
     
-    if (GLOBAL_dados_produtos == NULL) {
+    if (**GLOBAL_dados_produtos == NULL) {
         printf("!! ERRO !! \nNão há memória suficiente disponível!! \n");
         exit(1);
     }
     
     //aumenta o valor da variavel global
     (*GLOBAL_tam_pont_dados_produtos)++;
-    
-    return GLOBAL_dados_produtos;
 }
 
 void le_produtos(produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
