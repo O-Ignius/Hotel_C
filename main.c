@@ -38,6 +38,8 @@
     reserva *GLOBAL_dados_reservas = NULL; //já usado!
     
     //checkInOut
+    entrega_produto *GLOBAL_dados_entrega_produto = NULL; //já usado!
+    itens *GLOBAL_dados_itens = NULL; //já usado!
     checkInOut *GLOBAL_dados_checkInOut = NULL; //já usado!
     
 int main() {
