@@ -89,7 +89,6 @@ void menuOperadores(int tipoAquivo, operador **GLOBAL_dados_operadores, int *GLO
                 break;
         }
     }
-    return GLOBAL_dados_operadores;
 }
 
 void salva_cadastro_operadores_bin(operador dados) {

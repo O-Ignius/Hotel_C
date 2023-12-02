@@ -210,7 +210,7 @@ checkInOut *adicionaConsumo(float codReserva, float valor, checkInOut *GLOBAL_da
     if(encontrado == 0){
         if(GLOBAL_dados_checkInOut != NULL){
             int i;
-            for(i = 1; i < GLOBAL_tam_pont_dados_checks; i++){
+            for(i = 1; i < (*GLOBAL_tam_pont_dados_checks); i++){
                 if(GLOBAL_dados_checkInOut->delet == 0){
                     if(GLOBAL_dados_checkInOut->codigoReserva == codReserva){
                         GLOBAL_dados_checkInOut->consumoHospede += valor;

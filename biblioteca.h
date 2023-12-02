@@ -200,7 +200,8 @@ void menuFornecedores(int tipoAquivo, fornecedor **GLOBAL_dados_fornecedores, in
 
 void menuOperadores(int tipoAquivo, operador **GLOBAL_dados_operadores, int *GLOBAL_tam_pont_dados_reservas);
 
-void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos, entrega_produto **GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto, itens **GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens);
+void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos, entrega_produto **GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto,
+                    itens **GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens, reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks);
 
 void menu_checkInOut(int tipoArquivo, reserva *GLOBAL_dados_reservas, acomodacao *GLOBAL_dados_acomodacao, int GLOBAL_tam_pont_dados_reservas, int GLOBAL_tam_pont_dados_acomodacao, checkInOut **GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks);
 

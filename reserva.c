@@ -137,7 +137,6 @@ void menuReserva(int tipoArquivo, reserva **GLOBAL_dados_reservas, acomodacao *G
                 break;
         }
     }
-    return GLOBAL_dados_reservas;
 }
 
 //Menu de pesquisa

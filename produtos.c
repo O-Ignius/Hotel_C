@@ -94,7 +94,6 @@ void menuProdutos(int tipoAquivo, produto **GLOBAL_dados_produtos, int *GLOBAL_t
                 break;
         }
     }
-    return GLOBAL_dados_produtos;
 }
 
 void salva_cadastro_produtos_bin(produto dados) {

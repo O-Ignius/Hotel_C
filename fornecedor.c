@@ -117,7 +117,6 @@ void menuFornecedores(int tipoAquivo, fornecedor **GLOBAL_dados_fornecedores, in
         printf("\nPRESSIONE ENTER PARA CONTINUAR...");
         getchar();
     }
-    return GLOBAL_dados_fornecedores;
 }
 
 void salva_cadastro_fornecedores_bin(fornecedor dados) {

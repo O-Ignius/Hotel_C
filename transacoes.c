@@ -45,7 +45,8 @@ entrega_produto le_entrega_produto() {
     return dados;
 }
 
-void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos, entrega_produto **GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto, itens **GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens) {
+void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos, entrega_produto **GLOBAL_dados_entrega_produto, int *GLOBAL_tam_pont_dados_entrega_produto,
+                    itens **GLOBAL_dados_itens, int *GLOBAL_tam_pont_dados_itens, reserva *GLOBAL_dados_reservas, int GLOBAL_tam_pont_dados_reservas, checkInOut *GLOBAL_dados_checkInOut, int *GLOBAL_tam_pont_dados_checks) {
     int opcao = 0;
     produto dados;
     while (opcao != 6) {
@@ -82,7 +83,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
                 
                 break;
             case 4:
-                    GLOBAL_dados_produtos = vendeProduto(GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas, GLOBAL_dados_checkInOut, GLOBAL_tam_pont_dados_checks);
+                    GLOBAL_dados_produtos = vendeProduto(GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas, GLOBAL_dados_checkInOut, &(*GLOBAL_tam_pont_dados_checks));
                 break;
             case 5:
                 entrada_produtos(tipoArquivo, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, &GLOBAL_dados_entrega_produto, &(*GLOBAL_tam_pont_dados_entrega_produto), &GLOBAL_dados_itens, &(*GLOBAL_tam_pont_dados_itens));
