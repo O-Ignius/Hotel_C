@@ -18,7 +18,7 @@ itens le_valor_produto() {
     scanf("%f", &dados.codigo);
     setbuf(stdin, NULL);
     printf("Digite a quantia de produtos: \n");
-    scanf("%d", &dados.quantia);
+    scanf("%d", &dados.quantidade);
     setbuf(stdin, NULL);
     printf("Digite o valor do produto: \n");
     scanf("%f", &dados.valor);
@@ -33,7 +33,7 @@ entrega_produto le_entrega_produto() {
     
     setbuf(stdin, NULL);
     printf("Digite o ID do fornecedor: \n");
-    scanf("%f", dados.cod_forn);
+    scanf("%f", &dados.cod_forn);
     setbuf(stdin, NULL);
     printf("Digite o valor do frete: \n");
     scanf("%f", &dados.frete);
@@ -85,7 +85,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
                 
                 break;
             case 5:
-                entrada_produtos(GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
+                entrada_produtos(tipoArquivo, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
                 break;
             case 6:
                 break;
@@ -96,7 +96,7 @@ void menuTransacoes(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int 
     }
 }
 
-void entrada_produtos(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
+void entrada_produtos(int tipoArquivo, fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont_dados_fornecedores, produto *GLOBAL_dados_produtos, int GLOBAL_tam_pont_dados_produtos) {
     int quantia, i, aux = 0;
     int stop1 = 0;
     float val_imposto, val_frete;
@@ -106,16 +106,18 @@ void entrada_produtos(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont
         fornecimento = le_entrega_produto();
     
         if (check_fornecedor(fornecimento.cod_forn, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores) == 1) {
+            stop1 = 1;
             printf("Digite a quantia de produtos entregues: ");
             scanf("%d", &quantia);
 
             itens produtos[quantia];
+            fornecimento.qnt = quantia;
 
             for (i = 0; i < quantia; i++) {
                 produtos[i] = le_valor_produto();
                 
                 if (check_produto(produtos[i].codigo, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos) == 1) {
-                    aux += produtos[i].quantia;
+                    aux += produtos[i].quantidade;
                 }
                 else {
                     i--;
@@ -126,10 +128,20 @@ void entrada_produtos(fornecedor *GLOBAL_dados_fornecedores, int GLOBAL_tam_pont
             val_imposto = (fornecimento.imposto / aux);
 
             for (i = 0; i < quantia; i++) {
-                atualiza_estoque_produto(produtos[i].codigo, produtos[i].quantia, val_frete, val_imposto, produtos[i].valor, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
+                atualiza_estoque_produto(produtos[i].codigo, produtos[i].quantidade, val_frete, val_imposto, produtos[i].valor, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
             }
             
             //criar arquivo pra salvar entrada de produtos!
+            switch(tipoArquivo) {
+                case 0:
+                    salva_entrada_produto_bin(fornecimento, quantia, produtos);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+            }
+            
         }
         else {
             printf("Fornecedor não consta na base de dados!\n Favor cadastrá-lo! \n");
@@ -154,8 +166,6 @@ int check_fornecedor(float codigo, fornecedor *GLOBAL_dados_fornecedores, int GL
 
     while (fread(&dados, sizeof (fornecedor), 1, arquivo)) {
         if (dados.delet == 0 && dados.codigo == codigo) {
-            printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
-                    dados.codigo, dados.nome, dados.raz_soci, dados.inscri_estad, dados.cnpj, dados.email, dados.telefone, dados.local.estado, dados.local.cep, dados.local.cidade, dados.local.bairro, dados.local.rua, dados.local.numero);
             encontrado = 1;
         }
     }
@@ -175,31 +185,6 @@ int check_fornecedor(float codigo, fornecedor *GLOBAL_dados_fornecedores, int GL
             token = strtok(NULL, ";");
             dados.codigo = atoff(token);
             if (dados.delet == 0 && dados.codigo == codigo) {
-                printf("\nCódigo: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Nome: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Razão social: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Inscrição estadual: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("CNPJ: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Email: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Telefone: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Estado: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("CEP: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Cidade: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Bairro: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Rua: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Número: %s \n", token);
                 encontrado = 1;
             }
         }
@@ -212,9 +197,6 @@ int check_fornecedor(float codigo, fornecedor *GLOBAL_dados_fornecedores, int GL
         for (tam_point = 1; tam_point < GLOBAL_tam_pont_dados_fornecedores; tam_point++) {
             if (GLOBAL_dados_fornecedores->delet == 0) {
                 if (GLOBAL_dados_fornecedores->codigo == codigo) {
-                    printf("\nCódigo: %0.0f\n\tNome: %s\n\tRazão social: %s\n\tInscrição estadual: %s\n\tCNPJ: %s\n\tEmail: %s\n\tTelefone: %.0f\nDados do local:\n\tEstado: %s\n\tCEP: %.0f\n\tCidade: %s\n\tBairro: %s\n\tRua: %s\n\tNúmero: %.0f",
-                        GLOBAL_dados_fornecedores->codigo, GLOBAL_dados_fornecedores->nome, GLOBAL_dados_fornecedores->raz_soci, GLOBAL_dados_fornecedores->inscri_estad, GLOBAL_dados_fornecedores->cnpj, GLOBAL_dados_fornecedores->email, 
-                        GLOBAL_dados_fornecedores->telefone, GLOBAL_dados_fornecedores->local.estado, GLOBAL_dados_fornecedores->local.cep, GLOBAL_dados_fornecedores->local.cidade, GLOBAL_dados_fornecedores->local.bairro, GLOBAL_dados_fornecedores->local.rua, GLOBAL_dados_fornecedores->local.numero);
                     encontrado = 1;
                     break;
                 }
@@ -251,8 +233,6 @@ int check_produto(float codigo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_p
 
     while (fread(&dados, sizeof (produto), 1, arquivo)) {
         if (dados.delet == 0 && dados.codigo == codigo) {
-            printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
-                    dados.codigo, dados.descricao, dados.estoque_min, dados.estoque, dados.custo, dados.venda);
             encontrado = 1;
         }
     }
@@ -273,17 +253,6 @@ int check_produto(float codigo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_p
             dados.codigo = atoff(token);
             if (dados.delet == 0 && dados.codigo == codigo) {
                 encontrado = 1;
-                printf("\nCódigo: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Descrição: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Estoque mínimo: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Estoque atual: %s \n", token);
-                token = strtok(NULL, ";");
-                printf("Custo do produto: R$%s \n", token);
-                token = strtok(NULL, ";");
-                printf("Preço de venda: R$%s \n", token);
             }
         }
 
@@ -297,8 +266,6 @@ int check_produto(float codigo, produto *GLOBAL_dados_produtos, int GLOBAL_tam_p
                 if (GLOBAL_dados_produtos->delet == 0) {
                     if (GLOBAL_dados_produtos->codigo == codigo) {
                         encontrado = 1;
-                        printf("\nCódigo: %0.0f\n\tDescrição: %s\n\tEstoque mínimo: %d\n\tEstoque atual: %d\n\tCusto: R$%.2f\n\tVenda: R$%.2f",
-                        GLOBAL_dados_produtos->codigo, GLOBAL_dados_produtos->descricao, GLOBAL_dados_produtos->estoque_min, GLOBAL_dados_produtos->estoque, GLOBAL_dados_produtos->custo, GLOBAL_dados_produtos->venda);
                     }
                 }
 
@@ -438,4 +405,126 @@ void atualiza_estoque_produto(float codigo, int quantia, float frete, float impo
     if (encontrado != 0) {
         printf("Produtos atualizados com sucesso!\n");
     }
+}
+
+void salva_entrada_produto_bin(entrega_produto fornecimento, int quantia, itens *produtos) {
+    FILE *bin;
+    
+    bin = fopen("entrada_produto.bin", "ab");
+    if (bin == NULL) {
+        printf("Erro de abertura de arquivo entrada_produto.bin!\n");
+        exit(1);
+    }
+    
+    fwrite(&fornecimento, sizeof(entrega_produto), 1, bin);
+    fwrite(produtos, sizeof(itens), quantia, bin);
+    
+    fclose(bin);
+}
+
+void salva_entrada_produto_txt(entrega_produto fornecimento, int quantia, itens *produtos) {
+    FILE *txt;
+    int i = 0;
+    
+    txt = fopen("entrada_produto.txt", "a");
+    if (txt == NULL) {
+        printf("Erro de abertura de arquivo entrada_produto.bin!\n");
+        exit(1);
+    }
+    
+    //escreve os dados do fornecedor
+    fprintf(txt, "%0.0f;%0.2f;%0.2f;%d;", fornecimento.cod_forn, fornecimento.frete, fornecimento.imposto, fornecimento.qnt);
+    //escreve os dados dos produtos
+    for (i = 0; i < quantia; i++) {
+        if (i < quantia - 1) {
+            fprintf(txt, "%0.0f;0.2%f;%d", produtos[i].codigo, produtos[i].valor, produtos[i].quantidade);
+        }
+        else {
+            fprintf(txt, "%0.0f;%0.2f;%d;", produtos[i].codigo, produtos[i].valor, produtos[i].quantidade);
+        }
+    }
+    //salta pra proxima linha ao acabar de escrever os dados
+    fprintf(txt, "\n");
+    
+    fclose(txt);
+}
+
+void salva_entrada_produto_mem(entrega_produto fornecimento, int quantia, itens *produtos) {
+    
+}
+
+void le_todas_entradas_produto() {
+    FILE *arquivo;
+    int i = 0;
+    char forn[sizeof(entrega_produto)], prod[sizeof(itens)], *token1;
+    itens *produtos = NULL;
+    entrega_produto entrega;
+    
+    arquivo = fopen("entrada_produto.bin", "rb");
+    if (arquivo == NULL) {
+        printf("Erro de abertura de arquivo entrada_produto.bin!\n");
+        exit(1);
+    }
+    
+    // le binario
+    while(fread(&entrega, sizeof(entrega_produto), 1, arquivo)){
+        printf("Fornecedor: %0.0f, frete %0.2f, imposto %0.2f, quantia produtos %d \n", entrega.cod_forn, entrega.frete, entrega.imposto, entrega.qnt);
+        
+        //alocar memoria para salvamento base em ponteiro
+        produtos = malloc(sizeof(itens) * entrega.qnt);
+        
+        fread(produtos, sizeof(itens), entrega.qnt, arquivo);
+        for (i = 0; i < entrega.qnt; i++) {
+            printf("Codigo produto %0.0f, quantia %d, valor %0.2f\n", produtos[i].codigo, produtos[i].quantidade, produtos[i].valor);
+        }
+        
+        //liberando memória
+        free(produtos);
+    }
+    fclose(arquivo); //fim bin
+    
+    //le txt
+    arquivo = fopen("entrada_produto.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro de abertura de arquivo entrada_produto.bin!\n");
+        exit(1);
+    }
+    
+    while(fgets(forn, sizeof(entrega_produto), arquivo)) {
+        /*
+        token1 = strtok(";", forn);
+        entrega.cod_forn = atoff(token1);
+        token1 = strtok(";", NULL);
+        entrega.frete = atoff(token1);
+        token1 = strtok(";", NULL);
+        entrega.imposto = atoff(token1);
+        token1 = strtok(";", NULL);
+        entrega.qnt = atoi(token1);
+        */
+        
+        token1 = strtok(";", forn);
+        printf("Código do fornecedor: %s\n", token1);
+        token1 = strtok(";", NULL);
+        printf("Frete: R$%s\n", token1);
+        token1 = strtok(";", NULL);
+        printf("Imposto: R$%s\n", token1);
+        token1 = strtok(";", NULL);
+        entrega.qnt = atoi(token1);
+        printf("Quantia de produtos diferentes entregues: %s\n", token1);
+        for (i = 0; i < entrega.qnt; i++) {
+            while(fgets(prod, sizeof(itens), arquivo)) {
+                token1 = strtok(";", NULL);
+                printf("Código do produto: %s\n", token1);
+                token1 = strtok(";", NULL);
+                printf("Valor do produto: R$ %s\n", token1);
+                token1 = strtok(";", NULL);
+                printf("Quantia de produtos: %s\n", token1);
+            }
+        }
+    }
+    
+    fclose(arquivo); //fim txt
+    
+    //le memoria
+    
 }
