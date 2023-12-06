@@ -14,11 +14,13 @@
       <itemPath>categoria_acomodacao.c</itemPath>
       <itemPath>check.c</itemPath>
       <itemPath>clientes.c</itemPath>
+      <itemPath>exportacao.c</itemPath>
       <itemPath>fornecedor.c</itemPath>
       <itemPath>hotel.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>operador.c</itemPath>
       <itemPath>produtos.c</itemPath>
+      <itemPath>relatorios.c</itemPath>
       <itemPath>reserva.c</itemPath>
       <itemPath>transacoes.c</itemPath>
       <itemPath>vendaProdutos.c</itemPath>
@@ -94,6 +96,8 @@
       </item>
       <item path="clientes.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="exportacao.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="fornecedor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="hotel.c" ex="false" tool="0" flavor2="0">
@@ -103,6 +107,8 @@
       <item path="operador.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="produtos.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="relatorios.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="reserva.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -143,6 +149,8 @@
       </item>
       <item path="clientes.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="exportacao.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="fornecedor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="hotel.c" ex="false" tool="0" flavor2="0">
@@ -152,6 +160,8 @@
       <item path="operador.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="produtos.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="relatorios.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="reserva.c" ex="false" tool="0" flavor2="0">
       </item>

@@ -1,4 +1,4 @@
-/////////////////////////////   Biblioteca  \\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////   Biblioteca  \\\\\\\\\\\\\\\\\\\\\\A
 
 #include <stdio.h>
 
@@ -39,6 +39,9 @@
     
     //checkInOut
     checkInOut *GLOBAL_dados_checkInOut = NULL; //já usado!
+
+    //Contas
+    contaHotel *GLOBAL_dados_Contas = NULL; //já usado!
     
 int main() {
     // setar linguagem pt-br
@@ -63,7 +66,17 @@ int main() {
     fopen("reservas.txt","a");
     fopen("checkInOut.bin","ab");
     fopen("checkInOut.txt","a");
-    
+    fopen("contas.bin","ab");
+    fopen("contas.txt","a");
+    fopen("caixa.bin","ab");
+    fopen("caixa.txt","a");
+    fopen("montantesBanco.bin","ab");
+    fopen("montantesBanco.txt","a");
+    fopen("entradaProdutos.bin","ab");
+    fopen("entradaProdutos.txt","a");
+    fopen("contasApagar.bin","ab");
+    fopen("contasApagar.txt","a");
+
     if(verifica_Hotel(GLOBAL_dados_hotel) == 0){
         hotel dados;
         dados = le_dados_hotel();
@@ -71,6 +84,6 @@ int main() {
     }
 
     menuPrincipal(GLOBAL_dados_hotel, GLOBAL_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_dados_produtos, GLOBAL_dados_fornecedores,
-                  GLOBAL_dados_operadores, GLOBAL_dados_reservas, GLOBAL_dados_checkInOut);
+                  GLOBAL_dados_operadores, GLOBAL_dados_reservas, GLOBAL_dados_checkInOut, GLOBAL_dados_Contas);
     return 0;
 }

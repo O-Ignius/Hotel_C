@@ -75,7 +75,7 @@ float retorna_id(char *nome_txt, char *nome_bin, int tam, int tam_pont) {
 }
 
 void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, acomodacao *GLOBAL_dados_acomodacao, cate_aco *GLOBAL_dados_categ_acomodacao, produto *GLOBAL_dados_produtos,
-                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas, checkInOut *GLOBAL_dados_checkInOut) {
+                   fornecedor *GLOBAL_dados_fornecedores, operador *GLOBAL_dados_operadores, reserva *GLOBAL_dados_reservas, checkInOut *GLOBAL_dados_checkInOut,contaHotel *GLOBAL_dados_Contas) {
     int opcao = 99, binOUtxt = 0;
     
     //parametros globais para ponteiros globais
@@ -87,8 +87,8 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
     int GLOBAL_tam_pont_dados_operadores = 1; //ja usado!
     int GLOBAL_tam_pont_dados_reservas = 1; //ja usado!
     int GLOBAL_tam_pont_dados_checks = 1; //ja usado!
+    int GLOBAL_tam_pont_dados_contas = 1; //ja usadoz!
 
-    
     setbuf(stdin, NULL);
     while (opcao != 0) {
         printf("\n\n///// HOTELARIA - MENU \\\\\n\n\n");
@@ -103,7 +103,9 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
         printf("\tOperadores - 8\n");
         printf("\tTransações - 9\n");
         printf("\tCheck-In e Check-Out - 10\n");
-        printf("\tConfigurações de salvamento - 15\n");
+        printf("\tRelatórios - 11\n");
+        printf("\tExportação de dados - 12\n");
+        printf("\tConfigurações de salvamento - 13\n");
         printf("\tEncerrar - 0\n");
 
         printf("Opcão: ");
@@ -111,7 +113,7 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
 
         switch (opcao) {
             case 1:
-                GLOBAL_dados_hotel =menuHotel(binOUtxt, GLOBAL_dados_hotel);
+                GLOBAL_dados_hotel = menuHotel(binOUtxt, GLOBAL_dados_hotel);
                 break;
             case 2:
                 GLOBAL_dados_cliente = menuCliente(binOUtxt, GLOBAL_dados_cliente, &GLOBAL_tam_pont_dados_cliente);
@@ -135,12 +137,18 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
                 GLOBAL_dados_operadores = menuOperadores(binOUtxt, GLOBAL_dados_operadores, &GLOBAL_tam_pont_dados_reservas);
                 break;
             case 9:
-                menuTransacoes(binOUtxt, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos,GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas,  GLOBAL_dados_checkInOut, &GLOBAL_tam_pont_dados_checks);
+                GLOBAL_dados_Contas = menuTransacoes(binOUtxt, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos,GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas,  GLOBAL_dados_checkInOut, &GLOBAL_tam_pont_dados_checks, GLOBAL_dados_Contas, &GLOBAL_tam_pont_dados_contas);
                 break;
             case 10:
-                GLOBAL_dados_checkInOut = menu_checkInOut(binOUtxt, GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, GLOBAL_tam_pont_dados_reservas, GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_checkInOut, &GLOBAL_tam_pont_dados_checks);
+                GLOBAL_dados_checkInOut = menu_checkInOut(binOUtxt, GLOBAL_dados_reservas, GLOBAL_dados_acomodacao, GLOBAL_tam_pont_dados_reservas, GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_checkInOut, &GLOBAL_tam_pont_dados_checks, GLOBAL_dados_cliente, GLOBAL_tam_pont_dados_cliente);
                 break;
-            case 15:
+            case 11:
+                menuRelatorios(GLOBAL_dados_cliente, GLOBAL_tam_pont_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos);
+                break;
+            case 12:
+                menuExportacao(binOUtxt, GLOBAL_dados_cliente, GLOBAL_tam_pont_dados_cliente, GLOBAL_dados_acomodacao, GLOBAL_tam_pont_dados_acomodacao, GLOBAL_dados_categ_acomodacao, GLOBAL_tam_pont_dados_categ_acomodacao, GLOBAL_dados_reservas, GLOBAL_tam_pont_dados_reservas, GLOBAL_dados_produtos, GLOBAL_tam_pont_dados_produtos, GLOBAL_dados_operadores, GLOBAL_tam_pont_dados_operadores, GLOBAL_dados_fornecedores, GLOBAL_tam_pont_dados_fornecedores);
+                break;
+            case 13:
                 binOUtxt = selecionarTipoArquivo();
                 break;
             case 0:
@@ -164,3 +172,4 @@ void menuPrincipal(hotel *GLOBAL_dados_hotel, cad_clie *GLOBAL_dados_cliente, ac
     
     printf("Fechando programa...");
 }
+

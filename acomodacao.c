@@ -43,10 +43,6 @@ acomodacao le_dados_acomod(int GLOBAL_tam_pont_dados_acomodacao) {
     return dados;
 }
 
-
-
-
-
 acomodacao *menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomodacao, acomodacao *GLOBAL_dados_acomodacao, int *GLOBAL_tam_pont_dados_categ_acomodacao, int *GLOBAL_tam_pont_dados_acomodacao) {
     int opcao = 0;
     acomodacao dados;
@@ -98,7 +94,6 @@ acomodacao *menuAcomodacoes(int tipoArquivo, cate_aco *GLOBAL_dados_categ_acomod
     
     return GLOBAL_dados_acomodacao;
 }
-
 
 cate_aco retorna_tipo_acomodacao(cate_aco *GLOBAL_dados_categ_acomodacao, int GLOBAL_tam_pont_dados_categ_acomodacao) {
     FILE *tipo;

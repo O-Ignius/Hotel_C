@@ -40,11 +40,13 @@ OBJECTFILES= \
 	${OBJECTDIR}/categoria_acomodacao.o \
 	${OBJECTDIR}/check.o \
 	${OBJECTDIR}/clientes.o \
+	${OBJECTDIR}/exportacao.o \
 	${OBJECTDIR}/fornecedor.o \
 	${OBJECTDIR}/hotel.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/operador.o \
 	${OBJECTDIR}/produtos.o \
+	${OBJECTDIR}/relatorios.o \
 	${OBJECTDIR}/reserva.o \
 	${OBJECTDIR}/transacoes.o \
 	${OBJECTDIR}/vendaProdutos.o
@@ -68,11 +70,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_cfinal.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_cfinal.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_c ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hotel_cfinal ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/acomodacao.o: acomodacao.c
 	${MKDIR} -p ${OBJECTDIR}
@@ -99,6 +101,11 @@ ${OBJECTDIR}/clientes.o: clientes.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/clientes.o clientes.c
 
+${OBJECTDIR}/exportacao.o: exportacao.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/exportacao.o exportacao.c
+
 ${OBJECTDIR}/fornecedor.o: fornecedor.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -123,6 +130,11 @@ ${OBJECTDIR}/produtos.o: produtos.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/produtos.o produtos.c
+
+${OBJECTDIR}/relatorios.o: relatorios.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/relatorios.o relatorios.c
 
 ${OBJECTDIR}/reserva.o: reserva.c
 	${MKDIR} -p ${OBJECTDIR}
